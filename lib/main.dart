@@ -13,6 +13,7 @@ import 'screens/notification_screen.dart';
 import 'screens/toast_demo_screen.dart';
 import 'screens/checkout_step1.dart';
 import 'screens/order_success_screen.dart';
+import 'screens/profile_screen.dart';
 import 'widgets/bottom_navigation_bar.dart';
 
 void main() {
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         '/toast-demo': (context) => const ToastDemoScreen(),
         '/checkout': (context) => const CheckoutStep1Screen(),
         '/order-success': (context) => const OrderSuccessScreen(),
+        '/profile': (context) => const ProfileScreen(),
       },
     );
   }

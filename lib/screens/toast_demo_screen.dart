@@ -17,11 +17,6 @@ class ToastDemoScreen extends StatelessWidget {
               onNotificationTap: () {
                 Navigator.of(context).pushNamed('/notification');
               },
-              onProfileTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Profile tapped')),
-                );
-              },
             ),
             
             // Title

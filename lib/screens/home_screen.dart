@@ -10,6 +10,7 @@ import '../widgets/home_screen/company_information.dart';
 import 'plants_screen.dart';
 import 'categories_screen.dart';
 import 'cart_screen.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final NavigationItem initialNavigationItem;
@@ -80,12 +81,6 @@ class _HomeScreenState extends State<HomeScreen> {
               onNotificationTap: () {
                 // Navigate to notification screen using named route
                 Navigator.of(context).pushNamed('/notification');
-              },
-              onProfileTap: () {
-                // Handle profile tap
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Profile tapped')),
-                );
               },
             ),
             

@@ -20,11 +20,6 @@ class HelpScreen extends StatelessWidget {
                 // Navigate to notification screen
                 NotificationScreen.navigateTo(context);
               },
-              onProfileTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Profile')),
-                );
-              },
             ),
             
             // Scrollable content area

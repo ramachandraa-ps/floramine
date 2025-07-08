@@ -53,7 +53,15 @@ class HeaderWidget extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               GestureDetector(
-                onTap: onProfileTap,
+                onTap: () {
+                  // Use provided callback if available, otherwise use universal navigation
+                  if (onProfileTap != null) {
+                    onProfileTap!();
+                  } else {
+                    // Universal navigation to profile screen using named route
+                    Navigator.of(context).pushNamed('/profile');
+                  }
+                },
                 child: Container(
                   width: 40,
                   height: 40,

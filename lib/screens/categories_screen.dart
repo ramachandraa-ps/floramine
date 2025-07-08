@@ -80,11 +80,6 @@ class CategoriesScreen extends StatelessWidget {
                   // Navigate to notification screen
                   NotificationScreen.navigateTo(context);
                 },
-                onProfileTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Profile tapped')),
-                  );
-                },
               ),
               
               // 2. Search Bar
