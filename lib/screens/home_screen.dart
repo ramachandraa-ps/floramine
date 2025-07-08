@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/bottom_navigation_bar.dart';
 import '../widgets/header_widget.dart';
+import 'plants_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -47,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildCurrentScreen() {
     switch (_currentItem) {
       case NavigationItem.plants:
-        return _buildPlaceholderScreen('Plants Screen', const Color(0xFFD8EACF));
+        return const PlantsScreen();
       case NavigationItem.categories:
         return _buildPlaceholderScreen('Categories Screen', const Color(0xFFCCE6F9));
       case NavigationItem.cart:
