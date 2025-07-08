@@ -9,6 +9,7 @@ import '../widgets/home_screen/other_products_section.dart';
 import '../widgets/home_screen/company_information.dart';
 import 'plants_screen.dart';
 import 'categories_screen.dart';
+import 'cart_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final NavigationItem initialNavigationItem;
@@ -40,6 +41,17 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const CategoriesScreen()),
+        );
+      });
+    }
+    
+    // If cart is selected, navigate to the cart screen
+    if (_currentItem == NavigationItem.cart) {
+      // Use Future.microtask to avoid build errors when navigating during build
+      Future.microtask(() {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const CartScreen()),
         );
       });
     }

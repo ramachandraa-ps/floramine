@@ -4,6 +4,7 @@ import '../widgets/search_bar.dart';
 import '../widgets/home_screen/horizontal_product_card.dart';
 import '../widgets/bottom_navigation_bar.dart';
 import 'home_screen.dart';
+import 'cart_screen.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({Key? key}) : super(key: key);
@@ -154,15 +155,25 @@ class CategoriesScreen extends StatelessWidget {
                 onItemSelected: (item) {
                   // Handle navigation to other screens
                   if (item != NavigationItem.categories) {
-                    // Navigate to HomeScreen with the selected item
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomeScreen(
-                          initialNavigationItem: item,
+                    if (item == NavigationItem.cart) {
+                      // Navigate to CartScreen
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CartScreen(),
                         ),
-                      ),
-                    );
+                      );
+                    } else {
+                      // Navigate to HomeScreen with the selected item
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomeScreen(
+                            initialNavigationItem: item,
+                          ),
+                        ),
+                      );
+                    }
                   }
                 },
               ),
