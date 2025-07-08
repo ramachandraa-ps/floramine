@@ -4,6 +4,7 @@ import '../widgets/order_details/track_history_section.dart';
 import '../widgets/order_details/cart_details_section.dart';
 import '../widgets/order_details/order_actions_section.dart';
 import '../widgets/bottom_navigation_bar.dart';
+import '../screens/view_review_screen.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
   final String orderId;
@@ -94,8 +95,10 @@ class OrderDetailsScreen extends StatelessWidget {
                               );
                             },
                             onGiveReview: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Opening review form...')),
+                              // Navigate to the review screen
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const ViewReviewScreen()),
                               );
                             },
                             onReplacement: () {

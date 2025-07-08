@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../screens/view_review_screen.dart';
 
 class OrderActionsSection extends StatelessWidget {
   final String validTill;
@@ -54,13 +55,19 @@ class OrderActionsSection extends StatelessWidget {
             ),
           ),
           
-          // Give Review Button - Updated color to match the image
+          // View Review Button
           Container(
             width: double.infinity,
             height: 34,
             margin: EdgeInsets.only(bottom: 19),
             child: ElevatedButton(
-              onPressed: onGiveReview,
+              onPressed: onGiveReview ?? () {
+                // Navigate to ViewReviewScreen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ViewReviewScreen()),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 backgroundColor: const Color(0xFF622700), // Brown color as shown in the image
