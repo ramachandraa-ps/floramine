@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'create_ticket_screen.dart';
 
 class SupportTicketScreen extends StatelessWidget {
   const SupportTicketScreen({Key? key}) : super(key: key);
@@ -94,9 +95,10 @@ class SupportTicketScreen extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: GestureDetector(
         onTap: () {
-          // Handle create ticket tap
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Create Ticket tapped')),
+          // Navigate to create ticket screen
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const CreateTicketScreen()),
           );
         },
         child: Container(
