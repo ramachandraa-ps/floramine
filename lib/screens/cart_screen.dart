@@ -3,13 +3,40 @@ import '../widgets/cart/product_details_in_cart.dart';
 import '../widgets/cart/amount_payable_section.dart';
 import '../widgets/cart/saved_item_in_cart.dart';
 import '../widgets/bottom_navigation_bar.dart';
+import 'empty_cart_screen.dart';
 // Remove the import for checkout.dart as we'll use named routes instead
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   const CartScreen({Key? key}) : super(key: key);
 
   @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  // State to track if cart is empty
+  bool isCartEmpty = false;
+
+  @override
   Widget build(BuildContext context) {
+    // If cart is empty, show the empty cart screen with toggle button
+    if (isCartEmpty) {
+      return Scaffold(
+        body: EmptyCartScreen(),
+        // Add a floating action button to toggle cart state
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              isCartEmpty = false; // Toggle to filled cart
+            });
+          },
+          backgroundColor: const Color(0xFF54A801),
+          child: const Icon(Icons.add_shopping_cart),
+          tooltip: 'Add Products',
+        ),
+      );
+    }
+    
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -25,14 +52,40 @@ class CartScreen extends StatelessWidget {
                     children: [
                       // 1. Title
                       const SizedBox(height: 20),
-                      const Text(
-                        'My Cart (2)',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 28,
-                          fontFamily: 'Cabin',
-                          fontWeight: FontWeight.w700,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'My Cart (2)',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 28,
+                              fontFamily: 'Cabin',
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          // Add button to clear cart
+                          TextButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                isCartEmpty = true; // Toggle to empty cart
+                              });
+                            },
+                            icon: const Icon(
+                              Icons.remove_shopping_cart,
+                              color: Colors.red,
+                            ),
+                            label: const Text(
+                              'Clear',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 14,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 20),
                       

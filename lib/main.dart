@@ -24,6 +24,7 @@ import 'screens/create_ticket_screen.dart';
 import 'screens/chat_with_us.dart';
 import 'screens/faq_screen.dart';
 import 'screens/search_screen.dart';
+import 'screens/empty_cart_screen.dart';
 import 'widgets/bottom_navigation_bar.dart';
 
 void main() {
@@ -65,6 +66,7 @@ class MyApp extends StatelessWidget {
         '/chat-with-us': (context) => const ChatWithUsScreen(),
         '/faq': (context) => const FAQScreen(),
         '/search': (context) => const SearchScreen(),
+        '/empty-cart': (context) => const EmptyCartScreen(),
       },
     );
   }
