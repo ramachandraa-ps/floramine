@@ -134,10 +134,8 @@ class HelpScreen extends StatelessWidget {
       child: Column(
         children: [
           _buildMenuItem(context, 'Chat with Us', () {
-            // Handle chat action
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Chat feature coming soon')),
-            );
+            // Navigate to Chat with Us screen
+            Navigator.pushNamed(context, '/chat-with-us');
           }),
           
           _buildMenuItem(context, 'Raise Ticket', () {
