@@ -10,6 +10,7 @@ import 'screens/view_review_screen.dart';
 import 'screens/about_us_screen.dart';
 import 'screens/help_screen.dart';
 import 'screens/notification_screen.dart';
+import 'screens/toast_demo_screen.dart';
 import 'widgets/bottom_navigation_bar.dart';
 
 void main() {
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         '/orders': (context) => const OrderDetailsScreen(),
         '/help': (context) => const HelpScreen(),
         '/notification': (context) => const NotificationScreen(),
+        '/toast-demo': (context) => const ToastDemoScreen(),
       },
     );
   }
