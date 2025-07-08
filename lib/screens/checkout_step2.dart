@@ -419,8 +419,8 @@ class CheckoutStep2Screen extends StatelessWidget {
           // Proceed & Pay button
           GestureDetector(
             onTap: () {
-              // Navigate to payment step
-              // TODO: Implement navigation to payment step
+              // Navigate to order success screen
+              Navigator.pushNamed(context, '/order-success');
             },
             child: Container(
               height: 40,
