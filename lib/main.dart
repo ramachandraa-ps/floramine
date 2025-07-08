@@ -6,6 +6,8 @@ import 'screens/home_screen.dart';
 import 'screens/cart_screen.dart';
 import 'screens/categories_screen.dart';
 import 'screens/order_details_screen.dart';
+import 'screens/view_review_screen.dart';
+import 'screens/about_us_screen.dart';
 import 'widgets/bottom_navigation_bar.dart';
 
 void main() {
@@ -31,7 +33,7 @@ class MyApp extends StatelessWidget {
         '/categories': (context) => const CategoriesScreen(),
         '/cart': (context) => const CartScreen(),
         '/orders': (context) => const OrderDetailsScreen(),
-        '/help': (context) => const Scaffold(body: Center(child: Text('Help Screen'))),
+        '/help': (context) => const AboutUsScreen(),
       },
     );
   }
