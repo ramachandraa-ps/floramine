@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       home: const SplashPage(),
       // Define named routes for navigation
       routes: {
-        '/plants': (context) => const HomeScreen(initialNavigationItem: NavigationItem.plants),
+        '/plants': (context) => const HomeScreen(),
         '/categories': (context) => const CategoriesScreen(),
         '/cart': (context) => const CartScreen(),
         '/orders': (context) => const OrderDetailsScreen(),

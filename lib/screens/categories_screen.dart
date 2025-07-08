@@ -5,6 +5,7 @@ import '../widgets/home_screen/horizontal_product_card.dart';
 import '../widgets/bottom_navigation_bar.dart';
 import 'home_screen.dart';
 import 'cart_screen.dart';
+import 'plants_screen.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({Key? key}) : super(key: key);
@@ -135,13 +136,21 @@ class CategoriesScreen extends StatelessWidget {
                         imageUrl: categories[index]['imageUrl'],
                         isRounded: categories[index]['isRounded'],
                         onTap: () {
-                          // Handle category tap
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('${categories[index]['title']} category selected'),
-                              duration: const Duration(seconds: 1),
-                            ),
-                          );
+                          // If Plants category is selected, navigate to PlantsScreen
+                          if (categories[index]['title'] == 'Plants') {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const PlantsScreen()),
+                            );
+                          } else {
+                            // Handle other category taps
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('${categories[index]['title']} category selected'),
+                                duration: const Duration(seconds: 1),
+                              ),
+                            );
+                          }
                         },
                       );
                     },

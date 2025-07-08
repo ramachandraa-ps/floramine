@@ -100,7 +100,19 @@ class _HomeScreenState extends State<HomeScreen> {
             CustomBottomNavigationBar(
               currentItem: _currentItem,
               onItemSelected: (item) {
-                if (item != _currentItem) {
+                if (item == NavigationItem.plants) {
+                  // If already on plants tab and user taps it again, navigate to PlantsScreen
+                  if (_currentItem == NavigationItem.plants) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const PlantsScreen()),
+                    );
+                  } else {
+                    setState(() {
+                      _currentItem = item;
+                    });
+                  }
+                } else if (item != _currentItem) {
                   CustomBottomNavigationBar.navigateTo(context, item);
                 }
               },
@@ -125,9 +137,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 CustomSearchBar(
                   hintText: 'Indoor Plants',
                   onSearchIconTap: () {
-                    // Handle search
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Search tapped')),
+                    // Navigate to PlantsScreen when search is tapped
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const PlantsScreen()),
                     );
                   },
                 ),
