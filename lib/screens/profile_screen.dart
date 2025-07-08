@@ -164,7 +164,8 @@ class ProfileScreen extends StatelessWidget {
                         icon: Icons.location_on_outlined,
                         title: 'My Addresses',
                         onTap: () {
-                          // Handle My Addresses tap
+                          // Navigate to My Addresses screen
+                          Navigator.pushNamed(context, '/my-addresses');
                         },
                       ),
                       const SizedBox(height: 20),
