@@ -8,6 +8,7 @@ import '../widgets/home_screen/trending_products_section.dart';
 import '../widgets/home_screen/other_products_section.dart';
 import '../widgets/home_screen/company_information.dart';
 import 'plants_screen.dart';
+import 'categories_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -21,6 +22,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // If categories is selected, navigate to the categories screen
+    if (_currentItem == NavigationItem.categories) {
+      // Use Future.microtask to avoid build errors when navigating during build
+      Future.microtask(() {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const CategoriesScreen()),
+        );
+      });
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFEEF6E6),
       body: SafeArea(
@@ -44,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
             
             // Main content area with scroll
             Expanded(
-              child: _buildCurrentScreen(),
+              child: _buildPlantsScreen(),
             ),
             
             // Bottom navigation bar
@@ -60,21 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-  }
-
-  Widget _buildCurrentScreen() {
-    switch (_currentItem) {
-      case NavigationItem.plants:
-        return _buildPlantsScreen();
-      case NavigationItem.categories:
-        return _buildPlaceholderScreen('Categories Screen', const Color(0xFFCCE6F9));
-      case NavigationItem.cart:
-        return _buildPlaceholderScreen('Cart Screen', const Color(0xFFF9E8CC));
-      case NavigationItem.orders:
-        return _buildPlaceholderScreen('Orders Screen', const Color(0xFFE8CCF9));
-      case NavigationItem.help:
-        return _buildPlaceholderScreen('Help Screen', const Color(0xFFCCF9F3));
-    }
   }
 
   Widget _buildPlantsScreen() {

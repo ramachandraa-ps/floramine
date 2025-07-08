@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'horizontal_product_card.dart';
+import '../../screens/categories_screen.dart';
 
 class HorizontalProductList extends StatelessWidget {
   const HorizontalProductList({Key? key}) : super(key: key);
@@ -72,16 +73,13 @@ class HorizontalProductList extends StatelessWidget {
                     isRounded: product['isRounded'],
                     isAsset: true, // Using asset images
                     onTap: () {
-                      // Handle tap for each product category
-                      if (product['title'] == 'Plants') {
-                        Navigator.pushNamed(context, '/product_list');
-                      } else if (product['title'] == 'Gifting') {
-                        Navigator.pushNamed(context, '/gifting');
-                      } else if (product['title'] == 'Rental Services') {
-                        Navigator.pushNamed(context, '/rental_services');
-                      } else {
-                        print('Tapped on ${product['title']}');
-                      }
+                      // Navigate to categories screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CategoriesScreen(),
+                        ),
+                      );
                     },
                   ),
                 ),
