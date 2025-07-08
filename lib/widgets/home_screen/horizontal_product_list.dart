@@ -48,6 +48,11 @@ class HorizontalProductList extends StatelessWidget {
         'imageUrl': 'assets/images/home_screen/rentalservice.png',
         'isRounded': true,
       },
+      {
+        'title': 'Bundles',
+        'imageUrl': 'assets/images/home_screen/bundles.png',
+        'isRounded': true,
+      },
     ];
 
     return Container(
