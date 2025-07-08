@@ -3,6 +3,9 @@ import 'dart:async';
 import 'splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/cart_screen.dart';
+import 'screens/categories_screen.dart';
+import 'widgets/bottom_navigation_bar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,6 +24,14 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
       ),
       home: const SplashPage(),
+      // Define named routes for navigation
+      routes: {
+        '/plants': (context) => const HomeScreen(initialNavigationItem: NavigationItem.plants),
+        '/categories': (context) => const CategoriesScreen(),
+        '/cart': (context) => const CartScreen(),
+        '/orders': (context) => const Scaffold(body: Center(child: Text('Orders Screen'))),
+        '/help': (context) => const Scaffold(body: Center(child: Text('Help Screen'))),
+      },
     );
   }
 }

@@ -188,7 +188,7 @@ class CartScreen extends StatelessWidget {
             currentItem: NavigationItem.cart,
             onItemSelected: (item) {
               if (item != NavigationItem.cart) {
-                Navigator.pop(context);
+                CustomBottomNavigationBar.navigateTo(context, item);
               }
             },
           ),

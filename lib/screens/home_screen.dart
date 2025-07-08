@@ -38,22 +38,36 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_currentItem == NavigationItem.categories) {
       // Use Future.microtask to avoid build errors when navigating during build
       Future.microtask(() {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const CategoriesScreen()),
-        );
+        CustomBottomNavigationBar.navigateTo(context, NavigationItem.categories);
       });
+      return const SizedBox(); // Return empty widget while navigating
     }
     
     // If cart is selected, navigate to the cart screen
     if (_currentItem == NavigationItem.cart) {
       // Use Future.microtask to avoid build errors when navigating during build
       Future.microtask(() {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const CartScreen()),
-        );
+        CustomBottomNavigationBar.navigateTo(context, NavigationItem.cart);
       });
+      return const SizedBox(); // Return empty widget while navigating
+    }
+    
+    // If orders is selected
+    if (_currentItem == NavigationItem.orders) {
+      // Use Future.microtask to avoid build errors when navigating during build
+      Future.microtask(() {
+        CustomBottomNavigationBar.navigateTo(context, NavigationItem.orders);
+      });
+      return const SizedBox(); // Return empty widget while navigating
+    }
+    
+    // If help is selected
+    if (_currentItem == NavigationItem.help) {
+      // Use Future.microtask to avoid build errors when navigating during build
+      Future.microtask(() {
+        CustomBottomNavigationBar.navigateTo(context, NavigationItem.help);
+      });
+      return const SizedBox(); // Return empty widget while navigating
     }
 
     return Scaffold(
@@ -86,9 +100,9 @@ class _HomeScreenState extends State<HomeScreen> {
             CustomBottomNavigationBar(
               currentItem: _currentItem,
               onItemSelected: (item) {
-                setState(() {
-                  _currentItem = item;
-                });
+                if (item != _currentItem) {
+                  CustomBottomNavigationBar.navigateTo(context, item);
+                }
               },
             ),
           ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/cart_screen.dart';
 
 enum NavigationItem {
   plants,
@@ -17,6 +18,42 @@ class CustomBottomNavigationBar extends StatelessWidget {
     required this.currentItem,
     required this.onItemSelected,
   }) : super(key: key);
+
+  // Navigation handler method to navigate between screens
+  static void navigateTo(BuildContext context, NavigationItem item) {
+    // Get the current route name to avoid pushing duplicate routes
+    final String? currentRoute = ModalRoute.of(context)?.settings.name;
+    
+    // Define route names for each navigation item
+    String routeName;
+    
+    switch (item) {
+      case NavigationItem.plants:
+        routeName = '/plants';
+        break;
+      case NavigationItem.categories:
+        routeName = '/categories';
+        break;
+      case NavigationItem.cart:
+        routeName = '/cart';
+        break;
+      case NavigationItem.orders:
+        routeName = '/orders';
+        break;
+      case NavigationItem.help:
+        routeName = '/help';
+        break;
+    }
+    
+    // If we're already on this route, do nothing
+    if (currentRoute == routeName) return;
+    
+    // Navigate to the new route
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      routeName,
+      (route) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

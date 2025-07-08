@@ -155,25 +155,7 @@ class CategoriesScreen extends StatelessWidget {
                 onItemSelected: (item) {
                   // Handle navigation to other screens
                   if (item != NavigationItem.categories) {
-                    if (item == NavigationItem.cart) {
-                      // Navigate to CartScreen
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const CartScreen(),
-                        ),
-                      );
-                    } else {
-                      // Navigate to HomeScreen with the selected item
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomeScreen(
-                            initialNavigationItem: item,
-                          ),
-                        ),
-                      );
-                    }
+                    CustomBottomNavigationBar.navigateTo(context, item);
                   }
                 },
               ),
