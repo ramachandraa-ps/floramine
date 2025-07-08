@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../widgets/product_card.dart';
+import '../../widgets/plant_product_card.dart';
 
 class LastViewedProducts extends StatelessWidget {
   const LastViewedProducts({Key? key}) : super(key: key);
@@ -24,37 +24,31 @@ class LastViewedProducts extends StatelessWidget {
           ),
         ),
         
-        // Product grid - 2x2 layout (4 products total)
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            children: [
-              // First row (2 products)
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: ProductCard()),
-                  const SizedBox(width: 16),
-                  Expanded(child: ProductCard()),
-                ],
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Second row (2 products)
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: ProductCard()),
-                  const SizedBox(width: 16),
-                  Expanded(child: ProductCard()),
-                ],
-              ),
-            ],
+        // Horizontal scrollable products
+        SizedBox(
+          height: 420, // Increased height to accommodate the PlantProductCard
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 6, // Number of products
+            itemBuilder: (context, index) {
+              return Container(
+                width: 180,
+                margin: const EdgeInsets.only(right: 16),
+                child: PlantProductCard(
+                  imageAsset: 'assets/images/jasminum_sambac.png',
+                  name: 'Money Plant, Devil\'s Ivy',
+                  currentPrice: 249,
+                  originalPrice: 299,
+                  discountPercentage: 17,
+                  isAirPurifying: true,
+                  isPerfectGift: index % 3 == 0,
+                ),
+              );
+            },
           ),
         ),
         
-        // View All Products button - using the same design as in HomeScreen
+        // View All Products button
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 24.0),
           child: Container(
@@ -62,15 +56,15 @@ class LastViewedProducts extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
             decoration: ShapeDecoration(
               shape: RoundedRectangleBorder(
-                side: BorderSide(width: 1),
+                side: const BorderSide(width: 1),
                 borderRadius: BorderRadius.circular(26),
               ),
             ),
-            child: Row(
+            child: const Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
+              children: [
                 Text(
                   'View All Products',
                   style: TextStyle(

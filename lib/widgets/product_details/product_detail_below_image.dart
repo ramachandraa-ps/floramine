@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../screens/cart.dart'; // Import the cart screen
 
 class ProductDetailBelowImage extends StatelessWidget {
   final String productName;
@@ -262,6 +261,9 @@ class ProductDetailBelowImage extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () {
                     // Add to cart functionality
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Added to cart')),
+                    );
                   },
                   child: Container(
                     height: 34,
@@ -300,10 +302,9 @@ class ProductDetailBelowImage extends StatelessWidget {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    // Navigate to cart screen when Buy Now
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const CartScreen()),
+                    // Show a SnackBar instead of navigating to a non-existent screen
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Buy Now pressed')),
                     );
                   },
                   child: Container(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../widgets/product_card.dart';
+import '../../widgets/plant_product_card.dart';
 
 class YouMightAlsoLike extends StatelessWidget {
   const YouMightAlsoLike({Key? key}) : super(key: key);
@@ -24,37 +24,31 @@ class YouMightAlsoLike extends StatelessWidget {
           ),
         ),
         
-        // Product grid - 2x2 layout (4 products total)
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            children: [
-              // First row (2 products)
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: ProductCard()),
-                  const SizedBox(width: 16),
-                  Expanded(child: ProductCard()),
-                ],
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Second row (2 products)
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: ProductCard()),
-                  const SizedBox(width: 16),
-                  Expanded(child: ProductCard()),
-                ],
-              ),
-            ],
+        // Horizontal scrollable products
+        SizedBox(
+          height: 420, // Increased height to accommodate the PlantProductCard
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 6, // Number of products
+            itemBuilder: (context, index) {
+              return Container(
+                width: 180,
+                margin: const EdgeInsets.only(right: 16),
+                child: PlantProductCard(
+                  imageAsset: 'assets/images/jasminum_sambac.png',
+                  name: 'Areca Palm, Butterfly Palm',
+                  currentPrice: 399,
+                  originalPrice: 450,
+                  discountPercentage: 10,
+                  isAirPurifying: index % 2 == 0,
+                  isPerfectGift: true,
+                ),
+              );
+            },
           ),
         ),
         
-        // View All Products button - using the same design as in HomeScreen
+        // View All Products button
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 24.0),
           child: Container(
@@ -62,15 +56,15 @@ class YouMightAlsoLike extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
             decoration: ShapeDecoration(
               shape: RoundedRectangleBorder(
-                side: BorderSide(width: 1),
+                side: const BorderSide(width: 1),
                 borderRadius: BorderRadius.circular(26),
               ),
             ),
-            child: Row(
+            child: const Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
+              children: [
                 Text(
                   'View All Products',
                   style: TextStyle(
