@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import '../../screens/view_review_screen.dart';
+import '../../screens/replacement_expired_screen.dart';
 
 class OrderActionsSection extends StatelessWidget {
   final String validTill;
   final VoidCallback? onDownloadInvoice;
   final VoidCallback? onGiveReview;
   final VoidCallback? onReplacement;
+  final VoidCallback? onValidTillTap;
+  final bool isExpired;
 
   const OrderActionsSection({
     Key? key,
@@ -13,6 +16,8 @@ class OrderActionsSection extends StatelessWidget {
     this.onDownloadInvoice,
     this.onGiveReview,
     this.onReplacement,
+    this.onValidTillTap,
+    this.isExpired = false,
   }) : super(key: key);
 
   @override
@@ -117,17 +122,24 @@ class OrderActionsSection extends StatelessWidget {
             ),
           ),
           
-          // Validity Info
-          Container(
-            width: double.infinity,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 250,
-                  child: Text(
+          // Validity Info - Now clickable
+          GestureDetector(
+            onTap: onValidTillTap ?? () {
+              // Show replacement expired dialog when validity text is tapped
+              if (isExpired) {
+                ReplacementExpiredScreen.show(context);
+              }
+            },
+            behavior: HitTestBehavior.opaque, // Ensures the tap is detected even on transparent areas
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5), // Increased tap area
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center, // Center the text
+                children: [
+                  Text(
                     validTill,
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -135,10 +147,24 @@ class OrderActionsSection extends StatelessWidget {
                       fontSize: 16,
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w400,
+                      decoration: TextDecoration.underline,
                     ),
                   ),
-                ),
-              ],
+                  // Add a small hint to indicate it's clickable
+                  if (isExpired)
+                    const Text(
+                      "(tap for details)",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xFF54A801),
+                        fontSize: 12,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w400,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         ],

@@ -6,21 +6,27 @@ import '../widgets/order_details/order_actions_section.dart';
 import '../widgets/bottom_navigation_bar.dart';
 import '../screens/view_review_screen.dart';
 import '../screens/replacement_screen.dart';
+import '../screens/replacement_expired_screen.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
   final String orderId;
+  final bool isReplacementExpired;
 
   const OrderDetailsScreen({
     Key? key,
     this.orderId = '#ABC4578984321',
+    this.isReplacementExpired = false,
   }) : super(key: key);
   
   // Static method to navigate to this screen
-  static void navigateTo(BuildContext context, {String orderId = '#ABC4578984321'}) {
+  static void navigateTo(BuildContext context, {String orderId = '#ABC4578984321', bool isReplacementExpired = false}) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => OrderDetailsScreen(orderId: orderId),
+        builder: (context) => OrderDetailsScreen(
+          orderId: orderId,
+          isReplacementExpired: isReplacementExpired,
+        ),
       ),
     );
   }
@@ -90,6 +96,9 @@ class OrderDetailsScreen extends StatelessWidget {
                         // 7. Order Actions Section
                         Center(
                           child: OrderActionsSection(
+                            validTill: isReplacementExpired 
+                                ? 'Replacement Period Expired' 
+                                : 'Valid Till March 24, 2025',
                             onDownloadInvoice: () {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Downloading invoice...')),
@@ -103,11 +112,22 @@ class OrderDetailsScreen extends StatelessWidget {
                               );
                             },
                             onReplacement: () {
-                              // Navigate to the replacement screen
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const ReplacementScreen()),
-                              );
+                              // Check if replacement is expired
+                              if (isReplacementExpired) {
+                                // Show replacement expired dialog
+                                ReplacementExpiredScreen.show(context);
+                              } else {
+                                // Navigate to the replacement screen
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const ReplacementScreen()),
+                                );
+                              }
+                            },
+                            isExpired: isReplacementExpired,
+                            onValidTillTap: () {
+                              // Show replacement expired dialog when validity text is tapped
+                              ReplacementExpiredScreen.show(context);
                             },
                           ),
                         ),
