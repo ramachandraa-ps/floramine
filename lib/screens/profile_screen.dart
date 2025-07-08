@@ -145,7 +145,8 @@ class ProfileScreen extends StatelessWidget {
                         icon: Icons.person_outline,
                         title: 'My Profile',
                         onTap: () {
-                          // Handle My Profile tap
+                          // Navigate to My Profile screen
+                          Navigator.pushNamed(context, '/my-profile');
                         },
                       ),
                       const SizedBox(height: 20),
