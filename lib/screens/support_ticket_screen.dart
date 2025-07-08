@@ -258,10 +258,8 @@ class _TicketCard extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  // Handle view details
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('View Details tapped')),
-                  );
+                  // Navigate to ticket details screen
+                  Navigator.pushNamed(context, '/ticket-details');
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

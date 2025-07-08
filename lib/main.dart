@@ -19,6 +19,7 @@ import 'screens/payment_methods_screen.dart';
 import 'screens/my_profile_screen.dart';
 import 'screens/my_addresses_screen.dart';
 import 'screens/support_ticket_screen.dart';
+import 'screens/ticket_details_screen.dart';
 import 'widgets/bottom_navigation_bar.dart';
 
 void main() {
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
         '/my-profile': (context) => const MyProfileScreen(),
         '/my-addresses': (context) => const MyAddressesScreen(),
         '/support-ticket': (context) => const SupportTicketScreen(),
+        '/ticket-details': (context) => const TicketDetailsScreen(),
       },
     );
   }
