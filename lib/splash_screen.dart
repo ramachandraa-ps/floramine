@@ -5,44 +5,34 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+    
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            clipBehavior: Clip.antiAlias,
-            decoration: ShapeDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment(0.50, 0.00),
-                end: Alignment(0.50, 1.00),
-                colors: [Color(0xFF54A801), Color(0xFF214200)],
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-            child: Stack(
-              children: [
-                Positioned(
-                  left: -159,
-                  top: 100,
-                  child: Container(
-                    width: 757,
-                    height: 757,
-                    decoration: ShapeDecoration(
-                      color: Colors.white.withOpacity(0.05),
-                      shape: const OvalBorder(),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  left: -205,
-                  top: 53,
-                  child: Container(
-                    width: 850,
-                    height: 850,
+      body: Container(
+        width: screenSize.width,
+        height: screenSize.height,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment(0.50, 0.00),
+            end: Alignment(0.50, 1.00),
+            colors: [Color(0xFF54A801), Color(0xFF214200)],
+          ),
+        ),
+        child: Center(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Calculate circle size based on the smallest dimension
+              final double size = constraints.maxWidth < constraints.maxHeight 
+                  ? constraints.maxWidth 
+                  : constraints.maxHeight;
+              
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Concentric circles
+                  Container(
+                    width: size * 0.95,
+                    height: size * 0.95,
                     decoration: ShapeDecoration(
                       shape: OvalBorder(
                         side: BorderSide(
@@ -52,85 +42,69 @@ class SplashScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
-                Positioned(
-                  left: -89,
-                  top: 169,
-                  child: Container(
-                    width: 618,
-                    height: 618,
+                  Container(
+                    width: size * 0.85,
+                    height: size * 0.85,
                     decoration: ShapeDecoration(
                       color: Colors.white.withOpacity(0.05),
                       shape: const OvalBorder(),
                     ),
                   ),
-                ),
-                Positioned(
-                  left: -27,
-                  top: 231,
-                  child: Container(
-                    width: 494,
-                    height: 494,
+                  Container(
+                    width: size * 0.7,
+                    height: size * 0.7,
                     decoration: ShapeDecoration(
                       color: Colors.white.withOpacity(0.05),
                       shape: const OvalBorder(),
                     ),
                   ),
-                ),
-                Positioned(
-                  left: 30,
-                  top: 288,
-                  child: Container(
-                    width: 380,
-                    height: 380,
+                  Container(
+                    width: size * 0.55,
+                    height: size * 0.55,
                     decoration: ShapeDecoration(
                       color: Colors.white.withOpacity(0.05),
                       shape: const OvalBorder(),
                     ),
                   ),
-                ),
-                Positioned(
-                  left: 88,
-                  top: 347,
-                  child: Container(
-                    width: 263,
-                    height: 263,
+                  Container(
+                    width: size * 0.42,
+                    height: size * 0.42,
                     decoration: ShapeDecoration(
                       color: Colors.white.withOpacity(0.05),
                       shape: const OvalBorder(),
                     ),
                   ),
-                ),
-                Positioned(
-                  left: 127,
-                  top: 385,
-                  child: Container(
-                    width: 186,
-                    height: 186,
+                  Container(
+                    width: size * 0.3,
+                    height: size * 0.3,
+                    decoration: ShapeDecoration(
+                      color: Colors.white.withOpacity(0.05),
+                      shape: const OvalBorder(),
+                    ),
+                  ),
+                  // White circle - made larger
+                  Container(
+                    width: size * 0.28,
+                    height: size * 0.28,
                     decoration: const ShapeDecoration(
                       color: Colors.white,
                       shape: OvalBorder(),
                     ),
                   ),
-                ),
-                Positioned(
-                  left: 154.15,
-                  top: 428,
-                  child: Container(
-                    width: 130.69,
-                    height: 100,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage("assets/images/floramine_logo.png"),
-                        fit: BoxFit.contain,
-                      ),
+                  // Logo - made larger
+                  SizedBox(
+                    width: size * 0.22,
+                    height: size * 0.22,
+                    child: const Image(
+                      image: AssetImage("assets/images/floramine_logo.png"),
+                      fit: BoxFit.contain,
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              );
+            },
           ),
-        ],
+        ),
       ),
     );
   }
