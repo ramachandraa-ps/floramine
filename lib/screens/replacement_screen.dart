@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/bottom_navigation_bar.dart';
+import 'replacement_success_screen.dart';
 
 // Custom painter for dashed border
 class DashedBorderPainter extends CustomPainter {
@@ -314,10 +315,11 @@ class ReplacementScreen extends StatelessWidget {
   Widget _buildSubmitButton(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Replacement request submitted')),
+        // Navigate to success screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ReplacementSuccessScreen()),
         );
-        Navigator.pop(context);
       },
       child: Container(
         width: double.infinity,
