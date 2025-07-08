@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/checkout/shipping_address.dart';
+import 'checkout_step2.dart';
 
 class CheckoutStep1Screen extends StatelessWidget {
   const CheckoutStep1Screen({Key? key}) : super(key: key);
@@ -274,7 +275,10 @@ class CheckoutStep1Screen extends StatelessWidget {
           GestureDetector(
             onTap: () {
               // Navigate to step 2
-              // TODO: Implement navigation to step 2
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CheckoutStep2Screen()),
+              );
             },
             child: Container(
               width: 147,
