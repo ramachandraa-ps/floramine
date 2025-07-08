@@ -141,10 +141,8 @@ class HelpScreen extends StatelessWidget {
           }),
           
           _buildMenuItem(context, 'Raise Ticket', () {
-            // Handle ticket action
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Ticket system coming soon')),
-            );
+            // Navigate to Support Ticket screen
+            Navigator.pushNamed(context, '/support-ticket');
           }),
           
           _buildMenuItem(context, 'Frequently Asked Question', () {
