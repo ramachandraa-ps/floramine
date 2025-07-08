@@ -33,8 +33,8 @@ class HeaderWidget extends StatelessWidget {
               GestureDetector(
                 onTap: onNotificationTap,
                 child: Container(
-                  width: 40,
-                  height: 40,
+                  width: 24,
+                  height: 24,
                   child: Image.asset(
                     'assets/images/header/notification_bell.png',
                     fit: BoxFit.contain,
@@ -55,13 +55,9 @@ class HeaderWidget extends StatelessWidget {
                     ),
                   ),
                   child: ClipOval(
-                    child: Container(
-                      color: Colors.grey[200],
-                      child: const Icon(
-                        Icons.person,
-                        color: Color(0xFF54A801),
-                        size: 24,
-                      ),
+                    child: Image.asset(
+                      'assets/images/header/user.png',
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
