@@ -3,7 +3,7 @@ import '../widgets/cart/product_details_in_cart.dart';
 import '../widgets/cart/amount_payable_section.dart';
 import '../widgets/cart/saved_item_in_cart.dart';
 import '../widgets/bottom_navigation_bar.dart';
-import 'checkout.dart';
+// Remove the import for checkout.dart as we'll use named routes instead
 
 class CartScreen extends StatelessWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -144,10 +144,8 @@ class CartScreen extends StatelessWidget {
                 // Proceed button
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const CheckoutScreen()),
-                    );
+                    // Navigate to checkout step 1 using named route
+                    Navigator.pushNamed(context, '/checkout');
                   },
                   child: Container(
                     width: 147,
