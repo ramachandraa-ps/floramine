@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'reset_password_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -236,7 +237,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   // Verify button
                   ElevatedButton(
                     onPressed: () {
-                      // Handle verification logic
+                      // Validate recovery code
+                      if (_recoveryCodeController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Please enter recovery code')),
+                        );
+                        return;
+                      }
+                      
+                      // Navigate to reset password screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ResetPasswordScreen()),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF316300),
