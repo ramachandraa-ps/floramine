@@ -11,14 +11,25 @@ import 'plants_screen.dart';
 import 'categories_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final NavigationItem initialNavigationItem;
+  
+  const HomeScreen({
+    Key? key,
+    this.initialNavigationItem = NavigationItem.plants,
+  }) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  NavigationItem _currentItem = NavigationItem.plants;
+  late NavigationItem _currentItem;
+  
+  @override
+  void initState() {
+    super.initState();
+    _currentItem = widget.initialNavigationItem;
+  }
 
   @override
   Widget build(BuildContext context) {

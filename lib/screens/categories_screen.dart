@@ -158,7 +158,9 @@ class CategoriesScreen extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => HomeScreen(),
+                        builder: (context) => HomeScreen(
+                          initialNavigationItem: item,
+                        ),
                       ),
                     );
                   }

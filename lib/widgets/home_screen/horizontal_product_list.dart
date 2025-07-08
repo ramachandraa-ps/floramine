@@ -73,8 +73,8 @@ class HorizontalProductList extends StatelessWidget {
                     isRounded: product['isRounded'],
                     isAsset: true, // Using asset images
                     onTap: () {
-                      // Navigate to categories screen
-                      Navigator.push(
+                      // Navigate to categories screen with replacement
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const CategoriesScreen(),
