@@ -144,10 +144,8 @@ class HelpScreen extends StatelessWidget {
           }),
           
           _buildMenuItem(context, 'Frequently Asked Question', () {
-            // Handle FAQ action
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('FAQs coming soon')),
-            );
+            // Navigate to FAQ screen
+            Navigator.pushNamed(context, '/faq');
           }),
           
           _buildMenuItem(context, 'Blogs', () {
