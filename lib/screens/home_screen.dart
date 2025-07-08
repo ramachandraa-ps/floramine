@@ -4,7 +4,9 @@ import '../widgets/header_widget.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/home_screen/horizontal_product_list.dart';
 import '../widgets/home_screen/featured_products_section.dart';
-import '../widgets/home_screen/company_stats_banner.dart';
+import '../widgets/home_screen/trending_products_section.dart';
+import '../widgets/home_screen/other_products_section.dart';
+import '../widgets/home_screen/company_information.dart';
 import 'plants_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -140,8 +142,20 @@ class _HomeScreenState extends State<HomeScreen> {
           // Featured products section
           const FeaturedProductsSection(),
           
-          // Company stats banner
-          const CompanyStatsBanner(),
+          const SizedBox(height: 16),
+          
+          // Trending products section
+          const TrendingProductsSection(),
+          
+          const SizedBox(height: 16),
+          
+          // Other products section
+          const OtherProductsSection(),
+          
+          // Company information banner
+          const CompanyInformation(),
+          
+          const SizedBox(height: 16),
         ],
       ),
     );
