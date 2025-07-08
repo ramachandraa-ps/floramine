@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/bottom_navigation_bar.dart';
+import '../widgets/header_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -15,34 +16,30 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Floramine',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
-          ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            HeaderWidget(
+              onNotificationTap: () {
+                // Handle notification tap
+              },
+              onProfileTap: () {
+                // Handle profile tap
+              },
+            ),
+            Expanded(
+              child: _buildCurrentScreen(),
+            ),
+            CustomBottomNavigationBar(
+              currentItem: _currentItem,
+              onItemSelected: (item) {
+                setState(() {
+                  _currentItem = item;
+                });
+              },
+            ),
+          ],
         ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: _buildCurrentScreen(),
-          ),
-          CustomBottomNavigationBar(
-            currentItem: _currentItem,
-            onItemSelected: (item) {
-              setState(() {
-                _currentItem = item;
-              });
-            },
-          ),
-        ],
       ),
     );
   }
