@@ -9,6 +9,7 @@ import 'screens/order_details_screen.dart';
 import 'screens/view_review_screen.dart';
 import 'screens/about_us_screen.dart';
 import 'screens/help_screen.dart';
+import 'screens/notification_screen.dart';
 import 'widgets/bottom_navigation_bar.dart';
 
 void main() {
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
         '/cart': (context) => const CartScreen(),
         '/orders': (context) => const OrderDetailsScreen(),
         '/help': (context) => const HelpScreen(),
+        '/notification': (context) => const NotificationScreen(),
       },
     );
   }

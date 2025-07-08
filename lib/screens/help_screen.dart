@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/bottom_navigation_bar.dart';
 import '../widgets/header_widget.dart';
 import 'about_us_screen.dart';
+import 'notification_screen.dart';
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({Key? key}) : super(key: key);
@@ -16,9 +17,8 @@ class HelpScreen extends StatelessWidget {
             // Header with logo and profile
             HeaderWidget(
               onNotificationTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Notifications')),
-                );
+                // Navigate to notification screen
+                NotificationScreen.navigateTo(context);
               },
               onProfileTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(

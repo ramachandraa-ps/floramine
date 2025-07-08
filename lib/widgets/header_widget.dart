@@ -30,13 +30,23 @@ class HeaderWidget extends StatelessWidget {
           // Notification and Profile section
           Row(
             children: [
+              // Notification bell with increased tap area
               GestureDetector(
-                onTap: onNotificationTap,
-                child: Container(
-                  width: 24,
-                  height: 24,
+                onTap: () {
+                  // Use provided callback if available, otherwise use universal navigation
+                  if (onNotificationTap != null) {
+                    onNotificationTap!();
+                  } else {
+                    // Universal navigation to notification screen using named route
+                    Navigator.of(context).pushNamed('/notification');
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Image.asset(
                     'assets/images/header/notification_bell.png',
+                    width: 24,
+                    height: 24,
                     fit: BoxFit.contain,
                   ),
                 ),

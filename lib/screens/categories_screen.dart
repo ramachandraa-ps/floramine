@@ -6,6 +6,7 @@ import '../widgets/bottom_navigation_bar.dart';
 import 'home_screen.dart';
 import 'cart_screen.dart';
 import 'plants_screen.dart';
+import 'notification_screen.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({Key? key}) : super(key: key);
@@ -76,9 +77,8 @@ class CategoriesScreen extends StatelessWidget {
               // 1. Header Widget
               HeaderWidget(
                 onNotificationTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Notifications tapped')),
-                  );
+                  // Navigate to notification screen
+                  NotificationScreen.navigateTo(context);
                 },
                 onProfileTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(

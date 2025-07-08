@@ -78,10 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
             // Header widget
             HeaderWidget(
               onNotificationTap: () {
-                // Handle notification tap
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Notifications tapped')),
-                );
+                // Navigate to notification screen using named route
+                Navigator.of(context).pushNamed('/notification');
               },
               onProfileTap: () {
                 // Handle profile tap
