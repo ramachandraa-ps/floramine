@@ -181,7 +181,8 @@ class ProfileScreen extends StatelessWidget {
                         icon: Icons.chat_outlined,
                         title: 'Communication Preferences',
                         onTap: () {
-                          // Handle Communication Preferences tap
+                          // Navigate to Communication Preferences screen
+                          Navigator.pushNamed(context, '/communication-preferences');
                         },
                       ),
                       
