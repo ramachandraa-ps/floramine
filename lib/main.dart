@@ -15,6 +15,7 @@ import 'screens/checkout_step1.dart';
 import 'screens/order_success_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/communication_preferences_screen.dart';
+import 'screens/payment_methods_screen.dart';
 import 'widgets/bottom_navigation_bar.dart';
 
 void main() {
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         '/order-success': (context) => const OrderSuccessScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/communication-preferences': (context) => const CommunicationPreferencesScreen(),
+        '/payment-methods': (context) => const PaymentMethodsScreen(),
       },
     );
   }

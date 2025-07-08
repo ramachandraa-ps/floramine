@@ -69,6 +69,7 @@ flutter:
     - assets/images/plants/
     - assets/images/profile/
     - assets/images/help/
+    - assets/images/payment_methods/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

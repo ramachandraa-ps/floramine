@@ -172,7 +172,8 @@ class ProfileScreen extends StatelessWidget {
                         icon: Icons.credit_card,
                         title: 'Payment Methods',
                         onTap: () {
-                          // Handle Payment Methods tap
+                          // Navigate to Payment Methods screen
+                          Navigator.pushNamed(context, '/payment-methods');
                         },
                       ),
                       const SizedBox(height: 20),
