@@ -5,6 +5,7 @@ import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/cart_screen.dart';
 import 'screens/categories_screen.dart';
+import 'screens/order_details_screen.dart';
 import 'widgets/bottom_navigation_bar.dart';
 
 void main() {
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
         '/plants': (context) => const HomeScreen(initialNavigationItem: NavigationItem.plants),
         '/categories': (context) => const CategoriesScreen(),
         '/cart': (context) => const CartScreen(),
-        '/orders': (context) => const Scaffold(body: Center(child: Text('Orders Screen'))),
+        '/orders': (context) => const OrderDetailsScreen(),
         '/help': (context) => const Scaffold(body: Center(child: Text('Help Screen'))),
       },
     );
