@@ -8,14 +8,23 @@ import '../widgets/product_details/customer_review.dart';
 import '../widgets/product_details/related_products.dart';
 import '../widgets/product_details/you_might_also_like.dart';
 import '../widgets/product_details/last_viewed_products.dart';
+import '../widgets/product_details/no_reviews_widget.dart';
 
-class ProductDetailsScreen extends StatelessWidget {
+class ProductDetailsScreen extends StatefulWidget {
   final String productName;
   
   const ProductDetailsScreen({
     Key? key,
     required this.productName,
   }) : super(key: key);
+
+  @override
+  State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
+}
+
+class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  // State to control whether to show reviews or no reviews
+  bool _hasReviews = false;
 
   @override
   Widget build(BuildContext context) {
@@ -148,8 +157,41 @@ class ProductDetailsScreen extends StatelessWidget {
                     
                     const SizedBox(height: 16),
                     
-                    // 4. Customer Review
-                    const CustomerReview(),
+                    // Toggle switch for reviews/no reviews
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const Text(
+                          'Toggle Reviews',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Switch(
+                          value: _hasReviews,
+                          activeColor: const Color(0xFF54A801),
+                          onChanged: (value) {
+                            setState(() {
+                              _hasReviews = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    
+                    // 4. Customer Review - conditionally show reviews or no reviews
+                    _hasReviews 
+                      ? const CustomerReview() 
+                      : NoReviewsWidget(
+                          onWriteReviewPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Write a review pressed')),
+                            );
+                          },
+                        ),
                     
                     const SizedBox(height: 16),
                     

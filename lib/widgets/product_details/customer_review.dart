@@ -1,10 +1,32 @@
 import 'package:flutter/material.dart';
+import 'no_reviews_widget.dart';
 
-class CustomerReview extends StatelessWidget {
+class CustomerReview extends StatefulWidget {
   const CustomerReview({Key? key}) : super(key: key);
 
   @override
+  State<CustomerReview> createState() => _CustomerReviewState();
+}
+
+class _CustomerReviewState extends State<CustomerReview> {
+  // Sample data - in a real app, this would come from an API
+  // Set to false to show the "No Reviews" state
+  final bool _hasReviews = false;
+
+  @override
   Widget build(BuildContext context) {
+    // If there are no reviews, show the NoReviewsWidget
+    if (!_hasReviews) {
+      return NoReviewsWidget(
+        onWriteReviewPressed: () {
+          // Handle write review action
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Write a review action')),
+          );
+        },
+      );
+    }
+
     // Get the screen width to make responsive adjustments
     final screenWidth = MediaQuery.of(context).size.width;
     
@@ -249,7 +271,7 @@ class CustomerReview extends StatelessWidget {
                 height: 3,
                 margin: const EdgeInsets.symmetric(vertical: 1),
                 decoration: ShapeDecoration(
-                  color: const Color(0xFF316300),
+                  color: const Color(0xFF54A801),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(100),
                   ),
@@ -262,13 +284,17 @@ class CustomerReview extends StatelessWidget {
         const SizedBox(width: 8),
         
         // Count
-        Text(
-          count,
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 14,
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w500,
+        SizedBox(
+          width: 40,
+          child: Text(
+            count,
+            textAlign: TextAlign.right,
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 14,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],
@@ -281,136 +307,74 @@ class CustomerReview extends StatelessWidget {
     required String userName,
     required String date,
     required String reviewText,
+    int rating = 5,
   }) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: ShapeDecoration(
+        color: Colors.white,
         shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 1,
-            color: Colors.black.withOpacity(0.10),
-          ),
+          side: BorderSide(width: 1, color: Colors.black.withOpacity(0.10)),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // User info row
+          // User info and rating
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // User image - use placeholder color instead of network image
-              Container(
-                width: 50,
-                height: 50,
-                decoration: ShapeDecoration(
-                  color: Colors.grey[300],
-                  shape: OvalBorder(
-                    side: const BorderSide(
-                      width: 2,
-                      color: Color(0xFF54A801),
+              // User info
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    userName,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                ),
-                child: const Icon(Icons.person, color: Colors.grey),
+                  Text(
+                    date,
+                    style: TextStyle(
+                      color: Colors.black.withOpacity(0.50),
+                      fontSize: 12,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
               ),
               
-              const SizedBox(width: 10),
-              
-              // User name, date and rating
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          userName,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        const Icon(Icons.verified, size: 14, color: Color(0xFF54A801)),
-                      ],
-                    ),
-                    
-                    Text(
-                      date,
-                      style: TextStyle(
-                        color: Colors.black.withOpacity(0.60),
-                        fontSize: 12,
-                        fontFamily: 'Jost',
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    
-                    // Star rating
-                    Row(
-                      children: List.generate(
-                        5,
-                        (index) => Icon(
-                          Icons.star,
-                          color: index < 4 ? Colors.amber : Colors.grey.shade300,
-                          size: 14,
-                        ),
-                      ),
-                    ),
-                  ],
+              // Star rating
+              Row(
+                children: List.generate(
+                  5,
+                  (index) => Icon(
+                    Icons.star,
+                    color: index < rating ? Colors.amber : Colors.grey.shade300,
+                    size: 16,
+                  ),
                 ),
               ),
             ],
           ),
           
-          const SizedBox(height: 13),
+          const SizedBox(height: 10),
           
           // Review text
           Text(
             reviewText,
-            style: TextStyle(
-              color: Colors.black.withOpacity(0.60),
-              fontSize: 14,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w400,
-              height: 1.5,
-            ),
-          ),
-          
-          const SizedBox(height: 13),
-          
-          // Read more link
-          const Text(
-            'Read More',
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 14,
               fontFamily: 'Poppins',
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          
-          const SizedBox(height: 13),
-          
-          // Review images - use colored containers instead of network images
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: List.generate(
-                4,
-                (index) => Container(
-                  width: 60,
-                  height: 60,
-                  margin: const EdgeInsets.only(right: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(Icons.image, color: Colors.grey),
-                ),
-              ),
+              fontWeight: FontWeight.w400,
             ),
           ),
         ],
