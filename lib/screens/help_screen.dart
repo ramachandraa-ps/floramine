@@ -4,6 +4,7 @@ import '../widgets/header_widget.dart';
 import 'about_us_screen.dart';
 import 'notification_screen.dart';
 import 'rental_services_screen.dart';
+import 'bundles_screen.dart';
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({Key? key}) : super(key: key);
@@ -161,6 +162,14 @@ class HelpScreen extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const RentalServicesScreen()),
+            );
+          }),
+          
+          _buildMenuItem(context, 'Bundles', () {
+            // Navigate to Bundles screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const BundlesScreen()),
             );
           }),
           
