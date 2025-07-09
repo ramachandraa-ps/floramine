@@ -14,13 +14,14 @@ class BundlesScreen extends StatelessWidget {
             
             // Search bar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: _buildSearchBar(),
             ),
             
             // Make everything below search bar scrollable
             Expanded(
               child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 child: Column(
                   children: [
                     // Bundle categories
@@ -38,13 +39,10 @@ class BundlesScreen extends StatelessWidget {
                       ),
                     ),
                     
-                    // Products grid - now needs fixed height since it's in a scroll view
+                    // Products grid
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: SizedBox(
-                        height: 800, // Adjust based on typical screen size and number of products
-                        child: _buildProductsGrid(),
-                      ),
+                      child: _buildProductsGrid(),
                     ),
                     
                     // Add some bottom padding
@@ -61,7 +59,7 @@ class BundlesScreen extends StatelessWidget {
   
   Widget _buildSearchBar() {
     return Container(
-      height: 50,
+      height: 45,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(30),
         color: const Color(0xFFF0F0F0),
@@ -85,8 +83,8 @@ class BundlesScreen extends StatelessWidget {
             ),
           ),
           Container(
-            width: 50,
-            height: 50,
+            width: 45,
+            height: 45,
             decoration: BoxDecoration(
               color: const Color(0xFF54A801),
               borderRadius: BorderRadius.only(
@@ -108,8 +106,8 @@ class BundlesScreen extends StatelessWidget {
   
   Widget _buildFilterButton() {
     return Container(
-      height: 40,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      height: 35,
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black.withOpacity(0.2)),
         borderRadius: BorderRadius.circular(20),
@@ -121,13 +119,13 @@ class BundlesScreen extends StatelessWidget {
             'Filter',
             style: TextStyle(
               color: Colors.black,
-              fontSize: 16,
+              fontSize: 14,
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(width: 5),
-          Icon(Icons.keyboard_arrow_down, size: 20),
+          SizedBox(width: 4),
+          Icon(Icons.keyboard_arrow_down, size: 18),
         ],
       ),
     );
@@ -135,8 +133,8 @@ class BundlesScreen extends StatelessWidget {
   
   Widget _buildSortButton() {
     return Container(
-      height: 40,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      height: 35,
+      padding: const EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black.withOpacity(0.2)),
         borderRadius: BorderRadius.circular(20),
@@ -148,13 +146,13 @@ class BundlesScreen extends StatelessWidget {
             'Sort By',
             style: TextStyle(
               color: Colors.black,
-              fontSize: 16,
+              fontSize: 14,
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(width: 5),
-          Icon(Icons.keyboard_arrow_down, size: 20),
+          SizedBox(width: 4),
+          Icon(Icons.keyboard_arrow_down, size: 18),
         ],
       ),
     );
@@ -200,10 +198,12 @@ class BundlesScreen extends StatelessWidget {
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.65,
+        childAspectRatio: 0.50,
         crossAxisSpacing: 15,
-        mainAxisSpacing: 15,
+        mainAxisSpacing: 20,
       ),
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
       itemCount: products.length,
       itemBuilder: (context, index) {
         final product = products[index];
@@ -235,12 +235,12 @@ class BundlesScreen extends StatelessWidget {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
                 child: Image.asset(
                   product['imageUrl'],
-                  height: 150,
+                  height: 140,
                   width: double.infinity,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
-                      height: 150,
+                      height: 140,
                       color: Colors.grey[300],
                       child: Icon(Icons.image_not_supported, color: Colors.grey[600]),
                     );
@@ -249,13 +249,15 @@ class BundlesScreen extends StatelessWidget {
               ),
               if (product['discount'] != null)
                 Positioned(
-                  right: 5,
-                  bottom: 5,
+                  right: 0,
+                  bottom: 0,
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: const Color(0xFF54A801),
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                      ),
                     ),
                     child: Text(
                       product['discount'],
@@ -278,30 +280,33 @@ class BundlesScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Title
-                Text(
-                  product['title'],
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 12,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
+                SizedBox(
+                  height: 36,
+                  child: Text(
+                    product['title'],
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
                 
-                SizedBox(height: 8),
+                SizedBox(height: 6),
                 
                 // Size and color dropdowns
                 Row(
                   children: [
-                    _buildDropdown('Select Size'),
+                    Expanded(child: _buildDropdown('Select Size')),
                     SizedBox(width: 5),
-                    _buildDropdown('Select Colour'),
+                    Expanded(child: _buildDropdown('Select Colour')),
                   ],
                 ),
                 
-                SizedBox(height: 8),
+                SizedBox(height: 6),
                 
                 // Price
                 Row(
@@ -329,25 +334,30 @@ class BundlesScreen extends StatelessWidget {
                   ],
                 ),
                 
-                SizedBox(height: 8),
+                SizedBox(height: 6),
                 
                 // Tags
-                Row(
-                  children: [
-                    for (var tag in product['tags'])
-                      Padding(
-                        padding: const EdgeInsets.only(right: 5),
-                        child: _buildTag(tag),
-                      ),
-                  ],
+                SizedBox(
+                  height: 20,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      for (var tag in product['tags'])
+                        Padding(
+                          padding: EdgeInsets.only(right: 5),
+                          child: _buildTag(tag),
+                        ),
+                    ],
+                  ),
                 ),
                 
-                SizedBox(height: 8),
+                SizedBox(height: 6),
                 
                 // Action buttons
                 Row(
                   children: [
                     Expanded(
+                      flex: 4,
                       child: Container(
                         height: 30,
                         decoration: BoxDecoration(
@@ -369,6 +379,7 @@ class BundlesScreen extends StatelessWidget {
                     ),
                     SizedBox(width: 5),
                     Expanded(
+                      flex: 6,
                       child: Container(
                         height: 30,
                         decoration: BoxDecoration(
@@ -376,21 +387,24 @@ class BundlesScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.shopping_cart_outlined, color: Colors.white, size: 14),
-                              SizedBox(width: 4),
-                              Text(
-                                'Add to Cart',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w600,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.shopping_cart_outlined, color: Colors.white, size: 14),
+                                SizedBox(width: 4),
+                                Text(
+                                  'Add to Cart',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontFamily: 'Poppins',
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -406,18 +420,18 @@ class BundlesScreen extends StatelessWidget {
   }
   
   Widget _buildDropdown(String text) {
-    return Expanded(
-      child: Container(
-        height: 25,
-        padding: EdgeInsets.symmetric(horizontal: 8),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.black.withOpacity(0.2)),
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
+    return Container(
+      height: 25,
+      padding: EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black.withOpacity(0.2)),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            child: Text(
               text,
               style: TextStyle(
                 color: Colors.black,
@@ -425,10 +439,11 @@ class BundlesScreen extends StatelessWidget {
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w400,
               ),
+              overflow: TextOverflow.ellipsis,
             ),
-            Icon(Icons.keyboard_arrow_down, size: 14),
-          ],
-        ),
+          ),
+          Icon(Icons.keyboard_arrow_down, size: 14),
+        ],
       ),
     );
   }
@@ -499,7 +514,8 @@ class CustomHorizontalProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 101,
+        width: 90,
+        height: 130,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -507,8 +523,8 @@ class CustomHorizontalProductCard extends StatelessWidget {
           children: [
             // Product image with error handling
             Container(
-              width: 100,
-              height: 100,
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
                 borderRadius: isRounded
                     ? BorderRadius.circular(500)
@@ -548,23 +564,25 @@ class CustomHorizontalProductCard extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 5),
 
             // Product title
-            SizedBox(
-              width: 101,
-              child: Text(
-                title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
-                  height: 1.2,
+            Expanded(
+              child: Container(
+                width: 90,
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 11,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    height: 1.1,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.visible,
               ),
             ),
           ],
@@ -597,52 +615,44 @@ class HorizontalBundleList extends StatelessWidget {
     ];
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 20, bottom: 10),
+            padding: const EdgeInsets.only(left: 20, bottom: 5),
             child: Text(
               'Bundle Types',
               style: TextStyle(
                 color: Colors.black,
-                fontSize: 24,
+                fontSize: 18,
                 fontFamily: 'Cabin',
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
           SizedBox(
-            height: 150,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        for (var bundle in bundles)
-                          Padding(
-                            padding: const EdgeInsets.only(right: 20.0),
-                            child: CustomHorizontalProductCard(
-                              imageUrl: bundle['imageUrl'],
-                              title: bundle['title'],
-                              isRounded: bundle['isRounded'],
-                              isAsset: true,
-                              onTap: () {
-                                // Handle tap for each bundle
-                                print('Tapped on ${bundle['title']}');
-                              },
-                            ),
-                          ),
-                      ],
-                    ),
+            height: 130,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              physics: BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              itemCount: bundles.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 15.0),
+                  child: CustomHorizontalProductCard(
+                    imageUrl: bundles[index]['imageUrl'],
+                    title: bundles[index]['title'],
+                    isRounded: bundles[index]['isRounded'],
+                    isAsset: true,
+                    onTap: () {
+                      // Handle tap for each bundle
+                      print('Tapped on ${bundles[index]['title']}');
+                    },
                   ),
                 );
-              }
+              },
             ),
           ),
         ],
@@ -658,7 +668,7 @@ class Rectangle135 extends StatelessWidget {
       children: [
         Container(
           width: double.infinity,
-          height: 117,
+          height: 70,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment(0.00, 0.50),
@@ -675,8 +685,8 @@ class Rectangle135 extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      width: 40,
-                      height: 40,
+                      width: 32,
+                      height: 32,
                       clipBehavior: Clip.antiAlias,
                       decoration: ShapeDecoration(
                         color: Colors.white,
@@ -685,22 +695,23 @@ class Rectangle135 extends StatelessWidget {
                             width: 1,
                             color: const Color(0xFFE4E4E4),
                           ),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
                       child: IconButton(
-                        icon: Icon(Icons.arrow_back_ios_new, size: 16),
+                        icon: Icon(Icons.arrow_back_ios_new, size: 12),
+                        padding: EdgeInsets.zero,
                         onPressed: () {
                           Navigator.pop(context);
                         },
                       ),
                     ),
-                    SizedBox(width: 20),
+                    SizedBox(width: 12),
                     Text(
                       'Bundles',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 24,
+                        fontSize: 20,
                         fontFamily: 'Cabin',
                         fontWeight: FontWeight.w700,
                       ),
@@ -709,14 +720,14 @@ class Rectangle135 extends StatelessWidget {
                 ),
                 Stack(
                   children: [
-                    Icon(Icons.shopping_cart_outlined, size: 30, color: Colors.white),
+                    Icon(Icons.shopping_cart_outlined, size: 22, color: Colors.white),
                     Positioned(
                       right: 0,
                       top: 0,
                       child: Container(
-                        width: 12.50,
-                        height: 12.50,
-                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        width: 10,
+                        height: 10,
+                        padding: const EdgeInsets.all(1),
                         decoration: ShapeDecoration(
                           color: Colors.white,
                           shape: RoundedRectangleBorder(
@@ -729,7 +740,7 @@ class Rectangle135 extends StatelessWidget {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: const Color(0xFF54A801),
-                              fontSize: 7,
+                              fontSize: 6,
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w700,
                             ),
