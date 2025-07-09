@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'create_ticket_screen.dart';
+import 'empty_support_ticket_screen.dart';
 
 class SupportTicketScreen extends StatelessWidget {
   const SupportTicketScreen({Key? key}) : super(key: key);
@@ -62,6 +63,25 @@ class SupportTicketScreen extends StatelessWidget {
                         fontFamily: 'Cabin',
                         fontWeight: FontWeight.w700,
                       ),
+                    ),
+                    
+                    const Spacer(),
+                    
+                    // Icon to navigate to empty support ticket screen
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(
+                            builder: (context) => const EmptySupportTicketScreen(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.search_off_outlined,
+                        color: Colors.white,
+                      ),
+                      tooltip: 'View empty state',
                     ),
                   ],
                 ),
