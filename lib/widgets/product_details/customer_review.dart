@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'no_reviews_widget.dart';
 
 class CustomerReview extends StatefulWidget {
-  const CustomerReview({Key? key}) : super(key: key);
+  final bool forceShowReviews;
+  
+  const CustomerReview({
+    Key? key,
+    this.forceShowReviews = true,
+  }) : super(key: key);
 
   @override
   State<CustomerReview> createState() => _CustomerReviewState();
@@ -11,21 +16,21 @@ class CustomerReview extends StatefulWidget {
 class _CustomerReviewState extends State<CustomerReview> {
   // Sample data - in a real app, this would come from an API
   // Set to false to show the "No Reviews" state
-  final bool _hasReviews = false;
+  final bool _hasReviews = true; // Always true since we handle the no-reviews case in ProductDetailsScreen
 
   @override
   Widget build(BuildContext context) {
-    // If there are no reviews, show the NoReviewsWidget
-    if (!_hasReviews) {
-      return NoReviewsWidget(
-        onWriteReviewPressed: () {
-          // Handle write review action
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Write a review action')),
-          );
-        },
-      );
-    }
+    // We no longer need this condition since we handle it in ProductDetailsScreen
+    // if (!_hasReviews && !widget.forceShowReviews) {
+    //   return NoReviewsWidget(
+    //     onWriteReviewPressed: () {
+    //       // Handle write review action
+    //       ScaffoldMessenger.of(context).showSnackBar(
+    //         const SnackBar(content: Text('Write a review action')),
+    //       );
+    //     },
+    //   );
+    // }
 
     // Get the screen width to make responsive adjustments
     final screenWidth = MediaQuery.of(context).size.width;
