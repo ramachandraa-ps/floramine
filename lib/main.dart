@@ -28,6 +28,7 @@ import 'screens/empty_cart_screen.dart';
 import 'widgets/bottom_navigation_bar.dart';
 import 'screens/blog_details_screen.dart';
 import 'screens/gifting_screen.dart';
+import 'screens/corporate_gifting_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -74,6 +75,7 @@ class MyApp extends StatelessWidget {
           return BlogDetailsScreen(blogId: args['blogId']);
         },
         '/gifting': (context) => const GiftingScreen(),
+        '/corporate_gifting': (context) => const CorporateGiftingScreen(),
         
       },
     );

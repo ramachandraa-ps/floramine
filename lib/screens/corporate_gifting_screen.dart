@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import '../widgets/gifting/why_choose_plant_gifting_section.dart';
-import '../widgets/gifting/gifting_categories_section.dart';
-import '../widgets/gifting/whats_included_section.dart';
-import '../widgets/gifting/how_to_order_section.dart';
-import '../widgets/gifting/gifting_testimonials_section.dart';
+import '../widgets/corporate_gifting/corporate_gift_form.dart';
+import '../widgets/corporate_gifting/explore_gifts_section.dart';
+import '../widgets/corporate_gifting/personalized_gifting_section.dart';
+import '../widgets/corporate_gifting/corporate_testimonials_section.dart';
 
-class GiftingScreen extends StatelessWidget {
-  const GiftingScreen({Key? key}) : super(key: key);
+class CorporateGiftingScreen extends StatelessWidget {
+  const CorporateGiftingScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,58 +14,91 @@ class GiftingScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Header with Rectangle135
+              // Header
               const Rectangle135(),
               
-              // Corporate Gifting Button
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/corporate_gifting');
+              // Main content
+              const Frame427320937(),
+              
+              // Explore Gifts Section
+              ExploreGiftsSection(
+                giftProducts: [
+                  {
+                    'imageUrl': 'assets/images/plants/plant_1.png',
+                    'title': 'Corporate Gift Hamper - Eco-Friendly',
+                    'currentPrice': '₹1,499',
+                    'originalPrice': '₹1,999',
+                    'tags': ['Eco-Friendly', 'Branded'],
+                    'hasDiscount': true,
+                    'discountText': 'Save 25%'
                   },
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 12.0),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF316300),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.business, color: Colors.white),
-                        SizedBox(width: 8.0),
-                        Text(
-                          'Corporate Gifting Solutions',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                  {
+                    'imageUrl': 'assets/images/plants/plant_2.png',
+                    'title': 'Premium Plant Gift Box',
+                    'currentPrice': '₹2,499',
+                    'originalPrice': '₹2,999',
+                    'tags': ['Premium', 'Custom'],
+                    'hasDiscount': true,
+                    'discountText': 'Save 15%'
+                  },
+                  {
+                    'imageUrl': 'assets/images/plants/plant_3.png',
+                    'title': 'Desktop Plant Collection',
+                    'currentPrice': '₹999',
+                    'originalPrice': '₹1,299',
+                    'tags': ['Desktop', 'Office'],
+                    'hasDiscount': true,
+                    'discountText': 'Save 20%'
+                  },
+                  {
+                    'imageUrl': 'assets/images/plants/plant_4.png',
+                    'title': 'Executive Plant Gift Set',
+                    'currentPrice': '₹3,499',
+                    'originalPrice': '₹3,999',
+                    'tags': ['Executive', 'Premium'],
+                    'hasDiscount': true,
+                    'discountText': 'Save 10%'
+                  },
+                ],
+                onViewAllTap: () {
+                  // Navigate to all corporate gifts
+                },
               ),
               
-              // Why Choose Plant Gifting Section
-              const WhyChoosePlantGiftingSection(),
-              
-              // Gifting Categories Section
-              const GiftingCategoriesSection(),
-              
-              // What's Included Section
-              const WhatsIncludedSection(),
-              
-              // How to Order Section
-              const HowToOrderSection(),
+              // Personalized Gifting Section
+              const PersonalizedGiftingSection(),
               
               // Testimonials Section
-              const GiftingTestimonialsSection(),
+              CorporateTestimonialsSection(
+                testimonials: [
+                  {
+                    'name': 'Sarath Kumar',
+                    'rating': '2 Star',
+                    'review': '"Reliable and trustworthy. They have earned my trust and loyalty. This company has consistently demonstrated reliability and trustworthiness."',
+                    'image': 'assets/images/testimonials/user1.png',
+                  },
+                  {
+                    'name': 'Priya Sharma',
+                    'rating': '5 Star',
+                    'review': '"Exceptional service! The plants arrived in perfect condition and the corporate branding was exactly what we wanted. Will definitely order again."',
+                    'image': 'assets/images/testimonials/user1.png',
+                  },
+                  {
+                    'name': 'Raj Patel',
+                    'rating': '4 Star',
+                    'review': '"Great quality plants for our office space. The team was very responsive and helped us choose the right plants for our environment."',
+                    'image': 'assets/images/testimonials/user1.png',
+                  },
+                ],
+                onWriteReviewTap: () {
+                  // Handle write review action
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Write a review feature coming soon!')),
+                  );
+                },
+              ),
               
-              // Bottom Padding
+              // Bottom padding
               const SizedBox(height: 30),
             ],
           ),
@@ -244,148 +276,81 @@ class Rectangle135 extends StatelessWidget {
             ),
           ),
         ),
-        
-        const SizedBox(height: 20),
-        
-        // Banner section
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            clipBehavior: Clip.antiAlias,
-            decoration: ShapeDecoration(
-              color: const Color(0xFFF7FFEF),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
+      ],
+    );
+  }
+}
+
+class Frame427320937 extends StatelessWidget {
+  const Frame427320937({Key? key}) : super(key: key);
+  
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 19),
+          clipBehavior: Clip.antiAlias,
+          decoration: const BoxDecoration(color: Color(0xFFEEF6E6)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: double.infinity,
+                child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Celebrate ',
-                            style: TextStyle(
-                              color: Color(0xFF54A801),
-                              fontSize: 32,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                              height: 1.38,
-                            ),
-                          ),
-                          TextSpan(
-                            text: 'Moments That Matter,',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 32,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                              height: 1.38,
-                            ),
-                          ),
-                          TextSpan(
-                            text: ' the Green Way',
-                            style: TextStyle(
-                              color: Color(0xFF54A801),
-                              fontSize: 32,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                              height: 1.38,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    const Text(
-                      'From birthdays to anniversaries, make every special day unforgettable with a plant gift that symbolizes life, love, and lasting memories.',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    InkWell(
-                      onTap: () {
-                        // Navigate to special day gifts
-                      },
-                      child: Container(
-                        height: 34,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                        clipBehavior: Clip.antiAlias,
-                        decoration: ShapeDecoration(
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        'Bulk Plant Gifts for Your Clients, Employees & Events',
+                        style: TextStyle(
                           color: const Color(0xFF316300),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(26),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Shop Special Day Gifts',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            const Icon(
-                              Icons.arrow_forward,
-                              color: Colors.white,
-                              size: 24,
-                            ),
-                          ],
+                          fontSize: 32,
+                          fontFamily: 'Cabin',
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Image.asset(
-                    'assets/images/gifting/gift_banner.png',
-                    width: double.infinity,
-                    height: 206.67,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: double.infinity,
-                        height: 206.67,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.image_not_supported,
-                            color: Colors.grey,
-                            size: 50,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+              ),
+              const SizedBox(height: 20),
+              
+              // Hero image
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Image.asset(
+                  'assets/images/corporate_gifting/hero.png',
+                  width: double.infinity,
+                  height: 350,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: double.infinity,
+                      height: 350,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: const Center(
+                        child: Icon(Icons.image_not_supported, color: Colors.grey, size: 50),
+                      ),
+                    );
+                  },
                 ),
-              ],
-            ),
+              ),
+              
+              const SizedBox(height: 30),
+              
+              // Form section
+              const CorporateGiftForm(),
+            ],
           ),
         ),
       ],
