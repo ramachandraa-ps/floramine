@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'empty_addresses_screen.dart';
 
 class MyAddressesScreen extends StatelessWidget {
   const MyAddressesScreen({Key? key}) : super(key: key);
@@ -61,6 +62,25 @@ class MyAddressesScreen extends StatelessWidget {
                         fontFamily: 'Cabin',
                         fontWeight: FontWeight.w700,
                       ),
+                    ),
+                    
+                    const Spacer(),
+                    
+                    // Icon to navigate to empty addresses screen
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(
+                            builder: (context) => const EmptyAddressesScreen(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.map_outlined,
+                        color: Colors.white,
+                      ),
+                      tooltip: 'View empty state',
                     ),
                   ],
                 ),
