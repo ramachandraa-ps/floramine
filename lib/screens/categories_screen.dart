@@ -125,7 +125,7 @@ class CategoriesScreen extends StatelessWidget {
                       crossAxisCount: 3,
                       crossAxisSpacing: 30,
                       mainAxisSpacing: 30,
-                      childAspectRatio: 0.75,
+                      childAspectRatio: 0.67, // Adjusted to match the card's fixed height
                     ),
                     itemCount: categories.length,
                     itemBuilder: (context, index) {

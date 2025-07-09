@@ -85,9 +85,9 @@ class RentalServicesScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      width: 150,
+                      width: 130,
                       height: 40,
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       clipBehavior: Clip.antiAlias,
                       decoration: ShapeDecoration(
                         color: const Color(0xFF316300),
@@ -104,7 +104,7 @@ class RentalServicesScreen extends StatelessWidget {
                             'Get Quote',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 16,
+                              fontSize: 14,
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w400,
                             ),
@@ -115,7 +115,7 @@ class RentalServicesScreen extends StatelessWidget {
                     const SizedBox(width: 10),
                     Container(
                       height: 40,
-                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       clipBehavior: Clip.antiAlias,
                       decoration: ShapeDecoration(
                         shape: RoundedRectangleBorder(
@@ -130,15 +130,15 @@ class RentalServicesScreen extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.download_rounded,
-                            size: 18,
+                            size: 16,
                             color: Colors.black87,
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 5),
                           const Text(
                             'Download Catalog',
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 14,
+                              fontSize: 12,
                               fontFamily: 'Poppins',
                               fontWeight: FontWeight.w400,
                             ),

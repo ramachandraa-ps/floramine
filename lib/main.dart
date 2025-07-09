@@ -32,6 +32,8 @@ import 'screens/corporate_gifting_screen.dart';
 import 'screens/special_day_gifts_screen.dart';
 import 'screens/occasion_gifts_screen.dart';
 import 'screens/no_reviews_demo_screen.dart';
+import 'screens/rental_services_screen.dart';
+import 'screens/bundles_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -82,6 +84,8 @@ class MyApp extends StatelessWidget {
         '/special_day_gifts': (context) => const SpecialDayGiftsScreen(),
         '/occasion_gifts': (context) => const OccasionGiftsScreen(),
         '/no_reviews_demo': (context) => const NoReviewsDemoScreen(),
+        '/rental_services': (context) => const RentalServicesScreen(),
+        '/bundles': (context) => const BundlesScreen(),
       },
     );
   }

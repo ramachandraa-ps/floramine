@@ -22,6 +22,7 @@ class HorizontalProductCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: 101,
+        height: 150, // Set a fixed height for the entire card
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -44,23 +45,25 @@ class HorizontalProductCard extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 8), // Spacing between image and text
+            const SizedBox(height: 6), // Reduced spacing between image and text
 
-            // Product title - now with multiple lines
-            SizedBox(
-              width: 101,
-              child: Text(
-                title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
-                  height: 1.2, // Slightly tighter line height
+            // Product title - now with multiple lines and fixed height
+            Expanded(
+              child: Container(
+                width: 101,
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 12, // Slightly smaller font size
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    height: 1.1, // Tighter line height
+                  ),
+                  maxLines: 2, // Allow up to 2 lines
+                  overflow: TextOverflow.ellipsis, // Use ellipsis for overflow
                 ),
-                maxLines: 2, // Allow up to 2 lines
-                overflow: TextOverflow.visible, // Don't truncate with ellipsis
               ),
             ),
           ],
