@@ -78,24 +78,34 @@ class NotificationScreen extends StatelessWidget {
           // Notification list - Expanded to take remaining space
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(0),
               children: [
                 // Deal of the Day Card
                 _buildDealOfTheDayCard(context),
                 
                 const SizedBox(height: 16),
-                const Divider(color: Color(0x1A000000), height: 1),
-                const SizedBox(height: 8),
                 
-                // Regular notifications
-                for (int i = 0; i < 10; i++) ...[
-                  _buildNotificationItem(
-                    'Your Item is delivered. It will be delivered soon',
-                    'Mar 25, 2025',
-                    'assets/images/jasminum_sambac.png',
+                // Regular notifications section with padding
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Divider(color: Color(0x1A000000), height: 1),
+                      const SizedBox(height: 8),
+                      
+                      // Regular notifications
+                      for (int i = 0; i < 10; i++) ...[
+                        _buildNotificationItem(
+                          'Your Item is delivered. It will be delivered soon',
+                          'Mar 25, 2025',
+                          'assets/images/jasminum_sambac.png',
+                        ),
+                        if (i < 9) const Divider(color: Color(0x1A000000), height: 1),
+                      ],
+                    ],
                   ),
-                  if (i < 9) const Divider(color: Color(0x1A000000), height: 1),
-                ],
+                ),
               ],
             ),
           ),
@@ -118,6 +128,8 @@ class NotificationScreen extends StatelessWidget {
   
   // Deal of the Day Card
   Widget _buildDealOfTheDayCard(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -127,166 +139,220 @@ class NotificationScreen extends StatelessWidget {
       },
       child: Container(
         width: double.infinity,
-        height: 140,
-        margin: const EdgeInsets.only(bottom: 16),
+        height: 140, // Adjusted height to prevent overflow
+        margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
         decoration: BoxDecoration(
-          color: const Color(0xFFF6ECEC),
-          borderRadius: BorderRadius.circular(16),
+          color: const Color(0xFFF9F3F3),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            // Background designs
+            // Left plant decoration
             Positioned(
-              right: -30,
-              top: -20,
-              child: Container(
-                width: 120,
-                height: 100,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/deal_of_the_day/right_top.png'),
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              left: -20,
-              bottom: -20,
-              child: Container(
-                width: 100,
-                height: 100,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/deal_of_the_day/left_bottom.png'),
-                    fit: BoxFit.contain,
-                  ),
-                ),
+              left: -8,
+              bottom: 0,
+              child: Image.asset(
+                'assets/images/deal_of_the_day/left_bottom.png',
+                width: 70,
+                height: 70,
+                fit: BoxFit.contain,
               ),
             ),
             
-            // Content
+            // Right plant decoration
+            Positioned(
+              right: -5,
+              top: -15,
+              child: Image.asset(
+                'assets/images/deal_of_the_day/right_top.png',
+                width: 70,
+                height: 70,
+                fit: BoxFit.contain,
+              ),
+            ),
+            
+            // Content layout
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Left side - "Deal of the Day" text and image
+                  // Left section - Deal of the Day and text
                   Expanded(
                     flex: 2,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        // Logo/text
                         Image.asset(
                           'assets/images/deal_of_the_day/deal_of_the_day.png',
-                          width: 120,
+                          width: 140,
+                          height: 70,
+                          fit: BoxFit.contain,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 4),
                         const Text(
                           "Today's Green Highlight",
                           style: TextStyle(
                             color: Color(0xFF316300),
                             fontSize: 14,
                             fontFamily: 'Cabin',
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "Don't miss out!",
-                          style: TextStyle(
-                            color: Colors.black.withOpacity(0.6),
-                            fontSize: 12,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
                   ),
                   
-                  // Right side - Countdown timer
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF54A801),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _buildTimeUnit('24', 'Hrs'),
-                          const SizedBox(height: 6),
-                          _buildTimeUnit('02', 'Min'),
-                          const SizedBox(height: 6),
-                          _buildTimeUnit('26', 'Sec'),
-                        ],
-                      ),
+                  const SizedBox(width: 10),
+                  
+                  // Right side - Timer box
+                  Container(
+                    width: screenWidth * 0.3,
+                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF54A801),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Hours
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text(
+                              '24',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'Hrs',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        
+                        const SizedBox(height: 4),
+                        
+                        // Minutes
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text(
+                              '02',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'Min',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        
+                        const SizedBox(height: 4),
+                        
+                        // Seconds
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text(
+                              '26',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'Sec',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
             
-            // Arrow indicator
+            // Arrow button
             Positioned(
-              right: 8,
-              top: 8,
+              right: 10,
+              top: 10,
               child: Container(
-                width: 24,
-                height: 24,
+                width: 26,
+                height: 26,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.white,
                 ),
-                child: const Icon(
-                  Icons.arrow_forward_ios,
-                  color: Color(0xFF54A801),
-                  size: 14,
+                child: const Center(
+                  child: Icon(
+                    Icons.chevron_right,
+                    color: Color(0xFF54A801),
+                    size: 22,
+                  ),
+                ),
+              ),
+            ),
+            
+            // Yellow strip at bottom
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 6,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFFEE08),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  ),
                 ),
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-  
-  // Time unit for Deal of the Day card
-  Widget _buildTimeUnit(String value, String label) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(width: 4),
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 10,
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
     );
   }
   
