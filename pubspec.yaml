@@ -77,6 +77,8 @@ flutter:
     - assets/images/blogs/
     - assets/images/gifting/
     - assets/images/corporate_gifting/
+    - assets/images/special_day_gifts/
+    - assets/images/occasion_gifts/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 
