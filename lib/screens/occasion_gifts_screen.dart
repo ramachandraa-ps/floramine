@@ -101,7 +101,7 @@ class OccasionGiftsScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       decoration: BoxDecoration(
                         color: Colors.grey[200],
-                        borderRadius: BorderRadius.horizontal(
+                        borderRadius: const BorderRadius.horizontal(
                           left: Radius.circular(25),
                           right: Radius.circular(0),
                         ),
@@ -130,8 +130,8 @@ class OccasionGiftsScreen extends StatelessWidget {
                   Container(
                     height: 50,
                     width: 60,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF54A801),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF54A801),
                       borderRadius: BorderRadius.horizontal(
                         left: Radius.circular(0),
                         right: Radius.circular(25),
@@ -151,6 +151,7 @@ class OccasionGiftsScreen extends StatelessWidget {
             // Content
             Expanded(
               child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -171,7 +172,7 @@ class OccasionGiftsScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(26),
                             ),
                             child: Row(
-                              children: [
+                              children: const [
                                 Text(
                                   'Filter',
                                   style: TextStyle(
@@ -181,7 +182,7 @@ class OccasionGiftsScreen extends StatelessWidget {
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
-                                const SizedBox(width: 5),
+                                SizedBox(width: 5),
                                 Icon(Icons.keyboard_arrow_down, size: 18),
                               ],
                             ),
@@ -195,7 +196,7 @@ class OccasionGiftsScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(26),
                             ),
                             child: Row(
-                              children: [
+                              children: const [
                                 Text(
                                   'Sort By',
                                   style: TextStyle(
@@ -205,7 +206,7 @@ class OccasionGiftsScreen extends StatelessWidget {
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
-                                const SizedBox(width: 5),
+                                SizedBox(width: 5),
                                 Icon(Icons.keyboard_arrow_down, size: 18),
                               ],
                             ),
@@ -251,7 +252,7 @@ class CustomHorizontalProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 80,
+        width: 101,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -259,8 +260,8 @@ class CustomHorizontalProductCard extends StatelessWidget {
           children: [
             // Product image with error handling
             Container(
-              width: 60,
-              height: 60,
+              width: 100,
+              height: 100,
               decoration: BoxDecoration(
                 borderRadius: isRounded
                     ? BorderRadius.circular(500)
@@ -304,15 +305,15 @@ class CustomHorizontalProductCard extends StatelessWidget {
 
             // Product title
             SizedBox(
-              width: 80,
+              width: 101,
               child: Text(
                 title,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Colors.black,
-                  fontSize: 12,
+                  fontSize: 14,
                   fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                   height: 1.2,
                 ),
                 maxLines: 2,
@@ -358,27 +359,43 @@ class HorizontalOccasionCategoriesList extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Row(
-                children: [
-                  for (var category in occasionCategories)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 20.0),
-                      child: CustomHorizontalProductCard(
-                        imageUrl: category['imageUrl'],
-                        title: category['title'],
-                        isRounded: category['isRounded'],
-                        isAsset: true,
-                        onTap: () {
-                          // Handle tap for each occasion category
-                          print('Tapped on ${category['title']}');
-                        },
+          Padding(
+            padding: const EdgeInsets.only(left: 20, bottom: 15),
+            child: Text(
+              'Occasion Categories',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 24,
+                fontFamily: 'Cabin',
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          Container(
+            height: 160,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  children: [
+                    for (var category in occasionCategories)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20.0),
+                        child: CustomHorizontalProductCard(
+                          imageUrl: category['imageUrl'],
+                          title: category['title'],
+                          isRounded: category['isRounded'],
+                          isAsset: true,
+                          onTap: () {
+                            // Handle tap for each occasion category
+                            print('Tapped on ${category['title']}');
+                          },
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

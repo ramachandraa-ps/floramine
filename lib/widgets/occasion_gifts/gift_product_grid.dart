@@ -442,7 +442,7 @@ class ProductCard extends StatelessWidget {
           children: [
             Expanded(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                 decoration: BoxDecoration(
                   border: Border.all(
                     width: 1,
@@ -452,27 +452,31 @@ class ProductCard extends StatelessWidget {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      'Select Size',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 10,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500,
+                    Flexible(
+                      child: Text(
+                        'Select Size',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 9,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(width: 5),
-                    Icon(Icons.keyboard_arrow_down, size: 14),
+                    const SizedBox(width: 2),
+                    Icon(Icons.keyboard_arrow_down, size: 12),
                   ],
                 ),
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 6),
             Expanded(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                 decoration: BoxDecoration(
                   border: Border.all(
                     width: 1,
@@ -482,19 +486,23 @@ class ProductCard extends StatelessWidget {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      'Select Colour',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 10,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w500,
+                    Flexible(
+                      child: Text(
+                        'Select Colour',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 9,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(width: 5),
-                    Icon(Icons.keyboard_arrow_down, size: 14),
+                    const SizedBox(width: 2),
+                    Icon(Icons.keyboard_arrow_down, size: 12),
                   ],
                 ),
               ),
@@ -533,45 +541,49 @@ class ProductCard extends StatelessWidget {
         
         const SizedBox(height: 10),
         
-        // Tags
-        Row(
-          children: [
-            Container(
-              height: 20,
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-              decoration: BoxDecoration(
-                color: const Color(0x7F27DBE5),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Text(
-                '🍃 Air Purifying',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 8,
-                  fontFamily: 'Cabin',
-                  fontWeight: FontWeight.w500,
+        // Tags - Make it scrollable to prevent overflow
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: Row(
+            children: [
+              Container(
+                height: 20,
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                decoration: BoxDecoration(
+                  color: const Color(0x7F27DBE5),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Text(
+                  '🍃 Air Purifying',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 8,
+                    fontFamily: 'Cabin',
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 7),
-            Container(
-              height: 20,
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-              decoration: BoxDecoration(
-                color: const Color(0x7FE5D827),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Text(
-                '🎁 Perfect Gift',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 8,
-                  fontFamily: 'Cabin',
-                  fontWeight: FontWeight.w500,
+              const SizedBox(width: 7),
+              Container(
+                height: 20,
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                decoration: BoxDecoration(
+                  color: const Color(0x7FE5D827),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Text(
+                  '🎁 Perfect Gift',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 8,
+                    fontFamily: 'Cabin',
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         
         const SizedBox(height: 10),
@@ -580,7 +592,7 @@ class ProductCard extends StatelessWidget {
         Row(
           children: [
             Container(
-              width: 73,
+              width: 68,
               height: 34,
               decoration: BoxDecoration(
                 border: Border.all(
@@ -594,14 +606,14 @@ class ProductCard extends StatelessWidget {
                   'Buy Now',
                   style: TextStyle(
                     color: Color(0xFF316300),
-                    fontSize: 12,
+                    fontSize: 11,
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w400,
                   ),
                 ),
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 6),
             Expanded(
               child: Container(
                 height: 34,
@@ -610,19 +622,20 @@ class ProductCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(26),
                 ),
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
+                  children: const [
+                    Icon(
                       Icons.shopping_cart_outlined,
                       size: 14,
                       color: Colors.white,
                     ),
-                    const SizedBox(width: 4),
-                    const Text(
+                    SizedBox(width: 4),
+                    Text(
                       'Add to Cart',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 12,
+                        fontSize: 11,
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w400,
                       ),
