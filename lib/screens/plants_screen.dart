@@ -308,7 +308,7 @@ class _PlantsScreenState extends State<PlantsScreen> {
                   
                   // Featured Plants Section Title
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                    padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 10.0, bottom: 5.0),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
@@ -329,9 +329,9 @@ class _PlantsScreenState extends State<PlantsScreen> {
                     child: GridView.builder(
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        childAspectRatio: 0.55,
+                        childAspectRatio: 0.52,
                         crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
+                        mainAxisSpacing: 24,
                       ),
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
@@ -371,7 +371,7 @@ class _PlantsScreenState extends State<PlantsScreen> {
                   
                   // New Section: Trending Plants Title
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+                    padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 24.0, bottom: 5.0),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
@@ -392,9 +392,9 @@ class _PlantsScreenState extends State<PlantsScreen> {
                     child: GridView.builder(
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        childAspectRatio: 0.55,
+                        childAspectRatio: 0.52,
                         crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
+                        mainAxisSpacing: 24,
                       ),
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
@@ -433,7 +433,7 @@ class _PlantsScreenState extends State<PlantsScreen> {
                   ),
                   
                   // Add some padding at the bottom
-                  SizedBox(height: 20),
+                  SizedBox(height: 30),
                 ],
               ),
             ),
