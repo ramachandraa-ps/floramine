@@ -92,39 +92,37 @@ class FeaturedProductsSection extends StatelessWidget {
           
           const SizedBox(height: 16),
           
-          // Grid of product cards
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.55,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-              ),
+          // Horizontal scrollable product cards
+          SizedBox(
+            height: 400, // Fixed height for the scrollable container
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: products.length,
               itemBuilder: (context, index) {
                 final product = products[index];
-                return PlantProductCard(
-                  imageAsset: product['imageAsset'],
-                  name: product['name'],
-                  currentPrice: product['currentPrice'],
-                  originalPrice: product['originalPrice'],
-                  discountPercentage: product['discountPercentage'],
-                  isAirPurifying: product['isAirPurifying'],
-                  isPerfectGift: product['isPerfectGift'],
-                  isFavorite: product['isFavorite'],
-                  onBuyNowPressed: () {
-                    // Handle Buy Now tap
-                  },
-                  onAddToCartPressed: () {
-                    // Handle Add to Cart tap
-                  },
-                  onFavoritePressed: () {
-                    // Handle Favorite tap
-                  },
+                return Container(
+                  width: 200, // Fixed width for each product card
+                  margin: const EdgeInsets.only(right: 16),
+                  child: PlantProductCard(
+                    imageAsset: product['imageAsset'],
+                    name: product['name'],
+                    currentPrice: product['currentPrice'],
+                    originalPrice: product['originalPrice'],
+                    discountPercentage: product['discountPercentage'],
+                    isAirPurifying: product['isAirPurifying'],
+                    isPerfectGift: product['isPerfectGift'],
+                    isFavorite: product['isFavorite'],
+                    onBuyNowPressed: () {
+                      // Handle Buy Now tap
+                    },
+                    onAddToCartPressed: () {
+                      // Handle Add to Cart tap
+                    },
+                    onFavoritePressed: () {
+                      // Handle Favorite tap
+                    },
+                  ),
                 );
               },
             ),
