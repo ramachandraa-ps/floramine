@@ -63,16 +63,19 @@ class _CommunicationPreferencesScreenState extends State<CommunicationPreference
                         ),
                       ),
                     ),
-                    const SizedBox(width: 20),
+                    const SizedBox(width: 15),
                     
-                    // Title
-                    const Text(
-                      'Communication Preferences',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontFamily: 'Cabin',
-                        fontWeight: FontWeight.w700,
+                    // Title - Reduce font size to prevent overflow
+                    const Expanded(
+                      child: Text(
+                        'Communication Preferences',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontFamily: 'Cabin',
+                          fontWeight: FontWeight.w700,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -84,12 +87,13 @@ class _CommunicationPreferencesScreenState extends State<CommunicationPreference
           // Content
           Expanded(
             child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               child: Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
                     
                     // First row
                     Row(
@@ -103,7 +107,7 @@ class _CommunicationPreferencesScreenState extends State<CommunicationPreference
                             onTap: () => _togglePreference('Email'),
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: _buildCommunicationCard(
                             title: 'SMS',
@@ -116,7 +120,7 @@ class _CommunicationPreferencesScreenState extends State<CommunicationPreference
                       ],
                     ),
                     
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
                     
                     // Second row
                     Row(
@@ -130,7 +134,7 @@ class _CommunicationPreferencesScreenState extends State<CommunicationPreference
                             onTap: () => _togglePreference('Phone Call'),
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: _buildCommunicationCard(
                             title: 'App Notification',
@@ -150,7 +154,7 @@ class _CommunicationPreferencesScreenState extends State<CommunicationPreference
           
           // Save button at the bottom
           Padding(
-            padding: const EdgeInsets.only(bottom: 30.0, left: 24.0, right: 24.0),
+            padding: const EdgeInsets.only(bottom: 24.0, left: 20.0, right: 20.0, top: 8.0),
             child: GestureDetector(
               onTap: _savePreferences,
               child: Container(
@@ -203,7 +207,8 @@ class _CommunicationPreferencesScreenState extends State<CommunicationPreference
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(15),
+        height: 200,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -221,10 +226,10 @@ class _CommunicationPreferencesScreenState extends State<CommunicationPreference
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Icon circle
+                // Icon circle - Reduce size
                 Container(
-                  width: 80,
-                  height: 80,
+                  width: 60,
+                  height: 60,
                   decoration: const BoxDecoration(
                     color: Color(0x1954A801),
                     shape: BoxShape.circle,
@@ -232,34 +237,37 @@ class _CommunicationPreferencesScreenState extends State<CommunicationPreference
                   child: Center(
                     child: Icon(
                       iconData,
-                      size: 40,
+                      size: 30,
                       color: const Color(0xFF316300),
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 // Title
                 Text(
                   title,
                   style: const TextStyle(
                     color: Colors.black,
-                    fontSize: 20,
+                    fontSize: 18,
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 8),
-                // Description
-                Text(
-                  description,
-                  style: TextStyle(
-                    color: Colors.black.withOpacity(0.5),
-                    fontSize: 16,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
+                const SizedBox(height: 6),
+                // Description - Ensure it fits by using Expanded
+                Expanded(
+                  child: Text(
+                    description,
+                    style: TextStyle(
+                      color: Colors.black.withOpacity(0.5),
+                      fontSize: 14,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                      height: 1.3,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
                   ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -268,8 +276,8 @@ class _CommunicationPreferencesScreenState extends State<CommunicationPreference
               top: 0,
               right: 0,
               child: Container(
-                width: 28,
-                height: 28,
+                width: 24,
+                height: 24,
                 decoration: BoxDecoration(
                   color: isSelected ? const Color(0xFF54A801) : Colors.grey.shade300,
                   borderRadius: BorderRadius.circular(4),
@@ -277,7 +285,7 @@ class _CommunicationPreferencesScreenState extends State<CommunicationPreference
                 child: const Icon(
                   Icons.check,
                   color: Colors.white,
-                  size: 20,
+                  size: 16,
                 ),
               ),
             ),
