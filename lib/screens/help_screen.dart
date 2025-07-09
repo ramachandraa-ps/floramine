@@ -6,6 +6,7 @@ import 'notification_screen.dart';
 import 'rental_services_screen.dart';
 import 'bundles_screen.dart';
 import 'contact_us_screen.dart';
+import 'blogs_screen.dart';
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({Key? key}) : super(key: key);
@@ -152,9 +153,10 @@ class HelpScreen extends StatelessWidget {
           }),
           
           _buildMenuItem(context, 'Blogs', () {
-            // Handle blogs action
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Blogs coming soon')),
+            // Navigate to Blogs screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const BlogsScreen()),
             );
           }),
           
