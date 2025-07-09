@@ -71,7 +71,8 @@ flutter:
     - assets/images/help/
     - assets/images/payment_methods/
     - assets/images/deal_of_the_day/
-
+    - assets/images/rental_services/
+    - assets/images/testimonials/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

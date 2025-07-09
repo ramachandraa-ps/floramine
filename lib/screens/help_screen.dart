@@ -3,6 +3,7 @@ import '../widgets/bottom_navigation_bar.dart';
 import '../widgets/header_widget.dart';
 import 'about_us_screen.dart';
 import 'notification_screen.dart';
+import 'rental_services_screen.dart';
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({Key? key}) : super(key: key);
@@ -152,6 +153,14 @@ class HelpScreen extends StatelessWidget {
             // Handle blogs action
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Blogs coming soon')),
+            );
+          }),
+          
+          _buildMenuItem(context, 'Rental Services', () {
+            // Navigate to Rental Services screen
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const RentalServicesScreen()),
             );
           }),
           
