@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/payment_methods/payment_methods_section.dart';
+import 'empty_payment_methods_screen.dart';
 
 class PaymentMethodsScreen extends StatelessWidget {
   const PaymentMethodsScreen({Key? key}) : super(key: key);
@@ -62,6 +63,25 @@ class PaymentMethodsScreen extends StatelessWidget {
                         fontFamily: 'Cabin',
                         fontWeight: FontWeight.w700,
                       ),
+                    ),
+                    
+                    const Spacer(),
+                    
+                    // Icon to navigate to empty payment screen
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(
+                            builder: (context) => const EmptyPaymentMethodsScreen(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.view_agenda_outlined,
+                        color: Colors.white,
+                      ),
+                      tooltip: 'View empty state',
                     ),
                   ],
                 ),
