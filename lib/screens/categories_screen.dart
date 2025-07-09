@@ -7,6 +7,9 @@ import 'home_screen.dart';
 import 'cart_screen.dart';
 import 'plants_screen.dart';
 import 'notification_screen.dart';
+import 'gifting_screen.dart';
+import 'rental_services_screen.dart';
+import 'bundles_screen.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({Key? key}) : super(key: key);
@@ -131,20 +134,32 @@ class CategoriesScreen extends StatelessWidget {
                         imageUrl: categories[index]['imageUrl'],
                         isRounded: categories[index]['isRounded'],
                         onTap: () {
-                          // If Plants category is selected, navigate to PlantsScreen
-                          if (categories[index]['title'] == 'Plants') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const PlantsScreen()),
-                            );
-                          } else {
-                            // Handle other category taps
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('${categories[index]['title']} category selected'),
-                                duration: const Duration(seconds: 1),
-                              ),
-                            );
+                          // Navigate based on category
+                          switch (categories[index]['title']) {
+                            case 'Plants':
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const PlantsScreen()),
+                              );
+                              break;
+                            case 'Gifting':
+                              Navigator.pushNamed(context, '/gifting');
+                              break;
+                            case 'Rental Services':
+                              Navigator.pushNamed(context, '/rental_services');
+                              break;
+                            case 'Bundles':
+                              Navigator.pushNamed(context, '/bundles');
+                              break;
+                            default:
+                              // Handle other category taps
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('${categories[index]['title']} category selected'),
+                                  duration: const Duration(seconds: 1),
+                                ),
+                              );
+                              break;
                           }
                         },
                       );

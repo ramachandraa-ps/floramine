@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'horizontal_product_card.dart';
 import '../../screens/categories_screen.dart';
 import '../../screens/plants_screen.dart';
+import '../../screens/gifting_screen.dart';
+import '../../screens/rental_services_screen.dart';
+import '../../screens/bundles_screen.dart';
 
 class HorizontalProductList extends StatelessWidget {
   const HorizontalProductList({Key? key}) : super(key: key);
@@ -74,22 +77,30 @@ class HorizontalProductList extends StatelessWidget {
                     isRounded: product['isRounded'],
                     isAsset: true, // Using asset images
                     onTap: () {
-                      // If Plants category is selected, navigate to PlantsScreen
-                      if (product['title'] == 'Plants') {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const PlantsScreen(),
-                          ),
-                        );
-                      } else {
-                        // For other categories, navigate to categories screen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CategoriesScreen(),
-                          ),
-                        );
+                      // Navigate based on category
+                      switch (product['title']) {
+                        case 'Plants':
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const PlantsScreen()),
+                          );
+                          break;
+                        case 'Gifting':
+                          Navigator.pushNamed(context, '/gifting');
+                          break;
+                        case 'Rental Services':
+                          Navigator.pushNamed(context, '/rental_services');
+                          break;
+                        case 'Bundles':
+                          Navigator.pushNamed(context, '/bundles');
+                          break;
+                        default:
+                          // For other categories, navigate to categories screen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const CategoriesScreen()),
+                          );
+                          break;
                       }
                     },
                   ),

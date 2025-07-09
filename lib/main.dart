@@ -27,6 +27,7 @@ import 'screens/search_screen.dart';
 import 'screens/empty_cart_screen.dart';
 import 'widgets/bottom_navigation_bar.dart';
 import 'screens/blog_details_screen.dart';
+import 'screens/gifting_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -72,6 +73,8 @@ class MyApp extends StatelessWidget {
           final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
           return BlogDetailsScreen(blogId: args['blogId']);
         },
+        '/gifting': (context) => const GiftingScreen(),
+        
       },
     );
   }
