@@ -402,148 +402,149 @@ class OrderSummary extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Left side - Product image and details
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Product image
-              Container(
-                width: 100,
-                height: 100,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Image.asset(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              const SizedBox(width: 20),
-              
-              // Product details
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Product name
-                  SizedBox(
-                    width: 150,
-                    child: Text(
-                      name,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 16,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Product image
+                Container(
+                  width: 80,
+                  height: 80,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  const SizedBox(height: 10),
-                  
-                  // Size
-                  Text(
-                    'Size : $size',
-                    style: TextStyle(
-                      color: Colors.black.withOpacity(0.5),
-                      fontSize: 14,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w400,
-                    ),
+                  child: Image.asset(
+                    imageUrl,
+                    fit: BoxFit.cover,
                   ),
-                  const SizedBox(height: 10),
-                  
-                  // Quantity selector
-                  Row(
+                ),
+                const SizedBox(width: 10),
+                
+                // Product details
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFEAEAEA),
-                          borderRadius: BorderRadius.circular(20),
+                      // Product name
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
                         ),
-                        child: Row(
-                          children: [
-                            // Decrement button
-                            Container(
-                              width: 20,
-                              height: 20,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: const Text(
-                                '-',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 12,
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                            
-                            // Quantity
-                            Container(
-                              width: 20,
-                              height: 20,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: const Text(
-                                '1',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 8,
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                            
-                            // Increment button
-                            Container(
-                              width: 20,
-                              height: 20,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: const Text(
-                                '+',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 12,
-                                  fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                          ],
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 5),
+                      
+                      // Size
+                      Text(
+                        'Size : $size',
+                        style: TextStyle(
+                          color: Colors.black.withOpacity(0.5),
+                          fontSize: 12,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
-                      const SizedBox(width: 11),
+                      const SizedBox(height: 5),
                       
-                      // Delete icon
-                      Container(
-                        width: 20,
-                        height: 20,
-                        child: const Icon(
-                          Icons.delete_outline,
-                          size: 20,
-                          color: Colors.grey,
-                        ),
+                      // Quantity selector
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEAEAEA),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              children: [
+                                // Decrement button
+                                Container(
+                                  width: 18,
+                                  height: 18,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: const Text(
+                                    '-',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 12,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                                
+                                // Quantity
+                                Container(
+                                  width: 18,
+                                  height: 18,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: const Text(
+                                    '1',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 8,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                
+                                // Increment button
+                                Container(
+                                  width: 18,
+                                  height: 18,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: const Text(
+                                    '+',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 12,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          
+                          // Delete icon
+                          Container(
+                            width: 18,
+                            height: 18,
+                            child: const Icon(
+                              Icons.delete_outline,
+                              size: 18,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
           
           // Right side - Price
@@ -554,17 +555,17 @@ class OrderSummary extends StatelessWidget {
                 price,
                 style: const TextStyle(
                   color: Color(0xFF316300),
-                  fontSize: 24,
+                  fontSize: 18,
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(height: 5),
+              const SizedBox(height: 2),
               Text(
                 originalPrice,
                 style: TextStyle(
                   color: Colors.black.withOpacity(0.5),
-                  fontSize: 16,
+                  fontSize: 14,
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w700,
                   decoration: TextDecoration.lineThrough,

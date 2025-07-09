@@ -82,12 +82,12 @@ class CheckoutStep2Screen extends StatelessWidget {
                   label: 'Address',
                   isActive: true,
                   isCompleted: true,
-                  width: 82,
+                  width: 70,
                 ),
                 
                 // Divider line (completed)
                 Container(
-                  width: 77,
+                  width: 50,
                   height: 1,
                   color: const Color(0xFF54A801),
                 ),
@@ -95,15 +95,15 @@ class CheckoutStep2Screen extends StatelessWidget {
                 // Step 2 - Order Summary (Active)
                 _buildStepIndicator(
                   number: '2',
-                  label: 'Order Summary',
+                  label: 'Summary',
                   isActive: true,
                   isCompleted: false,
-                  width: null,
+                  width: 70,
                 ),
                 
                 // Divider line
                 Container(
-                  width: 77,
+                  width: 50,
                   height: 1,
                   color: Colors.black.withOpacity(0.10),
                 ),
@@ -114,7 +114,7 @@ class CheckoutStep2Screen extends StatelessWidget {
                   label: 'Payment',
                   isActive: false,
                   isCompleted: false,
-                  width: 82,
+                  width: 70,
                 ),
               ],
             ),
@@ -281,7 +281,7 @@ class CheckoutStep2Screen extends StatelessWidget {
     required String label,
     required bool isActive,
     required bool isCompleted,
-    double? width,
+    required double width,
   }) {
     return Container(
       width: width,
@@ -326,7 +326,7 @@ class CheckoutStep2Screen extends StatelessWidget {
             textAlign: TextAlign.center,
             style: const TextStyle(
               color: Colors.black,
-              fontSize: 14,
+              fontSize: 12,
               fontFamily: 'Cabin',
               fontWeight: FontWeight.w400,
             ),
