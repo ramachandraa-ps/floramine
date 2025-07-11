@@ -308,9 +308,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   void _navigateBasedOnCategory(BuildContext context, String categoryName) {
     switch (categoryName) {
       case 'Plants':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const PlantsScreen()),
+        Navigator.pushNamed(
+          context, 
+          '/products',
+          arguments: {'category': 'plants'},
         );
         break;
       case 'Gifting':
@@ -323,13 +324,24 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       case 'Bundles':
         Navigator.pushNamed(context, '/bundles');
         break;
+      case 'Pots':
+      case 'Soil & Fertilizers':
+      case 'Tools':
+      case 'Seeds':
+      case 'Accessories':
+        // Use the products screen with the category name
+        Navigator.pushNamed(
+          context, 
+          '/products',
+          arguments: {'category': categoryName.toLowerCase()},
+        );
+        break;
       default:
-        // Handle other category taps
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('$categoryName category selected'),
-            duration: const Duration(seconds: 1),
-          ),
+        // Handle other category taps by navigating to products screen
+        Navigator.pushNamed(
+          context, 
+          '/products',
+          arguments: {'category': categoryName.toLowerCase()},
         );
         break;
     }

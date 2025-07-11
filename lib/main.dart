@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
 import 'providers/category_provider.dart';
+import 'providers/product_provider.dart';
 import 'splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
@@ -36,12 +37,14 @@ import 'screens/occasion_gifts_screen.dart';
 import 'screens/no_reviews_demo_screen.dart';
 import 'screens/rental_services_screen.dart';
 import 'screens/bundles_screen.dart';
+import 'screens/products_screen.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
+        ChangeNotifierProvider(create: (_) => ProductProvider()),
       ],
       child: const MyApp(),
     ),
@@ -95,6 +98,14 @@ class MyApp extends StatelessWidget {
         '/no_reviews_demo': (context) => const NoReviewsDemoScreen(),
         '/rental_services': (context) => const RentalServicesScreen(),
         '/bundles': (context) => const BundlesScreen(),
+        '/products': (context) {
+          final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+          return ProductsScreen(
+            category: args?['category'],
+            subCategory: args?['subCategory'],
+            initialSearchQuery: args?['searchQuery'],
+          );
+        },
       },
     );
   }

@@ -1,0 +1,293 @@
+class Product {
+  final int id;
+  final String name;
+  final String sku;
+  final String tags;
+  final List<String> images;
+  final String video;
+  final String? productDescription;
+  final String categoryName;
+  final String subCategoryName;
+  final String brandName;
+  final String unitShortName;
+  final String barcodeType;
+  final String totalStock;
+  final List<ProductVariation> variations;
+  final String createdAt;
+
+  Product({
+    required this.id,
+    required this.name,
+    required this.sku,
+    required this.tags,
+    required this.images,
+    required this.video,
+    this.productDescription,
+    required this.categoryName,
+    required this.subCategoryName,
+    required this.brandName,
+    required this.unitShortName,
+    required this.barcodeType,
+    required this.totalStock,
+    required this.variations,
+    required this.createdAt,
+  });
+
+  factory Product.fromJson(Map<String, dynamic> json) {
+    // Parse image string into a list of image URLs
+    List<String> imageList = [];
+    if (json['image'] != null && json['image'].toString().isNotEmpty) {
+      imageList = json['image'].toString().split(',').map((img) => img.trim()).toList();
+    }
+
+    // Parse variations
+    List<ProductVariation> variationsList = [];
+    if (json['variations'] != null && json['variations'] is List) {
+      variationsList = (json['variations'] as List)
+          .map((variation) => ProductVariation.fromJson(variation))
+          .toList();
+    }
+
+    return Product(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      sku: json['sku'] ?? '',
+      tags: json['tags'] ?? '',
+      images: imageList,
+      video: json['video'] ?? '',
+      productDescription: json['product_description'],
+      categoryName: json['category_name'] ?? '',
+      subCategoryName: json['sub_category_name'] ?? '',
+      brandName: json['brand_name'] ?? '',
+      unitShortName: json['unit_short_name'] ?? '',
+      barcodeType: json['barcode_type'] ?? '',
+      totalStock: json['total_stock']?.toString() ?? '0',
+      variations: variationsList,
+      createdAt: json['created_at'] ?? '',
+    );
+  }
+}
+
+class ProductVariation {
+  final int id;
+  final String variationName;
+  final List<VariationTemplate> variationTemplates;
+  final List<VariationValue> variationValues;
+  final String variationCombination;
+  final String subSku;
+  final List<String> media;
+  final String defaultPrice;
+  final String defaultSellPrice;
+  final String discount;
+  final int stock;
+
+  ProductVariation({
+    required this.id,
+    required this.variationName,
+    required this.variationTemplates,
+    required this.variationValues,
+    required this.variationCombination,
+    required this.subSku,
+    required this.media,
+    required this.defaultPrice,
+    required this.defaultSellPrice,
+    required this.discount,
+    required this.stock,
+  });
+
+  factory ProductVariation.fromJson(Map<String, dynamic> json) {
+    // Parse variation templates
+    List<VariationTemplate> templatesList = [];
+    if (json['variation_templates'] != null && json['variation_templates'] is List) {
+      templatesList = (json['variation_templates'] as List)
+          .map((template) => VariationTemplate.fromJson(template))
+          .toList();
+    }
+
+    // Parse variation values
+    List<VariationValue> valuesList = [];
+    if (json['variation_values'] != null && json['variation_values'] is List) {
+      valuesList = (json['variation_values'] as List)
+          .map((value) => VariationValue.fromJson(value))
+          .toList();
+    }
+
+    // Parse media
+    List<String> mediaList = [];
+    if (json['media'] != null && json['media'] is List) {
+      mediaList = (json['media'] as List).map((m) => m.toString()).toList();
+    }
+
+    return ProductVariation(
+      id: json['id'] ?? 0,
+      variationName: json['variation_name'] ?? '',
+      variationTemplates: templatesList,
+      variationValues: valuesList,
+      variationCombination: json['variation_combination'] ?? '',
+      subSku: json['sub_sku'] ?? '',
+      media: mediaList,
+      defaultPrice: json['default_price'] ?? '',
+      defaultSellPrice: json['default_sell_price'] ?? '',
+      discount: json['discount'] ?? '',
+      stock: json['stock'] ?? 0,
+    );
+  }
+}
+
+class VariationTemplate {
+  final int id;
+  final String name;
+
+  VariationTemplate({
+    required this.id,
+    required this.name,
+  });
+
+  factory VariationTemplate.fromJson(Map<String, dynamic> json) {
+    return VariationTemplate(
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+    );
+  }
+}
+
+class VariationValue {
+  final int templateId;
+  final String templateName;
+  final int id;
+  final String name;
+
+  VariationValue({
+    required this.templateId,
+    required this.templateName,
+    required this.id,
+    required this.name,
+  });
+
+  factory VariationValue.fromJson(Map<String, dynamic> json) {
+    return VariationValue(
+      templateId: json['template_id'] ?? 0,
+      templateName: json['template_name'] ?? '',
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+    );
+  }
+}
+
+class ProductResponse {
+  final List<Product> data;
+  final PaginationLinks links;
+  final PaginationMeta meta;
+  final bool status;
+  final String message;
+
+  ProductResponse({
+    required this.data,
+    required this.links,
+    required this.meta,
+    required this.status,
+    required this.message,
+  });
+
+  factory ProductResponse.fromJson(Map<String, dynamic> json) {
+    List<Product> productList = [];
+    if (json['data'] != null && json['data'] is List) {
+      productList = (json['data'] as List)
+          .map((product) => Product.fromJson(product))
+          .toList();
+    }
+
+    return ProductResponse(
+      data: productList,
+      links: PaginationLinks.fromJson(json['links'] ?? {}),
+      meta: PaginationMeta.fromJson(json['meta'] ?? {}),
+      status: json['status'] ?? false,
+      message: json['message'] ?? '',
+    );
+  }
+}
+
+class PaginationLinks {
+  final String? first;
+  final String? last;
+  final String? prev;
+  final String? next;
+
+  PaginationLinks({
+    this.first,
+    this.last,
+    this.prev,
+    this.next,
+  });
+
+  factory PaginationLinks.fromJson(Map<String, dynamic> json) {
+    return PaginationLinks(
+      first: json['first'],
+      last: json['last'],
+      prev: json['prev'],
+      next: json['next'],
+    );
+  }
+}
+
+class PaginationMeta {
+  final int currentPage;
+  final int? from;
+  final int lastPage;
+  final List<PageLink> links;
+  final String path;
+  final int perPage;
+  final int? to;
+  final int total;
+
+  PaginationMeta({
+    required this.currentPage,
+    this.from,
+    required this.lastPage,
+    required this.links,
+    required this.path,
+    required this.perPage,
+    this.to,
+    required this.total,
+  });
+
+  factory PaginationMeta.fromJson(Map<String, dynamic> json) {
+    List<PageLink> linksList = [];
+    if (json['links'] != null && json['links'] is List) {
+      linksList = (json['links'] as List)
+          .map((link) => PageLink.fromJson(link))
+          .toList();
+    }
+
+    return PaginationMeta(
+      currentPage: json['current_page'] ?? 1,
+      from: json['from'],
+      lastPage: json['last_page'] ?? 1,
+      links: linksList,
+      path: json['path'] ?? '',
+      perPage: json['per_page'] ?? 10,
+      to: json['to'],
+      total: json['total'] ?? 0,
+    );
+  }
+}
+
+class PageLink {
+  final String? url;
+  final String label;
+  final bool active;
+
+  PageLink({
+    this.url,
+    required this.label,
+    required this.active,
+  });
+
+  factory PageLink.fromJson(Map<String, dynamic> json) {
+    return PageLink(
+      url: json['url'],
+      label: json['label'] ?? '',
+      active: json['active'] ?? false,
+    );
+  }
+} 

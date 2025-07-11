@@ -327,12 +327,14 @@ class SubcategoryScreen extends StatelessWidget {
           category: subcategory,
           useCircularImage: true, // Using circular images for consistency
           onTap: () {
-            // Navigate based on subcategory or show a message
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('${subcategory.name} selected'),
-                duration: const Duration(seconds: 1),
-              ),
+            // Navigate to products screen with subcategory filter
+            Navigator.pushNamed(
+              context,
+              '/products',
+              arguments: {
+                'subCategory': subcategory.name.toLowerCase().replaceAll(' ', '-'),
+                'category': parentCategory.name,
+              },
             );
           },
         );
