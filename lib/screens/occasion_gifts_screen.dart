@@ -1,230 +1,273 @@
 import 'package:flutter/material.dart';
 import '../widgets/occasion_gifts/gift_products_section_title.dart';
 import '../widgets/occasion_gifts/gift_product_grid.dart';
+import '../widgets/filter_widget.dart';
 
-class OccasionGiftsScreen extends StatelessWidget {
+class OccasionGiftsScreen extends StatefulWidget {
   const OccasionGiftsScreen({Key? key}) : super(key: key);
+
+  @override
+  _OccasionGiftsScreenState createState() => _OccasionGiftsScreenState();
+}
+
+class _OccasionGiftsScreenState extends State<OccasionGiftsScreen> {
+  // Add state variable for filter overlay
+  bool _showFilterOverlay = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header with green background
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment(0.00, 0.50),
-                  end: Alignment(1.00, 0.50),
-                  colors: [Color(0xFF54A801), Color(0xFF214200)],
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Back button
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back_ios_new,
-                        size: 16,
-                        color: Colors.black54,
-                      ),
+      body: Stack(
+        children: [
+          SafeArea(
+            child: Column(
+              children: [
+                // Header with green background
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment(0.00, 0.50),
+                      end: Alignment(1.00, 0.50),
+                      colors: [Color(0xFF54A801), Color(0xFF214200)],
                     ),
                   ),
-                  
-                  // Title
-                  const Text(
-                    'Occasion Gifts',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  
-                  // Cart icon with badge
-                  Stack(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(
-                        Icons.shopping_cart_outlined,
-                        size: 30,
-                        color: Colors.white,
-                      ),
-                      Positioned(
-                        right: 0,
-                        top: 0,
+                      // Back button
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
                         child: Container(
-                          width: 15,
-                          height: 15,
+                          width: 40,
+                          height: 40,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Center(
-                            child: Text(
-                              '0',
-                              style: TextStyle(
-                                color: Color(0xFF54A801),
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
+                          child: const Icon(
+                            Icons.arrow_back_ios_new,
+                            size: 16,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ),
+                      
+                      // Title
+                      const Text(
+                        'Occasion Gifts',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      
+                      // Cart icon with badge
+                      Stack(
+                        children: [
+                          const Icon(
+                            Icons.shopping_cart_outlined,
+                            size: 30,
+                            color: Colors.white,
+                          ),
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              width: 15,
+                              height: 15,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Center(
+                                child: Text(
+                                  '0',
+                                  style: TextStyle(
+                                    color: Color(0xFF54A801),
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // Search bar
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Row(
+                    children: [
+                      // Search input field
+                      Expanded(
+                        child: Container(
+                          height: 50,
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: const BorderRadius.horizontal(
+                              left: Radius.circular(25),
+                              right: Radius.circular(0),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  decoration: InputDecoration(
+                                    hintText: 'Search "Indoor Plants"',
+                                    hintStyle: TextStyle(
+                                      color: Colors.grey[600],
+                                      fontSize: 14,
+                                    ),
+                                    border: InputBorder.none,
+                                    suffixIcon: Icon(Icons.mic, color: Colors.grey),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      
+                      // Search button
+                      Container(
+                        height: 50,
+                        width: 60,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF54A801),
+                          borderRadius: BorderRadius.horizontal(
+                            left: Radius.circular(0),
+                            right: Radius.circular(25),
+                          ),
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.search,
+                            color: Colors.white,
                           ),
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            
-            // Search bar
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Row(
-                children: [
-                  // Search input field
-                  Expanded(
-                    child: Container(
-                      height: 50,
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: const BorderRadius.horizontal(
-                          left: Radius.circular(25),
-                          right: Radius.circular(0),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: 'Search "Indoor Plants"',
-                                hintStyle: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 14,
-                                ),
-                                border: InputBorder.none,
-                                suffixIcon: Icon(Icons.mic, color: Colors.grey),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  
-                  // Search button
-                  Container(
-                    height: 50,
-                    width: 60,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF54A801),
-                      borderRadius: BorderRadius.horizontal(
-                        left: Radius.circular(0),
-                        right: Radius.circular(25),
-                      ),
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.search,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            
-            // Content
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Gift categories
-                    HorizontalOccasionCategoriesList(),
-                    
-                    // Filter and Sort buttons
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Filter button
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                              border: Border.all(width: 1, color: Colors.black),
-                              borderRadius: BorderRadius.circular(26),
-                            ),
-                            child: Row(
-                              children: const [
-                                Text(
-                                  'Filter',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                SizedBox(width: 5),
-                                Icon(Icons.keyboard_arrow_down, size: 18),
-                              ],
-                            ),
-                          ),
-                          
-                          // Sort button
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                              border: Border.all(width: 1, color: Colors.black),
-                              borderRadius: BorderRadius.circular(26),
-                            ),
-                            child: Row(
-                              children: const [
-                                Text(
-                                  'Sort By',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                SizedBox(width: 5),
-                                Icon(Icons.keyboard_arrow_down, size: 18),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    
-                    // Product grid
-                    const GiftProductGrid(),
-                    
-                    const SizedBox(height: 20),
-                  ],
                 ),
-              ),
+                
+                // Content
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Gift categories
+                        HorizontalOccasionCategoriesList(),
+                        
+                        // Filter and Sort buttons
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Filter button
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _showFilterOverlay = true;
+                                  });
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(width: 1, color: Colors.black),
+                                    borderRadius: BorderRadius.circular(26),
+                                  ),
+                                  child: Row(
+                                    children: const [
+                                      Text(
+                                        'Filter',
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Icon(Icons.keyboard_arrow_down, size: 18),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              
+                              // Sort button
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
+                                  border: Border.all(width: 1, color: Colors.black),
+                                  borderRadius: BorderRadius.circular(26),
+                                ),
+                                child: Row(
+                                  children: const [
+                                    Text(
+                                      'Sort By',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                        fontFamily: 'Poppins',
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    SizedBox(width: 5),
+                                    Icon(Icons.keyboard_arrow_down, size: 18),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        
+                        // Product grid
+                        const GiftProductGrid(),
+                        
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          
+          // Filter overlay
+          FilterWidget(
+            showOverlay: _showFilterOverlay,
+            onClose: () {
+              setState(() {
+                _showFilterOverlay = false;
+              });
+            },
+            onApplyFilters: (filterValues) {
+              // Apply filters to the products
+              // This is where you would filter your product list based on selected filters
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Filters applied')),
+              );
+            },
+            onClearFilters: () {
+              // Clear all filters
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Filters cleared')),
+              );
+            },
+          ),
+        ],
       ),
     );
   }

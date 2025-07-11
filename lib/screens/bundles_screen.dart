@@ -1,58 +1,94 @@
 import 'package:flutter/material.dart';
+import '../widgets/filter_widget.dart';
 
-class BundlesScreen extends StatelessWidget {
+class BundlesScreen extends StatefulWidget {
   const BundlesScreen({Key? key}) : super(key: key);
+
+  @override
+  _BundlesScreenState createState() => _BundlesScreenState();
+}
+
+class _BundlesScreenState extends State<BundlesScreen> {
+  // Add state variable for filter overlay
+  bool _showFilterOverlay = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header with title and cart
-            Rectangle135(),
-            
-            // Search bar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: _buildSearchBar(),
-            ),
-            
-            // Make everything below search bar scrollable
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  children: [
-                    // Bundle categories
-                    HorizontalBundleList(),
-                    
-                    // Filter and Sort section
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _buildFilterButton(),
-                          _buildSortButton(),
-                        ],
-                      ),
-                    ),
-                    
-                    // Products grid
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: _buildProductsGrid(),
-                    ),
-                    
-                    // Add some bottom padding
-                    SizedBox(height: 20),
-                  ],
+      body: Stack(
+        children: [
+          SafeArea(
+            child: Column(
+              children: [
+                // Header with title and cart
+                Rectangle135(),
+                
+                // Search bar
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: _buildSearchBar(),
                 ),
-              ),
+                
+                // Make everything below search bar scrollable
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      children: [
+                        // Bundle categories
+                        HorizontalBundleList(),
+                        
+                        // Filter and Sort section
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _buildFilterButton(),
+                              _buildSortButton(),
+                            ],
+                          ),
+                        ),
+                        
+                        // Products grid
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: _buildProductsGrid(),
+                        ),
+                        
+                        // Add some bottom padding
+                        SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          
+          // Add filter overlay
+          FilterWidget(
+            showOverlay: _showFilterOverlay,
+            onClose: () {
+              setState(() {
+                _showFilterOverlay = false;
+              });
+            },
+            onApplyFilters: (filterValues) {
+              // Apply filters to the products
+              // This is where you would filter your product list based on selected filters
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Filters applied')),
+              );
+            },
+            onClearFilters: () {
+              // Clear all filters
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Filters cleared')),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -105,28 +141,35 @@ class BundlesScreen extends StatelessWidget {
   }
   
   Widget _buildFilterButton() {
-    return Container(
-      height: 35,
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black.withOpacity(0.2)),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Filter',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 14,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w500,
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _showFilterOverlay = true;
+        });
+      },
+      child: Container(
+        height: 35,
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Filter',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 14,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          SizedBox(width: 4),
-          Icon(Icons.keyboard_arrow_down, size: 18),
-        ],
+            SizedBox(width: 4),
+            Icon(Icons.keyboard_arrow_down, size: 18),
+          ],
+        ),
       ),
     );
   }

@@ -3,7 +3,12 @@ import './gift_product_card.dart';
 import './pagination_slider.dart';
 
 class GiftProductGrid extends StatefulWidget {
-  const GiftProductGrid({Key? key}) : super(key: key);
+  final Function? onFilterPressed;
+  
+  const GiftProductGrid({
+    Key? key,
+    this.onFilterPressed,
+  }) : super(key: key);
 
   @override
   State<GiftProductGrid> createState() => _GiftProductGridState();
@@ -99,32 +104,40 @@ class _GiftProductGridState extends State<GiftProductGrid> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Filter button
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Colors.black.withOpacity(0.3)),
-                    borderRadius: BorderRadius.circular(26),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Filter',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w400,
+              // Filter button - Now handled in parent screen
+              if (widget.onFilterPressed != null)
+                GestureDetector(
+                  onTap: () {
+                    if (widget.onFilterPressed != null) {
+                      widget.onFilterPressed!();
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(width: 1, color: Colors.black.withOpacity(0.3)),
+                        borderRadius: BorderRadius.circular(26),
                       ),
                     ),
-                    SizedBox(width: 5),
-                    Icon(Icons.filter_list, size: 16),
-                  ],
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Filter',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 14,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        SizedBox(width: 5),
+                        Icon(Icons.filter_list, size: 16),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
               
               // Sort by button
               Container(
