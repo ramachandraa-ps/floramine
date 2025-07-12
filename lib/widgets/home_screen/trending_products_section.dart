@@ -32,6 +32,7 @@ class _TrendingProductsSectionState extends State<TrendingProductsSection> {
         'isAirPurifying': true,
         'isPerfectGift': true,
         'isFavorite': false,
+        'usps': ['🍃 Air Purifying', '🎁 Perfect Gift', '🌸 Fragrant'],
       },
       {
         'imageAsset': 'assets/images/jasminum_sambac.png',
@@ -42,6 +43,7 @@ class _TrendingProductsSectionState extends State<TrendingProductsSection> {
         'isAirPurifying': true,
         'isPerfectGift': true,
         'isFavorite': false,
+        'usps': ['🍃 Air Purifying', '🎁 Perfect Gift', '🌹 Flowering'],
       },
       {
         'imageAsset': 'assets/images/jasminum_sambac.png',
@@ -52,6 +54,7 @@ class _TrendingProductsSectionState extends State<TrendingProductsSection> {
         'isAirPurifying': true,
         'isPerfectGift': true,
         'isFavorite': false,
+        'usps': ['🍃 Air Purifying', '🎁 Perfect Gift', '🌵 Succulent'],
       },
       {
         'imageAsset': 'assets/images/jasminum_sambac.png',
@@ -62,6 +65,7 @@ class _TrendingProductsSectionState extends State<TrendingProductsSection> {
         'isAirPurifying': false,
         'isPerfectGift': false,
         'isFavorite': false,
+        'usps': ['🪴 Pot', '🌿 Durable', '🏠 Indoor Use'],
       },
     ];
 
@@ -148,6 +152,7 @@ class _TrendingProductsSectionState extends State<TrendingProductsSection> {
                     isAirPurifying: product['isAirPurifying'],
                     isPerfectGift: product['isPerfectGift'],
                     isFavorite: product['isFavorite'],
+                    usps: product['usps'] as List<String>, // Pass USPs from sample data
                     onBuyNowPressed: () {
                       // Handle Buy Now tap
                     },

@@ -14,6 +14,7 @@ class Product {
   final String totalStock;
   final List<ProductVariation> variations;
   final String createdAt;
+  final List<String> usps; // Added USPs list
 
   Product({
     required this.id,
@@ -31,6 +32,7 @@ class Product {
     required this.totalStock,
     required this.variations,
     required this.createdAt,
+    required this.usps, // Added USPs parameter
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -83,6 +85,7 @@ class Product {
       totalStock: json['total_stock']?.toString() ?? '0',
       variations: variationsList,
       createdAt: json['created_at'] ?? '',
+      usps: uspList, // Added USPs to the constructor
     );
   }
 }

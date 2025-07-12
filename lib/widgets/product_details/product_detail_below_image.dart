@@ -47,32 +47,73 @@ class ProductDetailBelowImage extends StatelessWidget {
       discountText = 'Save upto 15%';
     }
     
-    // Extract tags from product if available
-    List<Map<String, dynamic>> tags = [];
+    // Extract USPs and tags for display
+    List<Map<String, dynamic>> featureTags = [];
     
     if (product != null) {
-      // Check if product has air purifying or perfect gift tags
-      bool isAirPurifying = product!.tags.toLowerCase().contains('air purifying');
-      bool isPerfectGift = product!.tags.toLowerCase().contains('perfect gift');
-      
-      if (isAirPurifying) {
-        tags.add({
-          'text': '🍃 Air Purifying',
-          'color': 0x7F27DBE5,
-        });
-      }
-      
-      if (isPerfectGift) {
-        tags.add({
-          'text': '🎁 Perfect Gift',
-          'color': 0x7FE5D827,
-        });
+      // First, check for USPs from API
+      if (product!.usps.isNotEmpty) {
+        for (var usp in product!.usps) {
+          // Determine background color based on content
+          Color bgColor;
+          if (usp.toLowerCase().contains('air purifying')) {
+            bgColor = const Color(0x7F27DBE5); // Light blue
+          } else if (usp.toLowerCase().contains('perfect gift')) {
+            bgColor = const Color(0x7FE5D827); // Light yellow
+          } else if (usp.toLowerCase().contains('low maintenance')) {
+            bgColor = const Color(0x7F54A801); // Light green
+          } else if (usp.toLowerCase().contains('pet friendly')) {
+            bgColor = const Color(0x7FE527B9); // Light pink
+          } else {
+            bgColor = const Color(0x7FA0A0A0); // Light gray
+          }
+          
+          featureTags.add({
+            'text': usp,
+            'color': bgColor.value,
+          });
+        }
+      } 
+      // If no USPs, fall back to tag-based detection
+      else {
+        // Check if product has air purifying or perfect gift tags
+        bool isAirPurifying = product!.tags.toLowerCase().contains('air purifying');
+        bool isPerfectGift = product!.tags.toLowerCase().contains('perfect gift');
+        
+        if (isAirPurifying) {
+          featureTags.add({
+            'text': '🍃 Air Purifying',
+            'color': 0x7F27DBE5,
+          });
+        }
+        
+        if (isPerfectGift) {
+          featureTags.add({
+            'text': '🎁 Perfect Gift',
+            'color': 0x7FE5D827,
+          });
+        }
+        
+        // Add other tags
+        if (product!.tags.isNotEmpty) {
+          List<String> tagsList = product!.tags.split(',').map((tag) => tag.trim()).toList();
+          for (var tag in tagsList) {
+            if (!tag.toLowerCase().contains('air purifying') && 
+                !tag.toLowerCase().contains('perfect gift') &&
+                tag.isNotEmpty) {
+              featureTags.add({
+                'text': '🌿 $tag',
+                'color': 0x7F54A801,
+              });
+            }
+          }
+        }
       }
     }
     
     // If no tags were extracted, use default tags
-    if (tags.isEmpty) {
-      tags = [
+    if (featureTags.isEmpty) {
+      featureTags = [
         {
           'text': '🍃 Air Purifying',
           'color': 0x7F27DBE5,
@@ -94,33 +135,36 @@ class ProductDetailBelowImage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Tags row
+              // Tags row - use horizontal scrolling for many tags
               Flexible(
-                child: Row(
-                  children: [
-                    for (int i = 0; i < tags.length; i++) ...[
-                      if (i > 0) const SizedBox(width: 7),
-                      Container(
-                        height: 20,
-                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                        decoration: ShapeDecoration(
-                          color: Color(tags[i]['color']),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      for (int i = 0; i < featureTags.length; i++) ...[
+                        if (i > 0) const SizedBox(width: 7),
+                        Container(
+                          height: 20,
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                          decoration: ShapeDecoration(
+                            color: Color(featureTags[i]['color']),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Text(
+                            featureTags[i]['text'],
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 12,
+                              fontFamily: 'Cabin',
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
-                        child: Text(
-                          tags[i]['text'],
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 12,
-                            fontFamily: 'Cabin',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
               

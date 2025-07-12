@@ -259,16 +259,43 @@ class ProductCard extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
                   children: [
-                    if (isAirPurifying)
-                      _buildFeatureTag('🍃 Air Purifying', const Color(0x7F27DBE5)),
-                    if (isPerfectGift)
-                      _buildFeatureTag('🎁 Perfect Gift', const Color(0x7FE5D827)),
-                    // Add other tags from API
-                    for (var tag in tagsList)
-                      if (!tag.toLowerCase().contains('air purifying') && 
-                          !tag.toLowerCase().contains('perfect gift') &&
-                          tag.isNotEmpty)
-                        _buildFeatureTag('🌿 $tag', const Color(0x7F54A801)),
+                    // If we have USPs from API, use those
+                    if (product.usps.isNotEmpty)
+                      ...product.usps.map((usp) {
+                        // Extract emoji and text if available
+                        final parts = usp.split(' ');
+                        final emoji = parts.isNotEmpty ? parts.first : '🌿';
+                        final text = parts.length > 1 ? parts.sublist(1).join(' ') : usp;
+                        
+                        // Determine background color based on content
+                        Color bgColor;
+                        if (usp.toLowerCase().contains('air purifying')) {
+                          bgColor = const Color(0x7F27DBE5); // Light blue
+                        } else if (usp.toLowerCase().contains('perfect gift')) {
+                          bgColor = const Color(0x7FE5D827); // Light yellow
+                        } else if (usp.toLowerCase().contains('low maintenance')) {
+                          bgColor = const Color(0x7F54A801); // Light green
+                        } else if (usp.toLowerCase().contains('pet friendly')) {
+                          bgColor = const Color(0x7FE527B9); // Light pink
+                        } else {
+                          bgColor = const Color(0x7FA0A0A0); // Light gray
+                        }
+                        
+                        return _buildFeatureTag(usp, bgColor);
+                      }).toList()
+                    // Otherwise fall back to tag-based detection
+                    else ...[
+                      if (isAirPurifying)
+                        _buildFeatureTag('🍃 Air Purifying', const Color(0x7F27DBE5)),
+                      if (isPerfectGift)
+                        _buildFeatureTag('🎁 Perfect Gift', const Color(0x7FE5D827)),
+                      // Add other tags from API
+                      for (var tag in tagsList)
+                        if (!tag.toLowerCase().contains('air purifying') && 
+                            !tag.toLowerCase().contains('perfect gift') &&
+                            tag.isNotEmpty)
+                          _buildFeatureTag('🌿 $tag', const Color(0x7F54A801)),
+                    ],
                   ],
                 ),
               ),

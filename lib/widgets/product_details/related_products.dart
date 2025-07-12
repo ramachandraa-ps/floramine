@@ -228,6 +228,7 @@ class _RelatedProductsState extends State<RelatedProducts> with AutomaticKeepAli
                         discountPercentage: discountPercentage,
                         isAirPurifying: isAirPurifying,
                         isPerfectGift: isPerfectGift,
+                        usps: product.usps, // Pass USPs from API
                         onTap: () {
                           if (mounted) {
                             // Navigate to product details

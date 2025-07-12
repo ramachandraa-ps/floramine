@@ -361,6 +361,7 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
                                 discountPercentage: 15,
                                 isAirPurifying: true,
                                 isPerfectGift: true,
+                                usps: ['🍃 Air Purifying', '🎁 Perfect Gift', '🏢 Corporate Gift'],
                                 onBuyNowPressed: () {},
                                 onAddToCartPressed: () {},
                                 onFavoritePressed: () {},
@@ -376,6 +377,7 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
                                 discountPercentage: 15,
                                 isAirPurifying: true,
                                 isPerfectGift: true,
+                                usps: ['🍃 Air Purifying', '🎁 Perfect Gift', '🏢 Corporate Gift'],
                                 onBuyNowPressed: () {},
                                 onAddToCartPressed: () {},
                                 onFavoritePressed: () {},
@@ -395,6 +397,7 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
                                 discountPercentage: 15,
                                 isAirPurifying: true,
                                 isPerfectGift: true,
+                                usps: ['🍃 Air Purifying', '🎁 Perfect Gift', '🏢 Corporate Gift'],
                                 onBuyNowPressed: () {},
                                 onAddToCartPressed: () {},
                                 onFavoritePressed: () {},
@@ -410,6 +413,7 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
                                 discountPercentage: 15,
                                 isAirPurifying: true,
                                 isPerfectGift: true,
+                                usps: ['🍃 Air Purifying', '🎁 Perfect Gift', '🏢 Corporate Gift'],
                                 onBuyNowPressed: () {},
                                 onAddToCartPressed: () {},
                                 onFavoritePressed: () {},
@@ -517,6 +521,29 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
       // Use local asset if no valid image URL
       String? imageAsset = imageUrl == null ? 'assets/images/plants/default_plant.png' : null;
 
+      // Check for tags
+      bool isAirPurifying = product.tags.toLowerCase().contains('air purifying');
+      bool isPerfectGift = product.tags.toLowerCase().contains('perfect gift');
+      
+      // Create default USPs if not available from API
+      List<String> defaultUsps = [];
+      if (product.usps.isEmpty) {
+        if (isAirPurifying) {
+          defaultUsps.add('🍃 Air Purifying');
+        }
+        if (isPerfectGift) {
+          defaultUsps.add('🎁 Perfect Gift');
+        }
+        // Add a deal-specific USP
+        if (variation != null && variation.isInDeal) {
+          defaultUsps.add('🔥 Hot Deal');
+        }
+        // Add generic USP if needed
+        if (defaultUsps.isEmpty) {
+          defaultUsps.add('🌿 Indoor Plant');
+        }
+      }
+
       return PlantProductCard(
         imageUrl: imageUrl,
         imageAsset: imageAsset,
@@ -524,9 +551,9 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
         currentPrice: currentPrice,
         originalPrice: originalPrice,
         discountPercentage: discountPercentage,
-        // Keep these UI elements as they are not provided by the API
-        isAirPurifying: true,
-        isPerfectGift: true,
+        isAirPurifying: isAirPurifying,
+        isPerfectGift: isPerfectGift,
+        usps: product.usps.isNotEmpty ? product.usps : defaultUsps, // Use API USPs or fallback to defaults
         onBuyNowPressed: () {},
         onAddToCartPressed: () {},
         onFavoritePressed: () {},

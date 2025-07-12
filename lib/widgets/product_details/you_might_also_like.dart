@@ -95,6 +95,7 @@ class YouMightAlsoLike extends StatelessWidget {
                     discountPercentage: discountPercentage,
                     isAirPurifying: isAirPurifying,
                     isPerfectGift: isPerfectGift,
+                    usps: product.usps, // Pass USPs from API
                     onTap: () {
                       // Navigate to product details
                       Navigator.pushNamed(
@@ -123,6 +124,7 @@ class YouMightAlsoLike extends StatelessWidget {
                     discountPercentage: product['discount'] as double,
                     isAirPurifying: product['isAirPurifying'] as bool,
                     isPerfectGift: product['isPerfectGift'] as bool,
+                    usps: product['usps'] as List<String>?, // Pass USPs from sample data
                     onTap: () {
                       // Navigate to product details screen with static data
                       Navigator.pushNamed(
@@ -189,6 +191,7 @@ class YouMightAlsoLike extends StatelessWidget {
         'discount': 10.0,
         'isAirPurifying': true,
         'isPerfectGift': true,
+        'usps': ['🍃 Air Purifying', '🎁 Perfect Gift', '🌿 Low Maintenance'],
       },
       {
         'name': 'Snake Plant, Mother-in-law\'s Tongue',
@@ -197,6 +200,7 @@ class YouMightAlsoLike extends StatelessWidget {
         'discount': 15.0,
         'isAirPurifying': true,
         'isPerfectGift': false,
+        'usps': ['🍃 Air Purifying', '🌿 Low Maintenance', '🐱 Pet Friendly'],
       },
       {
         'name': 'Peace Lily, Spathiphyllum',
@@ -205,6 +209,7 @@ class YouMightAlsoLike extends StatelessWidget {
         'discount': 12.0,
         'isAirPurifying': true,
         'isPerfectGift': true,
+        'usps': ['🍃 Air Purifying', '🎁 Perfect Gift', '💧 Low Water Needs'],
       },
       {
         'name': 'Aloe Vera',
@@ -213,6 +218,7 @@ class YouMightAlsoLike extends StatelessWidget {
         'discount': 17.0,
         'isAirPurifying': false,
         'isPerfectGift': true,
+        'usps': ['🎁 Perfect Gift', '💧 Low Water Needs', '🌞 Loves Sunlight'],
       },
       {
         'name': 'Pothos, Devil\'s Ivy',
@@ -221,6 +227,7 @@ class YouMightAlsoLike extends StatelessWidget {
         'discount': 20.0,
         'isAirPurifying': true,
         'isPerfectGift': false,
+        'usps': ['🍃 Air Purifying', '🌿 Low Maintenance', '🏠 Indoor Plant'],
       },
       {
         'name': 'Fiddle Leaf Fig',
@@ -229,6 +236,7 @@ class YouMightAlsoLike extends StatelessWidget {
         'discount': 14.0,
         'isAirPurifying': false,
         'isPerfectGift': true,
+        'usps': ['🎁 Perfect Gift', '🏠 Indoor Plant', '🌳 Tall Growing'],
       },
     ];
   }

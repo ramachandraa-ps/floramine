@@ -95,6 +95,7 @@ class LastViewedProducts extends StatelessWidget {
                     discountPercentage: discountPercentage,
                     isAirPurifying: isAirPurifying,
                     isPerfectGift: isPerfectGift,
+                    usps: product.usps, // Pass USPs from API
                     onTap: () {
                       // Navigate to product details
                       Navigator.pushNamed(
@@ -123,6 +124,7 @@ class LastViewedProducts extends StatelessWidget {
                     discountPercentage: product['discount'] as double,
                     isAirPurifying: product['isAirPurifying'] as bool,
                     isPerfectGift: product['isPerfectGift'] as bool,
+                    usps: product['usps'] as List<String>, // Pass USPs from sample data
                     onTap: () {
                       // Navigate to product details screen with static data
                       Navigator.pushNamed(
@@ -153,6 +155,7 @@ class LastViewedProducts extends StatelessWidget {
         'discount': 17.0,
         'isAirPurifying': true,
         'isPerfectGift': false,
+        'usps': ['🍃 Air Purifying', '🌿 Low Maintenance', '🏠 Indoor Plant'],
       },
       {
         'name': 'Boston Fern',
@@ -161,6 +164,7 @@ class LastViewedProducts extends StatelessWidget {
         'discount': 12.0,
         'isAirPurifying': true,
         'isPerfectGift': true,
+        'usps': ['🍃 Air Purifying', '🎁 Perfect Gift', '💧 Loves Humidity'],
       },
       {
         'name': 'Spider Plant',
@@ -169,6 +173,7 @@ class LastViewedProducts extends StatelessWidget {
         'discount': 20.0,
         'isAirPurifying': true,
         'isPerfectGift': false,
+        'usps': ['🍃 Air Purifying', '🌿 Low Maintenance', '🐱 Pet Friendly'],
       },
       {
         'name': 'Rubber Plant',
@@ -177,6 +182,7 @@ class LastViewedProducts extends StatelessWidget {
         'discount': 11.0,
         'isAirPurifying': false,
         'isPerfectGift': true,
+        'usps': ['🎁 Perfect Gift', '🌿 Low Maintenance', '🌳 Tall Growing'],
       },
       {
         'name': 'ZZ Plant',
@@ -185,6 +191,7 @@ class LastViewedProducts extends StatelessWidget {
         'discount': 14.0,
         'isAirPurifying': true,
         'isPerfectGift': false,
+        'usps': ['🍃 Air Purifying', '🌿 Low Maintenance', '💧 Low Water Needs'],
       },
       {
         'name': 'Jade Plant',
@@ -193,6 +200,7 @@ class LastViewedProducts extends StatelessWidget {
         'discount': 17.0,
         'isAirPurifying': false,
         'isPerfectGift': true,
+        'usps': ['🎁 Perfect Gift', '🌵 Succulent', '🌞 Loves Sunlight'],
       },
     ];
   }
