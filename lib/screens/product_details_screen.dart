@@ -52,10 +52,20 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   Future<void> _fetchProductDetails() async {
     try {
       final productProvider = Provider.of<ProductProvider>(context, listen: false);
-      await productProvider.getProductById(widget.productId!);
+      
+      // Use the new getProductDetailsById method
+      await productProvider.getProductDetailsById(widget.productId!);
+      
       if (mounted) {
         setState(() {
           _product = productProvider.selectedProduct;
+          
+          // Check if we have reviews from the API
+          if (productProvider.productDetails != null && 
+              productProvider.productDetails!.reviews.isNotEmpty) {
+            _hasReviews = true;
+          }
+          
           _isLoadingProduct = false;
         });
       }
@@ -193,8 +203,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   
   Widget _buildProductDetails() {
     // Use local product state or get it from provider
-    final product = _product ?? Provider.of<ProductProvider>(context).selectedProduct;
-    final error = Provider.of<ProductProvider>(context).error;
+    final productProvider = Provider.of<ProductProvider>(context);
+    final product = _product ?? productProvider.selectedProduct;
+    final productDetails = productProvider.productDetails;
+    final error = productProvider.error;
     
     // Show error message if there was an error
     if (error != null && product == null) {
@@ -249,34 +261,39 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             
             const SizedBox(height: 16),
             
-            // Toggle switch for reviews/no reviews
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                const Text(
-                  'Toggle Reviews',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w500,
+            // Toggle switch for reviews/no reviews - only show if we have API reviews
+            if (productDetails != null && productDetails.reviews.isNotEmpty)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text(
+                    'Toggle Reviews',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Switch(
-                  value: _hasReviews,
-                  activeColor: const Color(0xFF54A801),
-                  onChanged: (value) {
-                    setState(() {
-                      _hasReviews = value;
-                    });
-                  },
-                ),
-              ],
-            ),
+                  const SizedBox(width: 8),
+                  Switch(
+                    value: _hasReviews,
+                    activeColor: const Color(0xFF54A801),
+                    onChanged: (value) {
+                      setState(() {
+                        _hasReviews = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
             
             // 4. Customer Review - conditionally show reviews or no reviews
             _hasReviews 
-              ? const CustomerReview() 
+              ? CustomerReview(
+                  apiReviews: productDetails?.reviews,
+                  reviewSummary: productDetails?.reviewSummary,
+                  reviewPagination: productDetails?.reviewPagination,
+                ) 
               : NoReviewsWidget(
                   onWriteReviewPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -287,21 +304,36 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             
             const SizedBox(height: 16),
             
-            // 5. Related Products - Pass product category if available
-            if (product?.categoryName != null && product!.categoryName.isNotEmpty)
+            // 5. Related Products - Pass related products from API if available
+            if (productDetails != null && productDetails.related.isNotEmpty)
+              RelatedProducts(
+                apiRelatedProducts: productDetails.related,
+                category: product?.categoryName,
+              )
+            else if (product?.categoryName != null && product!.categoryName.isNotEmpty)
               RelatedProducts(
                 category: product.categoryName,
               ),
             
             const SizedBox(height: 16),
             
-            // 6. You Might Also Like
-            const YouMightAlsoLike(),
+            // 6. You Might Also Like - Pass "you might also like" products from API if available
+            if (productDetails != null && productDetails.youLike.isNotEmpty)
+              YouMightAlsoLike(
+                apiProducts: productDetails.youLike,
+              )
+            else
+              const YouMightAlsoLike(),
             
             const SizedBox(height: 16),
             
-            // 7. Last Viewed Products
-            const LastViewedProducts(),
+            // 7. Last Viewed Products - Pass recently viewed products from API if available
+            if (productDetails != null && productDetails.recentlyViewed.isNotEmpty)
+              LastViewedProducts(
+                apiProducts: productDetails.recentlyViewed,
+              )
+            else
+              const LastViewedProducts(),
             
             const SizedBox(height: 32),
           ],

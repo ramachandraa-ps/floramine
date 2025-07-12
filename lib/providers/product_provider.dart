@@ -13,6 +13,10 @@ class ProductProvider extends ChangeNotifier {
   Product? _selectedProduct;
   Product? get selectedProduct => _selectedProduct;
   
+  // Product details data
+  ProductDetailsData? _productDetails;
+  ProductDetailsData? get productDetails => _productDetails;
+  
   // Pagination state
   PaginationLinks? _paginationLinks;
   PaginationMeta? _paginationMeta;
@@ -26,6 +30,9 @@ class ProductProvider extends ChangeNotifier {
   
   bool _isLoadingMore = false;
   bool get isLoadingMore => _isLoadingMore;
+  
+  bool _isLoadingDetails = false;
+  bool get isLoadingDetails => _isLoadingDetails;
   
   String? _error;
   String? get error => _error;
@@ -128,22 +135,47 @@ class ProductProvider extends ChangeNotifier {
     _error = null;
     
     try {
-      // This would require a new API endpoint to get a product by ID
-      // For now, we'll just fetch all products and filter
-      final ProductResponse response = await _productService.getProducts();
+      // Use the getProductDetailsById method to get full product details
+      await getProductDetailsById(id);
       
-      final product = response.data.firstWhere(
-        (product) => product.id == id,
-        orElse: () => throw Exception('Product not found'),
-      );
-      
-      _selectedProduct = product;
+      // The selected product will be set in getProductDetailsById
     } catch (e) {
       _error = e.toString();
       print("Error fetching product by ID: $_error");
     } finally {
       _setLoading(false);
     }
+  }
+
+  // Get product details by ID
+  Future<void> getProductDetailsById(int id) async {
+    _isLoadingDetails = true;
+    _error = null;
+    notifyListeners();
+    
+    try {
+      final ProductDetailsResponse response = await _productService.getProductDetailsById(id);
+      
+      if (response.success) {
+        _productDetails = response.data;
+        _selectedProduct = response.data.product;
+      } else {
+        _error = response.message;
+      }
+    } catch (e) {
+      _error = e.toString();
+      print("Error fetching product details: $_error");
+    } finally {
+      _isLoadingDetails = false;
+      notifyListeners();
+    }
+  }
+
+  // Clear product details
+  void clearProductDetails() {
+    _productDetails = null;
+    _selectedProduct = null;
+    notifyListeners();
   }
   
   // Set category and fetch products

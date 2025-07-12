@@ -41,6 +41,7 @@ import 'screens/rental_services_screen.dart';
 import 'screens/bundles_screen.dart';
 import 'screens/products_screen.dart';
 import 'screens/deal_of_the_day_screen.dart';
+import 'screens/product_details_screen.dart';
 
 void main() {
   runApp(
@@ -96,6 +97,13 @@ class MyApp extends StatelessWidget {
         '/blog_details_with_id': (context) {
           final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
           return BlogDetailsScreen(blogId: args['blogId']);
+        },
+        '/product-details': (context) {
+          final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+          return ProductDetailsScreen(
+            productName: args?['productName'] ?? 'Product',
+            productId: args?['productId'],
+          );
         },
         '/gifting': (context) => const GiftingScreen(),
         '/corporate_gifting': (context) => const CorporateGiftingScreen(),

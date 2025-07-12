@@ -6,10 +6,12 @@ import '../../models/product_model.dart';
 
 class RelatedProducts extends StatefulWidget {
   final String? category;
+  final List<Product>? apiRelatedProducts; // Add parameter for API related products
   
   const RelatedProducts({
     Key? key, 
     this.category,
+    this.apiRelatedProducts,
   }) : super(key: key);
 
   @override
@@ -31,8 +33,12 @@ class _RelatedProductsState extends State<RelatedProducts> with AutomaticKeepAli
   void initState() {
     super.initState();
     
-    // Delay fetching products until the widget is properly built
-    if (widget.category != null && widget.category!.isNotEmpty) {
+    // If API related products are provided, use them
+    if (widget.apiRelatedProducts != null && widget.apiRelatedProducts!.isNotEmpty) {
+      _relatedProducts = widget.apiRelatedProducts!;
+    }
+    // Otherwise, fetch products by category if available
+    else if (widget.category != null && widget.category!.isNotEmpty) {
       // Use post-frame callback to ensure context is available
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && _isActive) {
@@ -46,8 +52,18 @@ class _RelatedProductsState extends State<RelatedProducts> with AutomaticKeepAli
   void didUpdateWidget(RelatedProducts oldWidget) {
     super.didUpdateWidget(oldWidget);
     
-    // If category changed, reload products
-    if (widget.category != oldWidget.category && widget.category != null && widget.category!.isNotEmpty) {
+    // If API related products changed, update the list
+    if (widget.apiRelatedProducts != oldWidget.apiRelatedProducts &&
+        widget.apiRelatedProducts != null && widget.apiRelatedProducts!.isNotEmpty) {
+      setState(() {
+        _relatedProducts = widget.apiRelatedProducts!;
+      });
+    }
+    // If category changed and no API related products, reload products
+    else if (widget.category != oldWidget.category && 
+             widget.category != null && 
+             widget.category!.isNotEmpty &&
+             (widget.apiRelatedProducts == null || widget.apiRelatedProducts!.isEmpty)) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && _isActive) {
           _loadRelatedProducts();
@@ -114,6 +130,11 @@ class _RelatedProductsState extends State<RelatedProducts> with AutomaticKeepAli
   @override
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
+    
+    // If no related products are available, don't render the widget
+    if (_relatedProducts.isEmpty && !_isLoading) {
+      return const SizedBox.shrink();
+    }
     
     return Column(
       children: [

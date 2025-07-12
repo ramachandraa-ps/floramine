@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import '../../models/product_model.dart';
 import 'no_reviews_widget.dart';
 
 class CustomerReview extends StatefulWidget {
   final bool forceShowReviews;
+  final List<Review>? apiReviews;
+  final ReviewSummary? reviewSummary;
+  final ReviewPagination? reviewPagination;
   
   const CustomerReview({
     Key? key,
     this.forceShowReviews = true,
+    this.apiReviews,
+    this.reviewSummary,
+    this.reviewPagination,
   }) : super(key: key);
 
   @override
@@ -14,26 +21,30 @@ class CustomerReview extends StatefulWidget {
 }
 
 class _CustomerReviewState extends State<CustomerReview> {
-  // Sample data - in a real app, this would come from an API
-  // Set to false to show the "No Reviews" state
-  final bool _hasReviews = true; // Always true since we handle the no-reviews case in ProductDetailsScreen
+  // Check if we have reviews from the API
+  bool get _hasReviews => widget.apiReviews != null && widget.apiReviews!.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
-    // We no longer need this condition since we handle it in ProductDetailsScreen
-    // if (!_hasReviews && !widget.forceShowReviews) {
-    //   return NoReviewsWidget(
-    //     onWriteReviewPressed: () {
-    //       // Handle write review action
-    //       ScaffoldMessenger.of(context).showSnackBar(
-    //         const SnackBar(content: Text('Write a review action')),
-    //       );
-    //     },
-    //   );
-    // }
+    // If no reviews and not forcing to show reviews UI, show the "No Reviews" widget
+    if (!_hasReviews && !widget.forceShowReviews) {
+      return NoReviewsWidget(
+        onWriteReviewPressed: () {
+          // Handle write review action
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Write a review action')),
+          );
+        },
+      );
+    }
 
     // Get the screen width to make responsive adjustments
     final screenWidth = MediaQuery.of(context).size.width;
+    
+    // Get review stats from API or use defaults
+    final totalReviews = widget.reviewSummary?.totalReviews ?? 0;
+    final averageRating = widget.reviewSummary?.averageRating ?? 0.0;
+    final breakdown = widget.reviewSummary?.breakdown ?? {};
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,9 +97,9 @@ class _CustomerReviewState extends State<CustomerReview> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        '4.1',
-                        style: TextStyle(
+                      Text(
+                        averageRating.toStringAsFixed(1),
+                        style: const TextStyle(
                           color: Color(0xFF54A801),
                           fontSize: 60,
                           fontFamily: 'Poppins',
@@ -105,16 +116,16 @@ class _CustomerReviewState extends State<CustomerReview> {
                               5,
                               (index) => Icon(
                                 Icons.star,
-                                color: index < 4 ? Colors.amber : Colors.grey.shade300,
+                                color: index < averageRating.round() ? Colors.amber : Colors.grey.shade300,
                                 size: 20,
                               ),
                             ),
                           ),
                           const SizedBox(height: 6),
-                          const Text(
-                            '128.45k reviews',
+                          Text(
+                            '$totalReviews reviews',
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.black,
                               fontSize: 14,
                               fontFamily: 'Poppins',
@@ -129,24 +140,32 @@ class _CustomerReviewState extends State<CustomerReview> {
                   const SizedBox(height: 16),
                   
                   // Write a review button
-                  Container(
-                    height: 40,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    decoration: ShapeDecoration(
-                      color: const Color(0xFF622700),
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(width: 1, color: Colors.white),
-                        borderRadius: BorderRadius.circular(26),
+                  GestureDetector(
+                    onTap: () {
+                      // Handle write review action
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Write a review action')),
+                      );
+                    },
+                    child: Container(
+                      height: 40,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: ShapeDecoration(
+                        color: const Color(0xFF622700),
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(width: 1, color: Colors.white),
+                          borderRadius: BorderRadius.circular(26),
+                        ),
                       ),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'Write a Review',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w400,
+                      child: const Center(
+                        child: Text(
+                          'Write a Review',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
                       ),
                     ),
@@ -162,15 +181,15 @@ class _CustomerReviewState extends State<CustomerReview> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildRatingBar(context, 5, 0.62, '5.1k'),
+                    _buildRatingBar(context, 5, _getBreakdownPercentage('5_star', breakdown), breakdown['5_star'] ?? '0'),
                     const SizedBox(height: 9),
-                    _buildRatingBar(context, 4, 0.50, '41.1k'),
+                    _buildRatingBar(context, 4, _getBreakdownPercentage('4_star', breakdown), breakdown['4_star'] ?? '0'),
                     const SizedBox(height: 9),
-                    _buildRatingBar(context, 3, 0.79, '71.1k'),
+                    _buildRatingBar(context, 3, _getBreakdownPercentage('3_star', breakdown), breakdown['3_star'] ?? '0'),
                     const SizedBox(height: 9),
-                    _buildRatingBar(context, 2, 0.52, '5.1k'),
+                    _buildRatingBar(context, 2, _getBreakdownPercentage('2_star', breakdown), breakdown['2_star'] ?? '0'),
                     const SizedBox(height: 9),
-                    _buildRatingBar(context, 1, 0.40, '1.1k'),
+                    _buildRatingBar(context, 1, _getBreakdownPercentage('1_star', breakdown), breakdown['1_star'] ?? '0'),
                   ],
                 ),
               ),
@@ -180,86 +199,131 @@ class _CustomerReviewState extends State<CustomerReview> {
         
         const SizedBox(height: 20),
         
-        // Review cards
-        _buildReviewCard(
-          context,
-          userName: 'Jenny Wilson',
-          date: 'Nov 26, 2025',
-          reviewText: 'Bright, indirect light is best for the Areca Palms. They need to be watered once a week or when the top inch of soil feels dry. Palms prefer evenly moist soil but are susceptible to root rot if overwatered.',
-        ),
-        
-        const SizedBox(height: 10),
-        
-        _buildReviewCard(
-          context,
-          userName: 'Jenny Wilson',
-          date: 'Nov 26, 2025',
-          reviewText: 'Bright, indirect light is best for the Areca Palms. They need to be watered once a week or when the top inch of soil feels dry.',
-        ),
+        // Review cards - show API reviews if available, otherwise show sample reviews
+        if (_hasReviews) 
+          ...widget.apiReviews!.map((review) => Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: _buildReviewCard(
+              context,
+              userName: review.contactName,
+              date: review.createdAt,
+              reviewText: review.comments,
+              rating: review.rating,
+              imageUrl: review.contactImg,
+              reviewImages: review.images,
+            ),
+          )).toList()
+        else
+          ...[
+            _buildReviewCard(
+              context,
+              userName: 'Jenny Wilson',
+              date: 'Nov 26, 2025',
+              reviewText: 'Bright, indirect light is best for the Areca Palms. They need to be watered once a week or when the top inch of soil feels dry. Palms prefer evenly moist soil but are susceptible to root rot if overwatered.',
+            ),
+            
+            const SizedBox(height: 10),
+            
+            _buildReviewCard(
+              context,
+              userName: 'Jenny Wilson',
+              date: 'Nov 26, 2025',
+              reviewText: 'Bright, indirect light is best for the Areca Palms. They need to be watered once a week or when the top inch of soil feels dry.',
+            ),
+          ],
         
         const SizedBox(height: 20),
         
         // View all reviews button - center it
-        Center(
-          child: Container(
-            height: 40,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            decoration: ShapeDecoration(
-              shape: RoundedRectangleBorder(
-                side: const BorderSide(width: 1),
-                borderRadius: BorderRadius.circular(26),
-              ),
-            ),
-            child: const Center(
-              child: Text(
-                'View All Reviews',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w400,
+        if (widget.reviewPagination != null && widget.reviewPagination!.total > widget.reviewPagination!.perPage)
+          Center(
+            child: GestureDetector(
+              onTap: () {
+                // Handle view all reviews action
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('View all reviews action')),
+                );
+              },
+              child: Container(
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: ShapeDecoration(
+                  shape: RoundedRectangleBorder(
+                    side: const BorderSide(width: 1),
+                    borderRadius: BorderRadius.circular(26),
+                  ),
+                ),
+                child: const Center(
+                  child: Text(
+                    'View All Reviews',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 14,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
       ],
     );
   }
   
+  // Helper method to calculate breakdown percentage
+  double _getBreakdownPercentage(String starKey, Map<String, String> breakdown) {
+    if (breakdown.isEmpty) return 0.0;
+    
+    try {
+      // Get total reviews
+      int total = 0;
+      breakdown.forEach((key, value) {
+        total += int.tryParse(value) ?? 0;
+      });
+      
+      if (total == 0) return 0.0;
+      
+      // Get count for this star rating
+      int count = int.tryParse(breakdown[starKey] ?? '0') ?? 0;
+      
+      // Calculate percentage
+      return count / total;
+    } catch (e) {
+      return 0.0;
+    }
+  }
+
   // Helper method to build rating bar
-  Widget _buildRatingBar(BuildContext context, int rating, double fillPercentage, String count) {
-    // Get available width to make the progress bar responsive
-    final availableWidth = MediaQuery.of(context).size.width - 150; // Subtract space for other elements
-    final progressBarWidth = availableWidth * 0.6; // Use 60% of available width
+  Widget _buildRatingBar(BuildContext context, int stars, double fillPercentage, String count) {
+    final double progressBarWidth = MediaQuery.of(context).size.width * 0.5;
     
     return Row(
-      mainAxisSize: MainAxisSize.min, // Prevent overflow
       children: [
-        // Rating number with star
+        // Stars label
         SizedBox(
           width: 40,
           child: Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '$rating',
+                '$stars',
                 style: const TextStyle(
                   color: Colors.black,
-                  fontSize: 16,
+                  fontSize: 14,
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(width: 4),
-              const Icon(Icons.star, size: 16, color: Colors.amber),
+              const Icon(
+                Icons.star,
+                color: Colors.amber,
+                size: 14,
+              ),
             ],
           ),
         ),
         
-        const SizedBox(width: 8),
-        
-        // Progress bar - make it responsive
+        // Progress bar
         Container(
           width: progressBarWidth,
           height: 5,
@@ -313,6 +377,8 @@ class _CustomerReviewState extends State<CustomerReview> {
     required String date,
     required String reviewText,
     int rating = 5,
+    String? imageUrl,
+    List<String>? reviewImages,
   }) {
     return Container(
       width: double.infinity,
@@ -331,27 +397,48 @@ class _CustomerReviewState extends State<CustomerReview> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // User info
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              // User info with profile image
+              Row(
                 children: [
-                  Text(
-                    userName,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600,
+                  // Profile image
+                  if (imageUrl != null && imageUrl.isNotEmpty)
+                    Container(
+                      width: 40,
+                      height: 40,
+                      margin: const EdgeInsets.only(right: 10),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: NetworkImage(imageUrl),
+                          fit: BoxFit.cover,
+                          onError: (exception, stackTrace) => const AssetImage('assets/images/default_profile.png'),
+                        ),
+                      ),
                     ),
-                  ),
-                  Text(
-                    date,
-                    style: TextStyle(
-                      color: Colors.black.withOpacity(0.50),
-                      fontSize: 12,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w400,
-                    ),
+                  
+                  // User name and date
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        userName,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        date,
+                        style: TextStyle(
+                          color: Colors.black.withOpacity(0.50),
+                          fontSize: 12,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -382,6 +469,32 @@ class _CustomerReviewState extends State<CustomerReview> {
               fontWeight: FontWeight.w400,
             ),
           ),
+          
+          // Review images
+          if (reviewImages != null && reviewImages.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 80,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: reviewImages.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    width: 80,
+                    height: 80,
+                    margin: const EdgeInsets.only(right: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      image: DecorationImage(
+                        image: NetworkImage(reviewImages[index]),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ],
       ),
     );

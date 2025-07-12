@@ -325,3 +325,170 @@ class PageLink {
     );
   }
 } 
+
+class ProductDetailsResponse {
+  final bool success;
+  final String message;
+  final ProductDetailsData data;
+
+  ProductDetailsResponse({
+    required this.success,
+    required this.message,
+    required this.data,
+  });
+
+  factory ProductDetailsResponse.fromJson(Map<String, dynamic> json) {
+    return ProductDetailsResponse(
+      success: json['success'] ?? false,
+      message: json['message'] ?? '',
+      data: ProductDetailsData.fromJson(json['data'] ?? {}),
+    );
+  }
+}
+
+class ProductDetailsData {
+  final Product product;
+  final List<Product> youLike;
+  final List<Product> related;
+  final List<Product> recentlyViewed;
+  final List<Review> reviews;
+  final ReviewPagination reviewPagination;
+  final ReviewSummary reviewSummary;
+
+  ProductDetailsData({
+    required this.product,
+    required this.youLike,
+    required this.related,
+    required this.recentlyViewed,
+    required this.reviews,
+    required this.reviewPagination,
+    required this.reviewSummary,
+  });
+
+  factory ProductDetailsData.fromJson(Map<String, dynamic> json) {
+    // Parse product
+    Product product = Product.fromJson(json['product'] ?? {});
+    
+    // Parse "you might like" products
+    List<Product> youLike = [];
+    if (json['you_like'] != null && json['you_like'] is List) {
+      youLike = (json['you_like'] as List)
+          .map((item) => Product.fromJson(item))
+          .toList();
+    }
+    
+    // Parse related products
+    List<Product> related = [];
+    if (json['related'] != null && json['related'] is List) {
+      related = (json['related'] as List)
+          .map((item) => Product.fromJson(item))
+          .toList();
+    }
+    
+    // Parse recently viewed products
+    List<Product> recentlyViewed = [];
+    if (json['recently_viewed'] != null && json['recently_viewed'] is List) {
+      recentlyViewed = (json['recently_viewed'] as List)
+          .map((item) => Product.fromJson(item))
+          .toList();
+    }
+    
+    // Parse reviews
+    List<Review> reviews = [];
+    if (json['reviews'] != null && json['reviews'] is List) {
+      reviews = (json['reviews'] as List)
+          .map((item) => Review.fromJson(item))
+          .toList();
+    }
+    
+    return ProductDetailsData(
+      product: product,
+      youLike: youLike,
+      related: related,
+      recentlyViewed: recentlyViewed,
+      reviews: reviews,
+      reviewPagination: ReviewPagination.fromJson(json['review_pagination'] ?? {}),
+      reviewSummary: ReviewSummary.fromJson(json['review_summery'] ?? {}),
+    );
+  }
+}
+
+class Review {
+  final String contactName;
+  final String contactImg;
+  final int rating;
+  final String comments;
+  final List<String> images;
+  final String createdAt;
+
+  Review({
+    required this.contactName,
+    required this.contactImg,
+    required this.rating,
+    required this.comments,
+    required this.images,
+    required this.createdAt,
+  });
+
+  factory Review.fromJson(Map<String, dynamic> json) {
+    List<String> imagesList = [];
+    if (json['images'] != null && json['images'] is List) {
+      imagesList = (json['images'] as List).map((item) => item.toString()).toList();
+    }
+
+    return Review(
+      contactName: json['contact_name'] ?? '',
+      contactImg: json['contact_img'] ?? '',
+      rating: json['rating'] ?? 0,
+      comments: json['comments'] ?? '',
+      images: imagesList,
+      createdAt: json['created_at'] ?? '',
+    );
+  }
+}
+
+class ReviewPagination {
+  final int total;
+  final int perPage;
+  final int currentPage;
+
+  ReviewPagination({
+    required this.total,
+    required this.perPage,
+    required this.currentPage,
+  });
+
+  factory ReviewPagination.fromJson(Map<String, dynamic> json) {
+    return ReviewPagination(
+      total: json['total'] ?? 0,
+      perPage: json['per_page'] ?? 0,
+      currentPage: json['current_page'] ?? 0,
+    );
+  }
+}
+
+class ReviewSummary {
+  final int totalReviews;
+  final double averageRating;
+  final Map<String, String> breakdown;
+
+  ReviewSummary({
+    required this.totalReviews,
+    required this.averageRating,
+    required this.breakdown,
+  });
+
+  factory ReviewSummary.fromJson(Map<String, dynamic> json) {
+    Map<String, String> breakdownMap = {};
+    if (json['breakdown'] != null && json['breakdown'] is Map) {
+      breakdownMap = (json['breakdown'] as Map<String, dynamic>)
+          .map((key, value) => MapEntry(key, value.toString()));
+    }
+
+    return ReviewSummary(
+      totalReviews: json['total_reviews'] ?? 0,
+      averageRating: (json['average_rating'] ?? 0).toDouble(),
+      breakdown: breakdownMap,
+    );
+  }
+} 

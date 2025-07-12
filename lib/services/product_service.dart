@@ -118,4 +118,20 @@ class ProductService {
     // Sort options: date_asc, date_desc, price_asc, price_desc
     return getProducts(sort: sortOption);
   }
+
+  // Get product details by ID
+  Future<ProductDetailsResponse> getProductDetailsById(int id) async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/products/$id'));
+      
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return ProductDetailsResponse.fromJson(data);
+      } else {
+        throw Exception('Failed to load product details: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching product details: $e');
+    }
+  }
 } 
