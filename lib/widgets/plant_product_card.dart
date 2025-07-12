@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import '../screens/product_details_screen.dart';
 
 class PlantProductCard extends StatelessWidget {
-  final String imageAsset;
+  final String? imageAsset;
+  final String? imageUrl;
   final String name;
   final double currentPrice;
   final double originalPrice;
@@ -16,7 +17,8 @@ class PlantProductCard extends StatelessWidget {
 
   const PlantProductCard({
     Key? key,
-    required this.imageAsset,
+    this.imageAsset,
+    this.imageUrl,
     required this.name,
     required this.currentPrice,
     required this.originalPrice,
@@ -27,7 +29,8 @@ class PlantProductCard extends StatelessWidget {
     this.onAddToCartPressed,
     this.onFavoritePressed,
     this.isFavorite = false,
-  }) : super(key: key);
+  }) : assert(imageAsset != null || imageUrl != null, 'Either imageAsset or imageUrl must be provided'),
+       super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -63,19 +66,49 @@ class PlantProductCard extends StatelessWidget {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      // Plant image
-                      Image.asset(
-                        imageAsset,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[200],
-                            child: const Center(
-                              child: Icon(Icons.image_not_supported, color: Colors.grey),
-                            ),
-                          );
-                        },
-                      ),
+                      // Plant image - use either network image or asset image
+                      if (imageUrl != null)
+                        Image.network(
+                          imageUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            // Fallback to asset image if available, otherwise show error placeholder
+                            if (imageAsset != null) {
+                              return Image.asset(
+                                imageAsset!,
+                                fit: BoxFit.cover,
+                              );
+                            }
+                            return Container(
+                              color: Colors.grey[200],
+                              child: const Center(
+                                child: Icon(Icons.image_not_supported, color: Colors.grey),
+                              ),
+                            );
+                          },
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              color: Colors.grey[200],
+                              child: const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          },
+                        )
+                      else
+                        Image.asset(
+                          imageAsset!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              color: Colors.grey[200],
+                              child: const Center(
+                                child: Icon(Icons.image_not_supported, color: Colors.grey),
+                              ),
+                            );
+                          },
+                        ),
                       
                       // Discount badge
                       if (discountPercentage > 0)
@@ -175,7 +208,7 @@ class PlantProductCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '₹ ${currentPrice.toInt()}',
+                    '₹ ${currentPrice.toStringAsFixed(2)}',
                     style: const TextStyle(
                       color: Color(0xFF316300),
                       fontSize: 16,
@@ -186,7 +219,7 @@ class PlantProductCard extends StatelessWidget {
                   const SizedBox(width: 5),
                   Flexible(
                     child: Text(
-                      '₹ ${originalPrice.toInt()}',
+                      '₹ ${originalPrice.toStringAsFixed(2)}',
                       style: TextStyle(
                         color: Colors.black.withOpacity(0.50),
                         fontSize: 10,

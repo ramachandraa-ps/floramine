@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:provider/provider.dart';
 import 'providers/category_provider.dart';
 import 'providers/product_provider.dart';
+import 'providers/deal_provider.dart';
 import 'splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
@@ -38,6 +39,7 @@ import 'screens/no_reviews_demo_screen.dart';
 import 'screens/rental_services_screen.dart';
 import 'screens/bundles_screen.dart';
 import 'screens/products_screen.dart';
+import 'screens/deal_of_the_day_screen.dart';
 
 void main() {
   runApp(
@@ -45,6 +47,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
+        ChangeNotifierProvider(create: (_) => DealProvider()),
       ],
       child: const MyApp(),
     ),
@@ -87,6 +90,7 @@ class MyApp extends StatelessWidget {
         '/faq': (context) => const FAQScreen(),
         '/search': (context) => const SearchScreen(),
         '/empty-cart': (context) => const EmptyCartScreen(),
+        '/deal-of-the-day': (context) => const DealOfTheDayScreen(),
         '/blog_details_with_id': (context) {
           final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
           return BlogDetailsScreen(blogId: args['blogId']);

@@ -37,7 +37,11 @@ class Product {
     // Parse image string into a list of image URLs
     List<String> imageList = [];
     if (json['image'] != null && json['image'].toString().isNotEmpty) {
-      imageList = json['image'].toString().split(',').map((img) => img.trim()).toList();
+      // If image is a string URL, add it directly to the list
+      imageList.add(json['image'].toString());
+      
+      // Print debug info
+      print("Added image URL: ${json['image']}");
     }
 
     // Parse variations
@@ -57,7 +61,7 @@ class Product {
       video: json['video'] ?? '',
       productDescription: json['product_description'],
       categoryName: json['category_name'] ?? '',
-      subCategoryName: json['sub_category_name'] ?? '',
+      subCategoryName: json['sub_category_names'] ?? '',
       brandName: json['brand_name'] ?? '',
       unitShortName: json['unit_short_name'] ?? '',
       barcodeType: json['barcode_type'] ?? '',
@@ -80,6 +84,12 @@ class ProductVariation {
   final String defaultSellPrice;
   final String discount;
   final int stock;
+  
+  // Deal-specific fields
+  final String? dealOfferPrice;
+  final String? dealDiscount;
+  final String? dealTag;
+  final bool isInDeal;
 
   ProductVariation({
     required this.id,
@@ -93,6 +103,10 @@ class ProductVariation {
     required this.defaultSellPrice,
     required this.discount,
     required this.stock,
+    this.dealOfferPrice,
+    this.dealDiscount,
+    this.dealTag,
+    this.isInDeal = false,
   });
 
   factory ProductVariation.fromJson(Map<String, dynamic> json) {
@@ -130,6 +144,11 @@ class ProductVariation {
       defaultSellPrice: json['default_sell_price'] ?? '',
       discount: json['discount'] ?? '',
       stock: json['stock'] ?? 0,
+      // Deal-specific fields
+      dealOfferPrice: json['deal_offer_price'],
+      dealDiscount: json['deal_discount'],
+      dealTag: json['deal_tag'],
+      isInDeal: json['is_in_deal'] ?? false,
     );
   }
 }

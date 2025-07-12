@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:provider/provider.dart';
 import '../widgets/plant_product_card.dart';
+import '../providers/deal_provider.dart';
+import '../models/product_model.dart';
 
 class DealOfTheDayScreen extends StatefulWidget {
   const DealOfTheDayScreen({Key? key}) : super(key: key);
@@ -20,6 +23,11 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
   void initState() {
     super.initState();
     _startTimer();
+    
+    // Load deal products when the screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<DealProvider>(context, listen: false).loadDealProducts();
+    });
   }
 
   @override
@@ -54,6 +62,7 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final dealProvider = Provider.of<DealProvider>(context);
     
     return Scaffold(
       body: SingleChildScrollView(
@@ -239,71 +248,28 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
               ),
             ),
             
-            // Top Deals on Plants Section
-            _buildProductSection(
-              'Top Deals on Plants',
-              [
-                PlantProductCard(
-                  imageAsset: 'assets/images/plants/jasmine.png',
-                  name: 'Jasminum sambac, Mogra, Arabian Jasmine - Plant',
-                  currentPrice: 299,
-                  originalPrice: 350,
-                  discountPercentage: 15,
-                  isAirPurifying: true,
-                  isPerfectGift: true,
-                  onBuyNowPressed: () {},
-                  onAddToCartPressed: () {},
-                  onFavoritePressed: () {},
+            // Show loading indicator or error message if needed
+            if (dealProvider.isLoading)
+              const Padding(
+                padding: EdgeInsets.all(20.0),
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else if (dealProvider.error != null)
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Center(
+                  child: Text(
+                    'Failed to load deals: ${dealProvider.error}',
+                    style: const TextStyle(color: Colors.red),
+                  ),
                 ),
-                PlantProductCard(
-                  imageAsset: 'assets/images/plants/rose.png',
-                  name: 'Miniature Rose, Button Rose (Any Color) - Plant',
-                  currentPrice: 299,
-                  originalPrice: 350,
-                  discountPercentage: 15,
-                  isAirPurifying: true,
-                  isPerfectGift: true,
-                  onBuyNowPressed: () {},
-                  onAddToCartPressed: () {},
-                  onFavoritePressed: () {},
-                ),
-              ]
-            ),
-            
-            const SizedBox(height: 10),
-            
-            _buildViewAllButton(),
-            
-            // Top Deals on Plants Section (Repeat)
-            _buildProductSection(
-              'Top Deals on Plants',
-              [
-                PlantProductCard(
-                  imageAsset: 'assets/images/plants/jasmine.png',
-                  name: 'Jasminum sambac, Mogra, Arabian Jasmine - Plant',
-                  currentPrice: 299,
-                  originalPrice: 350,
-                  discountPercentage: 15,
-                  isAirPurifying: true,
-                  isPerfectGift: true,
-                  onBuyNowPressed: () {},
-                  onAddToCartPressed: () {},
-                  onFavoritePressed: () {},
-                ),
-                PlantProductCard(
-                  imageAsset: 'assets/images/plants/rose.png',
-                  name: 'Miniature Rose, Button Rose (Any Color) - Plant',
-                  currentPrice: 299,
-                  originalPrice: 350,
-                  discountPercentage: 15,
-                  isAirPurifying: true,
-                  isPerfectGift: true,
-                  onBuyNowPressed: () {},
-                  onAddToCartPressed: () {},
-                  onFavoritePressed: () {},
-                ),
-              ]
-            ),
+              )
+            else
+              // Top Deals on Plants Section
+              _buildProductSection(
+                'Top Deals on Plants',
+                _buildDealProductCards(dealProvider.dealProducts),
+              ),
             
             const SizedBox(height: 10),
             
@@ -412,6 +378,147 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
         ),
       ),
     );
+  }
+
+  // Helper method to build product cards from API data
+  List<Widget> _buildDealProductCards(List<Product> products) {
+    // If no products, return placeholder cards
+    if (products.isEmpty) {
+      return [
+        PlantProductCard(
+          imageAsset: 'assets/images/plants/jasmine.png',
+          name: 'Jasminum sambac, Mogra, Arabian Jasmine - Plant',
+          currentPrice: 299,
+          originalPrice: 350,
+          discountPercentage: 15,
+          isAirPurifying: true,
+          isPerfectGift: true,
+          onBuyNowPressed: () {},
+          onAddToCartPressed: () {},
+          onFavoritePressed: () {},
+        ),
+        PlantProductCard(
+          imageAsset: 'assets/images/plants/rose.png',
+          name: 'Miniature Rose, Button Rose (Any Color) - Plant',
+          currentPrice: 299,
+          originalPrice: 350,
+          discountPercentage: 15,
+          isAirPurifying: true,
+          isPerfectGift: true,
+          onBuyNowPressed: () {},
+          onAddToCartPressed: () {},
+          onFavoritePressed: () {},
+        ),
+      ];
+    }
+
+    // Otherwise, build cards from API data
+    return products.map((product) {
+      // Extract variation data for price information
+      final variation = product.variations.isNotEmpty ? product.variations.first : null;
+      
+      // Parse prices from the API response
+      double currentPrice = 0;
+      double originalPrice = 0;
+      double discountPercentage = 0;
+      
+      if (variation != null) {
+        try {
+          // Extract price strings and remove currency symbol and whitespace
+          String defaultPriceStr = variation.defaultPrice.replaceAll('₹', '').trim();
+          String defaultSellPriceStr = variation.defaultSellPrice.replaceAll('₹', '').trim();
+          
+          // Parse prices to double
+          double defaultPrice = double.parse(defaultPriceStr);
+          double defaultSellPrice = double.parse(defaultSellPriceStr);
+          
+          print("Raw price values - Default price: $defaultPrice, Default sell price: $defaultSellPrice");
+          
+          // Set current price to default sell price
+          currentPrice = defaultSellPrice;
+          
+          // For original price:
+          // 1. If default_price is available and greater than sell price, use it as original price
+          // 2. If default_price is 0 or less than sell price, create a synthetic original price
+          if (defaultPrice > 0 && defaultPrice > defaultSellPrice) {
+            originalPrice = defaultPrice;
+            print("Using actual default_price as original price: $originalPrice");
+          } else {
+            // If default price is 0 or less than sell price, create a synthetic original price
+            originalPrice = defaultSellPrice * 1.05;
+            print("Created synthetic original price: $originalPrice (5% above sell price)");
+          }
+          
+          // If the product is in a deal and has a deal offer price, use that instead
+          if (variation.isInDeal && variation.dealOfferPrice != null && variation.dealOfferPrice!.isNotEmpty) {
+            String dealOfferPriceStr = variation.dealOfferPrice!.replaceAll('₹', '').trim();
+            double dealOfferPrice = double.parse(dealOfferPriceStr);
+            
+            // Only use deal price if it's actually lower than the default sell price
+            if (dealOfferPrice < defaultSellPrice) {
+              currentPrice = dealOfferPrice;
+              originalPrice = defaultSellPrice; // Original price becomes the default sell price
+              print("Using deal price: $currentPrice (original was $originalPrice)");
+            }
+          }
+          
+          // Debug output to verify values
+          print("Product: ${product.name}");
+          print("Default price: ${variation.defaultPrice}, Default sell price: ${variation.defaultSellPrice}");
+          print("Final prices - Original: $originalPrice, Current: $currentPrice");
+          print("Is in deal: ${variation.isInDeal}");
+          
+          // Parse discount percentage
+          if (variation.dealDiscount != null && variation.dealDiscount!.isNotEmpty) {
+            String discountStr = variation.dealDiscount!.replaceAll('%', '').trim();
+            discountPercentage = double.parse(discountStr);
+            print("Using provided discount percentage: $discountPercentage%");
+          } else if (originalPrice > 0 && currentPrice > 0 && originalPrice > currentPrice) {
+            // Calculate discount if not provided
+            discountPercentage = ((originalPrice - currentPrice) / originalPrice) * 100;
+            print("Calculated discount percentage: $discountPercentage%");
+          }
+        } catch (e) {
+          print("Error parsing prices for ${product.name}: $e");
+          // Fallback values
+          originalPrice = 25.0;
+          currentPrice = 23.75;
+          discountPercentage = 5.0;
+        }
+      }
+
+      // Get the first image URL or use a placeholder
+      String imageUrl = product.images.isNotEmpty 
+          ? product.images.first 
+          : 'assets/images/plants/default_plant.png';
+
+      // Use local asset if the API image is not available
+      bool useLocalImage = !imageUrl.startsWith('http');
+      String imageAsset = useLocalImage ? imageUrl : 'assets/images/plants/default_plant.png';
+
+      // Print debug information
+      print("Creating PlantProductCard for ${product.name}:");
+      print("  - Original Price: $originalPrice");
+      print("  - Current Price: $currentPrice");
+      print("  - Discount: $discountPercentage%");
+      print("  - Image URL: $imageUrl");
+      print("  - Using local image: $useLocalImage");
+
+      return PlantProductCard(
+        imageUrl: !useLocalImage ? imageUrl : null,
+        imageAsset: useLocalImage ? imageAsset : null,
+        name: product.name,
+        currentPrice: currentPrice,
+        originalPrice: originalPrice,
+        discountPercentage: discountPercentage,
+        // Keep these UI elements as they are not provided by the API
+        isAirPurifying: true,
+        isPerfectGift: true,
+        onBuyNowPressed: () {},
+        onAddToCartPressed: () {},
+        onFavoritePressed: () {},
+      );
+    }).toList();
   }
 
   Widget _buildProductSection(String title, List<Widget> products) {
