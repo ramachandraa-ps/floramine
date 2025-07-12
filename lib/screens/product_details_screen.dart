@@ -28,8 +28,6 @@ class ProductDetailsScreen extends StatefulWidget {
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  // State to control whether to show reviews or no reviews
-  bool _hasReviews = false;
   Product? _product;
   bool _isLoadingProduct = false;
 
@@ -59,13 +57,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       if (mounted) {
         setState(() {
           _product = productProvider.selectedProduct;
-          
-          // Check if we have reviews from the API
-          if (productProvider.productDetails != null && 
-              productProvider.productDetails!.reviews.isNotEmpty) {
-            _hasReviews = true;
-          }
-          
           _isLoadingProduct = false;
         });
       }
@@ -261,46 +252,21 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             
             const SizedBox(height: 16),
             
-            // Toggle switch for reviews/no reviews - only show if we have API reviews
+            // 4. Customer Review - show reviews if available, otherwise show no reviews widget
             if (productDetails != null && productDetails.reviews.isNotEmpty)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  const Text(
-                    'Toggle Reviews',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Switch(
-                    value: _hasReviews,
-                    activeColor: const Color(0xFF54A801),
-                    onChanged: (value) {
-                      setState(() {
-                        _hasReviews = value;
-                      });
-                    },
-                  ),
-                ],
+              CustomerReview(
+                apiReviews: productDetails.reviews,
+                reviewSummary: productDetails.reviewSummary,
+                reviewPagination: productDetails.reviewPagination,
+              )
+            else
+              NoReviewsWidget(
+                onWriteReviewPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Write a review pressed')),
+                  );
+                },
               ),
-            
-            // 4. Customer Review - conditionally show reviews or no reviews
-            _hasReviews 
-              ? CustomerReview(
-                  apiReviews: productDetails?.reviews,
-                  reviewSummary: productDetails?.reviewSummary,
-                  reviewPagination: productDetails?.reviewPagination,
-                ) 
-              : NoReviewsWidget(
-                  onWriteReviewPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Write a review pressed')),
-                    );
-                  },
-                ),
             
             // 5. Related Products - Pass related products from API if available
             if (productDetails != null && productDetails.related.isNotEmpty)
