@@ -95,7 +95,10 @@ class PlantProductCard extends StatelessWidget {
                             return Container(
                               color: Colors.grey[200],
                               child: const Center(
-                                child: CircularProgressIndicator(),
+                                child: CircularProgressIndicator(
+                                  color: Color(0xFF54A801),
+                                  strokeWidth: 2.0,
+                                ),
                               ),
                             );
                           },

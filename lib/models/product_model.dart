@@ -67,6 +67,22 @@ class Product {
           uspList.add('${usp['emoji']} ${usp['description']}');
         }
       }
+    } else {
+      // Generate default USPs based on category or tags
+      String category = json['category_name'] ?? '';
+      String tags = json['tags'] ?? '';
+      
+      if (category.toLowerCase().contains('plant')) {
+        uspList.add('🌿 Plant');
+      }
+      
+      if (tags.toLowerCase().contains('air purifying')) {
+        uspList.add('🍃 Air Purifying');
+      }
+      
+      if (tags.toLowerCase().contains('low maintenance')) {
+        uspList.add('🌱 Low Maintenance');
+      }
     }
 
     return Product(
@@ -78,7 +94,7 @@ class Product {
       video: json['video'] ?? '',
       productDescription: json['product_description'],
       categoryName: json['category_name'] ?? '',
-      subCategoryName: json['sub_category_names'] ?? '',
+      subCategoryName: json['sub_category_name'] ?? '',
       brandName: json['brand_name'] ?? '',
       unitShortName: json['unit_short_name'] ?? '',
       barcodeType: json['barcode_type'] ?? '',
@@ -404,6 +420,16 @@ class ProductDetailsData {
           .toList();
     }
     
+    // Parse review summary with correct field name
+    ReviewSummary reviewSummary;
+    if (json['review_summery'] != null) {
+      reviewSummary = ReviewSummary.fromJson(json['review_summery']);
+    } else if (json['review_summary'] != null) {
+      reviewSummary = ReviewSummary.fromJson(json['review_summary']);
+    } else {
+      reviewSummary = ReviewSummary.fromJson({});
+    }
+    
     return ProductDetailsData(
       product: product,
       youLike: youLike,
@@ -411,7 +437,7 @@ class ProductDetailsData {
       recentlyViewed: recentlyViewed,
       reviews: reviews,
       reviewPagination: ReviewPagination.fromJson(json['review_pagination'] ?? {}),
-      reviewSummary: ReviewSummary.fromJson(json['review_summery'] ?? {}),
+      reviewSummary: reviewSummary,
     );
   }
 }
@@ -485,7 +511,7 @@ class ReviewSummary {
     Map<String, String> breakdownMap = {};
     if (json['breakdown'] != null && json['breakdown'] is Map) {
       breakdownMap = (json['breakdown'] as Map<String, dynamic>)
-          .map((key, value) => MapEntry(key, value.toString()));
+          .map((key, value) => MapEntry(key, value?.toString() ?? '0'));
     }
 
     return ReviewSummary(

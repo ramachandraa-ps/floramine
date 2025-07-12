@@ -68,11 +68,15 @@ class LastViewedProducts extends StatelessWidget {
                     currentPrice = double.tryParse(currentPriceStr) ?? 0;
                     originalPrice = double.tryParse(originalPriceStr) ?? 0;
                     
-                    if (originalPrice > 0 && currentPrice > 0 && originalPrice > currentPrice) {
+                    // Get discount percentage directly from variation if available, otherwise calculate
+                    if (variation.discount.isNotEmpty && variation.discount != "0.00%") {
+                      discountPercentage = double.tryParse(variation.discount.replaceAll('%', '')) ?? 0;
+                    } else if (originalPrice > 0 && currentPrice > 0 && originalPrice > currentPrice) {
                       discountPercentage = ((originalPrice - currentPrice) / originalPrice) * 100;
                     }
                   } catch (e) {
                     // Handle parsing errors silently
+                    print('Error parsing price: $e');
                   }
                 }
                 
@@ -81,22 +85,38 @@ class LastViewedProducts extends StatelessWidget {
                 bool isPerfectGift = product.tags.toLowerCase().contains('perfect gift');
                 
                 // Get image URL
-                String imageUrl = product.images.isNotEmpty
-                    ? product.images.first
-                    : 'assets/images/jasminum_sambac.png';
+                String? imageUrl;
+                if (product.images.isNotEmpty) {
+                  imageUrl = product.images.first;
+                }
+                
+                // Generate USPs if none are provided
+                List<String> usps = product.usps;
+                if (usps.isEmpty) {
+                  if (product.categoryName.toLowerCase().contains('plant')) {
+                    usps.add('🌿 Plant');
+                  }
+                  if (isAirPurifying) {
+                    usps.add('🍃 Air Purifying');
+                  }
+                  if (product.tags.toLowerCase().contains('low maintenance')) {
+                    usps.add('🌱 Low Maintenance');
+                  }
+                }
                 
                 return Container(
                   width: 180,
                   margin: const EdgeInsets.only(right: 16),
                   child: PlantProductCard(
                     imageUrl: imageUrl,
+                    imageAsset: imageUrl == null ? 'assets/images/jasminum_sambac.png' : null,
                     name: product.name,
                     currentPrice: currentPrice,
                     originalPrice: originalPrice,
                     discountPercentage: discountPercentage,
                     isAirPurifying: isAirPurifying,
                     isPerfectGift: isPerfectGift,
-                    usps: product.usps, // Pass USPs from API
+                    usps: usps,
                     onTap: () {
                       // Navigate to product details
                       Navigator.pushNamed(
