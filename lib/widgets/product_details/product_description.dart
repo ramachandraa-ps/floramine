@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 
 class ProductDescription extends StatelessWidget {
-  final String description;
+  final String? description;
+  final String defaultDescription = 'Bright, indirect light is best for this plant. It needs to be watered once a week or when the top inch of soil feels dry. Plants prefer evenly moist soil but are susceptible to root rot if overwatered. Thrives in moderate humidity but can adapt to average household levels. Regular misting or using a humidifier can help maintain optimal humidity, especially in drier climates.';
 
   const ProductDescription({
     Key? key,
-    this.description =
-        'Bright, indirect light is best for the Areca Palms. They need to be watered once a week or when the top inch of soil feels dry. Palms prefer evenly moist soil but are susceptible to root rot if overwatered. Thrives in moderate humidity but can adapt to average household levels. Regular misting or using a humidifier can help maintain optimal humidity, especially in drier climates.',
+    this.description,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Use the provided description or fall back to default
+    final String displayDescription = description ?? defaultDescription;
+    
     return Column(
       children: [
         // Description section
@@ -61,19 +64,10 @@ class ProductDescription extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              // Description text
+              // Description text - simple text rendering
               SizedBox(
-                width: 360,
-                child: Text(
-                  description,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 17,
-                    fontFamily: 'Cabin',
-                    fontWeight: FontWeight.w400,
-                    height: 1.65,
-                  ),
-                ),
+                width: double.infinity,
+                child: _buildFormattedText(displayDescription),
               ),
             ],
           ),
@@ -119,6 +113,53 @@ class ProductDescription extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+  
+  // Helper method to build formatted text from potentially HTML content
+  Widget _buildFormattedText(String text) {
+    // Check if the text contains HTML tags
+    bool containsHtml = text.contains('<') && text.contains('>');
+    
+    if (!containsHtml) {
+      // If no HTML, return simple text
+      return Text(
+        text,
+        style: const TextStyle(
+          color: Colors.black,
+          fontSize: 17,
+          fontFamily: 'Cabin',
+          fontWeight: FontWeight.w400,
+          height: 1.65,
+        ),
+      );
+    }
+    
+    // Simple HTML parsing for basic formatting
+    // Remove HTML tags but preserve paragraph breaks
+    String cleanedText = text
+        .replaceAll(RegExp(r'<br\s*\/?>|<\/p>'), '\n\n') // Replace <br> and </p> with newlines
+        .replaceAll(RegExp(r'<[^>]*>'), '') // Remove all other HTML tags
+        .replaceAll('&nbsp;', ' ') // Replace non-breaking spaces
+        .replaceAll('&amp;', '&') // Replace ampersand
+        .replaceAll('&lt;', '<') // Replace less than
+        .replaceAll('&gt;', '>') // Replace greater than
+        .replaceAll('&quot;', '"') // Replace quotes
+        .replaceAll('&apos;', "'") // Replace apostrophe
+        .trim();
+    
+    // Remove extra newlines
+    cleanedText = cleanedText.replaceAll(RegExp(r'\n{3,}'), '\n\n');
+    
+    return Text(
+      cleanedText,
+      style: const TextStyle(
+        color: Colors.black,
+        fontSize: 17,
+        fontFamily: 'Cabin',
+        fontWeight: FontWeight.w400,
+        height: 1.65,
+      ),
     );
   }
 }

@@ -4,6 +4,7 @@ import '../models/product_model.dart';
 import '../providers/product_provider.dart';
 import '../widgets/filter_widget.dart';
 import '../widgets/product_card.dart';
+import '../screens/product_details_screen.dart'; // Added import for ProductDetailsScreen
 
 class ProductsScreen extends StatefulWidget {
   final String? category;
@@ -100,6 +101,63 @@ class _ProductsScreenState extends State<ProductsScreen> {
     
     // Fetch products with applied filters
     productProvider.fetchProducts(page: 1);
+  }
+  
+  // Helper method to build the product grid
+  Widget _buildProductGrid(List<Product> products) {
+    return GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.58, // Adjust for taller product cards
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+      ),
+      itemCount: products.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        final product = products[index];
+        return ProductCard(
+          product: product,
+          isFavorite: false, // Replace with actual favorite status
+          onTap: () {
+            // Navigate to product details with product ID
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProductDetailsScreen(
+                  productName: product.name,
+                  productId: product.id,
+                ),
+              ),
+            );
+          },
+          onFavoritePressed: () {
+            // Handle favorite button press
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('${product.name} added to favorites'),
+                duration: const Duration(seconds: 1),
+              ),
+            );
+          },
+          onAddToCartPressed: () {
+            // Handle add to cart button press
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('${product.name} added to cart'),
+                duration: const Duration(seconds: 1),
+              ),
+            );
+          },
+          onBuyNowPressed: () {
+            // Handle buy now button press
+            Navigator.pushNamed(context, '/checkout');
+          },
+        );
+      },
+    );
   }
   
   @override
@@ -374,97 +432,88 @@ class _ProductsScreenState extends State<ProductsScreen> {
               Expanded(
                 child: Consumer<ProductProvider>(
                   builder: (context, productProvider, child) {
-                    if (productProvider.isLoading && productProvider.products.isEmpty) {
-                      return const Center(child: CircularProgressIndicator());
+                    final products = productProvider.products;
+                    final isLoading = productProvider.isLoading;
+                    final isLoadingMore = productProvider.isLoadingMore;
+                    final error = productProvider.error;
+                    
+                    if (isLoading && products.isEmpty) {
+                      // Show loading indicator while fetching initial products
+                      return const Center(
+                        child: CircularProgressIndicator(color: Color(0xFF54A801)),
+                      );
                     }
                     
-                    if (productProvider.error != null && productProvider.products.isEmpty) {
+                    if (error != null && products.isEmpty) {
+                      // Show error message if there was an error and no products
                       return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              'Error: ${productProvider.error}',
-                              style: TextStyle(color: Colors.red),
+                            const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'Error loading products',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
+                            const SizedBox(height: 8),
+                            Text(error),
+                            const SizedBox(height: 16),
                             ElevatedButton(
-                              onPressed: () => productProvider.fetchProducts(page: 1),
-                              child: Text('Retry'),
+                              onPressed: () {
+                                // Retry loading products
+                                productProvider.fetchProducts(page: 1);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF54A801),
+                              ),
+                              child: const Text('Retry'),
                             ),
                           ],
                         ),
                       );
                     }
                     
-                    if (productProvider.products.isEmpty) {
-                      return Center(
+                    if (products.isEmpty) {
+                      // Show message when no products found
+                      return const Center(
                         child: Text(
                           'No products found',
                           style: TextStyle(
                             fontSize: 16,
-                            fontFamily: 'Poppins',
+                            fontFamily: 'Cabin',
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       );
                     }
                     
-                    return Stack(
-                      children: [
-                        GridView.builder(
-                          controller: _scrollController,
-                          padding: const EdgeInsets.all(16),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.45,
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 16,
-                          ),
-                          itemCount: productProvider.products.length,
-                          itemBuilder: (context, index) {
-                            final product = productProvider.products[index];
-                            return ProductCard(
-                              product: product,
-                              onAddToCartPressed: () {
-                                // Handle add to cart
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('${product.name} added to cart'),
-                                    duration: const Duration(seconds: 1),
-                                  ),
-                                );
-                              },
-                              onFavoritePressed: () {
-                                // Handle favorite toggle
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('${product.name} added to favorites'),
-                                    duration: const Duration(seconds: 1),
-                                  ),
-                                );
-                              },
-                              onBuyNowPressed: () {
-                                // Handle buy now
-                                Navigator.pushNamed(context, '/checkout');
-                              },
-                            );
-                          },
-                        ),
-                        
-                        // Show loading indicator at bottom when loading more products
-                        if (productProvider.isLoading)
-                          Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: Container(
-                              color: Colors.white.withOpacity(0.7),
-                              padding: const EdgeInsets.all(8),
-                              child: const Center(
-                                child: CircularProgressIndicator(),
+                    // Show products grid with pagination
+                    return RefreshIndicator(
+                      onRefresh: () => productProvider.fetchProducts(page: 1),
+                      color: const Color(0xFF54A801),
+                      child: ListView(
+                        controller: _scrollController,
+                        children: [
+                          // Products grid
+                          _buildProductGrid(products),
+                          
+                          // Loading indicator for pagination
+                          if (isLoadingMore)
+                            const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Center(
+                                child: CircularProgressIndicator(color: Color(0xFF54A801)),
                               ),
                             ),
-                          ),
-                      ],
+                            
+                          // Space at the bottom
+                          const SizedBox(height: 20),
+                        ],
+                      ),
                     );
                   },
                 ),
@@ -473,24 +522,15 @@ class _ProductsScreenState extends State<ProductsScreen> {
           ),
           
           // Filter overlay
-          FilterWidget(
-            showOverlay: _showFilterOverlay,
-            onClose: () {
-              setState(() {
-                _showFilterOverlay = false;
-              });
-            },
-            onApplyFilters: (filterValues) {
-              _applyFilters(filterValues);
-              setState(() {
-                _showFilterOverlay = false;
-              });
-            },
-            onClearFilters: () {
-              Provider.of<ProductProvider>(context, listen: false).resetFilters();
-              Provider.of<ProductProvider>(context, listen: false).fetchProducts(page: 1);
-            },
-          ),
+          if (_showFilterOverlay)
+            FilterWidget(
+              onClose: () {
+                setState(() {
+                  _showFilterOverlay = false;
+                });
+              },
+              onApply: _applyFilters,
+            ),
         ],
       ),
     );

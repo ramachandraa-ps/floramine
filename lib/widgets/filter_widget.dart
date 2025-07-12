@@ -5,13 +5,15 @@ class FilterWidget extends StatefulWidget {
   final Function? onClearFilters;
   final bool showOverlay;
   final Function onClose;
+  final Function? onApply;
 
   const FilterWidget({
     Key? key,
     this.onApplyFilters,
     this.onClearFilters,
-    required this.showOverlay,
+    this.showOverlay = true,
     required this.onClose,
+    this.onApply,
   }) : super(key: key);
 
   @override
@@ -53,6 +55,30 @@ class _FilterWidgetState extends State<FilterWidget> {
       
       widget.onApplyFilters!(filterValues);
     }
+    
+    // Use the onApply callback if provided
+    if (widget.onApply != null) {
+      final filterValues = {
+        'price': {
+          'below_500': _belowFiveHundred,
+          'between_500_1000': _betweenFiveHundredAndThousand,
+          'above_1000': _aboveThousand,
+        },
+        'size': {
+          'small': _smallSize,
+          'medium': _mediumSize,
+          'large': _largeSize,
+        },
+        'color': {
+          'red': _redColor,
+          'blue': _blueColor,
+          'green': _greenColor,
+        },
+      };
+      
+      widget.onApply!(filterValues);
+    }
+    
     widget.onClose();
   }
 

@@ -37,11 +37,16 @@ class Product {
     // Parse image string into a list of image URLs
     List<String> imageList = [];
     if (json['image'] != null && json['image'].toString().isNotEmpty) {
-      // If image is a string URL, add it directly to the list
-      imageList.add(json['image'].toString());
-      
-      // Print debug info
-      print("Added image URL: ${json['image']}");
+      // Split by comma if multiple images are provided
+      if (json['image'].toString().contains(',')) {
+        imageList = json['image'].toString().split(',')
+            .map((img) => img.trim())
+            .where((img) => img.isNotEmpty)
+            .toList();
+      } else {
+        // If image is a single string URL, add it directly to the list
+        imageList.add(json['image'].toString());
+      }
     }
 
     // Parse variations
@@ -50,6 +55,16 @@ class Product {
       variationsList = (json['variations'] as List)
           .map((variation) => ProductVariation.fromJson(variation))
           .toList();
+    }
+
+    // Parse USPs if available
+    List<String> uspList = [];
+    if (json['usps'] != null && json['usps'] is List) {
+      for (var usp in json['usps']) {
+        if (usp['emoji'] != null && usp['description'] != null) {
+          uspList.add('${usp['emoji']} ${usp['description']}');
+        }
+      }
     }
 
     return Product(

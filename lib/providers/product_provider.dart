@@ -9,6 +9,10 @@ class ProductProvider extends ChangeNotifier {
   List<Product> _products = [];
   List<Product> get products => _products;
   
+  // Selected product for details view
+  Product? _selectedProduct;
+  Product? get selectedProduct => _selectedProduct;
+  
   // Pagination state
   PaginationLinks? _paginationLinks;
   PaginationMeta? _paginationMeta;
@@ -19,6 +23,9 @@ class ProductProvider extends ChangeNotifier {
   // Loading states
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+  
+  bool _isLoadingMore = false;
+  bool get isLoadingMore => _isLoadingMore;
   
   String? _error;
   String? get error => _error;
@@ -69,6 +76,7 @@ class ProductProvider extends ChangeNotifier {
       _updateProductsData(response);
     } catch (e) {
       _error = e.toString();
+      print("Error fetching products: $_error");
     } finally {
       _setLoading(false);
     }
@@ -76,11 +84,12 @@ class ProductProvider extends ChangeNotifier {
   
   // Load more products (next page)
   Future<void> loadMoreProducts() async {
-    if (_paginationLinks?.next == null || _isLoading) {
+    if (_paginationLinks?.next == null || _isLoading || _isLoadingMore) {
       return;
     }
     
-    _setLoading(true);
+    _isLoadingMore = true;
+    notifyListeners();
     
     try {
       final ProductResponse response = await _productService.getNextPage(_paginationLinks!);
@@ -93,6 +102,45 @@ class ProductProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _error = e.toString();
+      print("Error loading more products: $_error");
+    } finally {
+      _isLoadingMore = false;
+      notifyListeners();
+    }
+  }
+  
+  // Get product by ID
+  Future<void> getProductById(int id) async {
+    // First check if the product is already in the list
+    final existingProduct = _products.firstWhere(
+      (product) => product.id == id,
+      orElse: () => null as Product, // This will throw if not found
+    );
+    
+    if (existingProduct != null) {
+      _selectedProduct = existingProduct;
+      notifyListeners();
+      return;
+    }
+    
+    // If not in the list, fetch it from the API
+    _setLoading(true);
+    _error = null;
+    
+    try {
+      // This would require a new API endpoint to get a product by ID
+      // For now, we'll just fetch all products and filter
+      final ProductResponse response = await _productService.getProducts();
+      
+      final product = response.data.firstWhere(
+        (product) => product.id == id,
+        orElse: () => throw Exception('Product not found'),
+      );
+      
+      _selectedProduct = product;
+    } catch (e) {
+      _error = e.toString();
+      print("Error fetching product by ID: $_error");
     } finally {
       _setLoading(false);
     }

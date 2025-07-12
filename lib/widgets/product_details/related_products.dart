@@ -1,11 +1,120 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../widgets/plant_product_card.dart';
+import '../../providers/product_provider.dart';
+import '../../models/product_model.dart';
 
-class RelatedProducts extends StatelessWidget {
-  const RelatedProducts({Key? key}) : super(key: key);
+class RelatedProducts extends StatefulWidget {
+  final String? category;
+  
+  const RelatedProducts({
+    Key? key, 
+    this.category,
+  }) : super(key: key);
+
+  @override
+  State<RelatedProducts> createState() => _RelatedProductsState();
+}
+
+class _RelatedProductsState extends State<RelatedProducts> with AutomaticKeepAliveClientMixin {
+  bool _isLoading = false;
+  List<Product> _relatedProducts = [];
+  bool _isActive = true;
+  String? _currentCategory;
+  String? _currentSubCategory;
+  String? _currentType;
+  
+  @override
+  bool get wantKeepAlive => true; // Keep the state alive when scrolling
+  
+  @override
+  void initState() {
+    super.initState();
+    
+    // Delay fetching products until the widget is properly built
+    if (widget.category != null && widget.category!.isNotEmpty) {
+      // Use post-frame callback to ensure context is available
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _isActive) {
+          _loadRelatedProducts();
+        }
+      });
+    }
+  }
+  
+  @override
+  void didUpdateWidget(RelatedProducts oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    
+    // If category changed, reload products
+    if (widget.category != oldWidget.category && widget.category != null && widget.category!.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _isActive) {
+          _loadRelatedProducts();
+        }
+      });
+    }
+  }
+  
+  @override
+  void dispose() {
+    _isActive = false;
+    super.dispose();
+  }
+  
+  Future<void> _loadRelatedProducts() async {
+    // Guard against multiple simultaneous calls or calls after dispose
+    if (!mounted || !_isActive || _isLoading) return;
+    
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      
+      final productProvider = Provider.of<ProductProvider>(context, listen: false);
+      
+      // Store current filter state
+      _currentCategory = productProvider.currentCategory;
+      _currentSubCategory = productProvider.currentSubCategory;
+      _currentType = productProvider.currentType;
+      
+      // Set new category filter
+      await productProvider.setCategory(widget.category!);
+      
+      // Check if widget is still active before updating state
+      if (!mounted || !_isActive) return;
+      
+      // Update related products
+      setState(() {
+        _relatedProducts = List.from(productProvider.products);
+        _isLoading = false;
+      });
+      
+      // Restore previous filter state
+      if (!mounted || !_isActive) return;
+      
+      // Restore original filters without triggering setState
+      if (_currentCategory != null) {
+        await productProvider.setCategory(_currentCategory!);
+      } else if (_currentSubCategory != null) {
+        await productProvider.setSubCategory(_currentSubCategory!);
+      } else if (_currentType != null) {
+        await productProvider.setType(_currentType!);
+      }
+    } catch (e) {
+      if (_isActive && mounted) {
+        print('Error fetching related products: $e');
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
+    
     return Column(
       children: [
         // Section title
@@ -25,59 +134,143 @@ class RelatedProducts extends StatelessWidget {
         ),
         
         // Horizontal scrollable products
-        SizedBox(
-          height: 420, // Increased height to accommodate the PlantProductCard
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: 6, // Number of products
-            itemBuilder: (context, index) {
-              return Container(
-                width: 180,
-                margin: const EdgeInsets.only(right: 16),
-                child: PlantProductCard(
-                  imageAsset: 'assets/images/jasminum_sambac.png',
-                  name: 'Jasminum Sambac, Arabian Jasmine',
-                  currentPrice: 299,
-                  originalPrice: 350,
-                  discountPercentage: 15,
-                  isAirPurifying: true,
-                  isPerfectGift: index % 2 == 0,
-                ),
-              );
-            },
-          ),
-        ),
-        
-        // View All Products button
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24.0),
-          child: Container(
-            height: 40,
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
-            decoration: ShapeDecoration(
-              shape: RoundedRectangleBorder(
-                side: const BorderSide(width: 1),
-                borderRadius: BorderRadius.circular(26),
+        _isLoading
+          ? const SizedBox(
+              height: 200,
+              child: Center(
+                child: CircularProgressIndicator(color: Color(0xFF54A801)),
               ),
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'View All Products',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontFamily: 'Cabin',
-                    fontWeight: FontWeight.w400,
+            )
+          : _relatedProducts.isEmpty
+            ? const SizedBox(
+                height: 100,
+                child: Center(
+                  child: Text(
+                    'No related products found',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'Cabin',
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
-              ],
+              )
+            : SizedBox(
+                height: 420, // Height for the product card
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _relatedProducts.length > 6 ? 6 : _relatedProducts.length, // Limit to 6 products
+                  itemBuilder: (context, index) {
+                    final product = _relatedProducts[index];
+                    
+                    // Extract price information
+                    double currentPrice = 0;
+                    double originalPrice = 0;
+                    double discountPercentage = 0;
+                    
+                    if (product.variations.isNotEmpty) {
+                      final variation = product.variations.first;
+                      
+                      // Parse prices
+                      try {
+                        String currentPriceStr = variation.defaultSellPrice.replaceAll('₹', '').trim();
+                        String originalPriceStr = variation.defaultPrice.replaceAll('₹', '').trim();
+                        
+                        currentPrice = double.tryParse(currentPriceStr) ?? 0;
+                        originalPrice = double.tryParse(originalPriceStr) ?? 0;
+                        
+                        if (originalPrice > 0 && currentPrice > 0 && originalPrice > currentPrice) {
+                          discountPercentage = ((originalPrice - currentPrice) / originalPrice) * 100;
+                        }
+                      } catch (e) {
+                        // Handle parsing errors silently
+                      }
+                    }
+                    
+                    // Check for tags
+                    bool isAirPurifying = product.tags.toLowerCase().contains('air purifying');
+                    bool isPerfectGift = product.tags.toLowerCase().contains('perfect gift');
+                    
+                    // Get image URL
+                    String imageUrl = product.images.isNotEmpty
+                        ? product.images.first
+                        : 'assets/images/jasminum_sambac.png';
+                    
+                    return Container(
+                      width: 180,
+                      margin: const EdgeInsets.only(right: 16),
+                      child: PlantProductCard(
+                        imageUrl: imageUrl,
+                        name: product.name,
+                        currentPrice: currentPrice,
+                        originalPrice: originalPrice,
+                        discountPercentage: discountPercentage,
+                        isAirPurifying: isAirPurifying,
+                        isPerfectGift: isPerfectGift,
+                        onTap: () {
+                          if (mounted) {
+                            // Navigate to product details
+                            Navigator.pushNamed(
+                              context,
+                              '/product-details',
+                              arguments: {
+                                'productId': product.id,
+                                'productName': product.name,
+                              },
+                            );
+                          }
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+        
+        // View All Products button
+        if (!_isLoading && _relatedProducts.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24.0),
+            child: GestureDetector(
+              onTap: () {
+                if (mounted && widget.category != null && widget.category!.isNotEmpty) {
+                  // Navigate to products screen with category filter
+                  Navigator.pushNamed(
+                    context,
+                    '/products',
+                    arguments: {'category': widget.category},
+                  );
+                } else if (mounted) {
+                  Navigator.pushNamed(context, '/products');
+                }
+              },
+              child: Container(
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
+                decoration: ShapeDecoration(
+                  shape: RoundedRectangleBorder(
+                    side: const BorderSide(width: 1),
+                    borderRadius: BorderRadius.circular(26),
+                  ),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'View All Products',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontFamily: 'Cabin',
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
       ],
     );
   }

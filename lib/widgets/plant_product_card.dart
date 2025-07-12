@@ -14,6 +14,7 @@ class PlantProductCard extends StatelessWidget {
   final VoidCallback? onAddToCartPressed;
   final VoidCallback? onFavoritePressed;
   final bool isFavorite;
+  final VoidCallback? onTap;
 
   const PlantProductCard({
     Key? key,
@@ -29,13 +30,14 @@ class PlantProductCard extends StatelessWidget {
     this.onAddToCartPressed,
     this.onFavoritePressed,
     this.isFavorite = false,
+    this.onTap,
   }) : assert(imageAsset != null || imageUrl != null, 'Either imageAsset or imageUrl must be provided'),
        super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap: onTap ?? () {
         // Navigate to product details screen
         Navigator.push(
           context,

@@ -104,6 +104,21 @@ class ProductCard extends StatelessWidget {
                                   ),
                                 );
                               },
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Container(
+                                  color: Colors.grey[200],
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      value: loadingProgress.expectedTotalBytes != null
+                                          ? loadingProgress.cumulativeBytesLoaded /
+                                              loadingProgress.expectedTotalBytes!
+                                          : null,
+                                      color: const Color(0xFF54A801),
+                                    ),
+                                  ),
+                                );
+                              },
                             )
                           : Container(
                               color: Colors.grey[200],

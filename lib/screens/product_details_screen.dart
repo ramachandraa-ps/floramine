@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/product_details/product_action_bar.dart';
 import '../widgets/product_details/image_section.dart';
@@ -9,13 +10,17 @@ import '../widgets/product_details/related_products.dart';
 import '../widgets/product_details/you_might_also_like.dart';
 import '../widgets/product_details/last_viewed_products.dart';
 import '../widgets/product_details/no_reviews_widget.dart';
+import '../providers/product_provider.dart';
+import '../models/product_model.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final String productName;
+  final int? productId;
   
   const ProductDetailsScreen({
     Key? key,
     required this.productName,
+    this.productId,
   }) : super(key: key);
 
   @override
@@ -25,6 +30,44 @@ class ProductDetailsScreen extends StatefulWidget {
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   // State to control whether to show reviews or no reviews
   bool _hasReviews = false;
+  Product? _product;
+  bool _isLoadingProduct = false;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // If productId is provided, fetch the product details
+    if (widget.productId != null) {
+      _isLoadingProduct = true;
+      // Use post-frame callback to ensure the widget is fully built
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _fetchProductDetails();
+        }
+      });
+    }
+  }
+  
+  Future<void> _fetchProductDetails() async {
+    try {
+      final productProvider = Provider.of<ProductProvider>(context, listen: false);
+      await productProvider.getProductById(widget.productId!);
+      if (mounted) {
+        setState(() {
+          _product = productProvider.selectedProduct;
+          _isLoadingProduct = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoadingProduct = false;
+        });
+      }
+      print('Error fetching product details: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,101 +177,135 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           
           // Product details content
           Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 16),
-                    
-                    // 1. Image Section
-                    const ProductImageSection(),
-                    
-                    const SizedBox(height: 16),
-                    
-                    // 2. Product Detail Below Image
-                    const ProductDetailBelowImage(),
-                    
-                    const SizedBox(height: 16),
-                    
-                    // 3. Product Description
-                    const ProductDescription(),
-                    
-                    const SizedBox(height: 16),
-                    
-                    // Toggle switch for reviews/no reviews
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        const Text(
-                          'Toggle Reviews',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Switch(
-                          value: _hasReviews,
-                          activeColor: const Color(0xFF54A801),
-                          onChanged: (value) {
-                            setState(() {
-                              _hasReviews = value;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    
-                    // 4. Customer Review - conditionally show reviews or no reviews
-                    _hasReviews 
-                      ? const CustomerReview() 
-                      : NoReviewsWidget(
-                          onWriteReviewPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Write a review pressed')),
-                            );
-                          },
-                        ),
-                    
-                    const SizedBox(height: 16),
-                    
-                    // 5. Related Products
-                    const RelatedProducts(),
-                    
-                    const SizedBox(height: 16),
-                    
-                    // 6. You Might Also Like
-                    const YouMightAlsoLike(),
-                    
-                    const SizedBox(height: 16),
-                    
-                    // 7. Last Viewed Products
-                    const LastViewedProducts(),
-                    
-                    const SizedBox(height: 24),
-                  ],
-                ),
-              ),
-            ),
+            child: _isLoadingProduct 
+              ? const Center(
+                  child: CircularProgressIndicator(color: Color(0xFF54A801)),
+                )
+              : _buildProductDetails(),
           ),
           
-          // Bottom action bar
-          ProductActionBar(
-            onAddToCartPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Added to cart')),
-              );
-            },
-            onBuyNowPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Buy Now pressed')),
-              );
-            },
-          ),
+          // Product Action Bar (Add to Cart, Buy Now)
+          const ProductActionBar(),
         ],
+      ),
+    );
+  }
+  
+  Widget _buildProductDetails() {
+    // Use local product state or get it from provider
+    final product = _product ?? Provider.of<ProductProvider>(context).selectedProduct;
+    final error = Provider.of<ProductProvider>(context).error;
+    
+    // Show error message if there was an error
+    if (error != null && product == null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, color: Colors.red, size: 48),
+            const SizedBox(height: 16),
+            const Text(
+              'Error loading product details',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(error),
+          ],
+        ),
+      );
+    }
+    
+    // Show product details if available
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 16),
+            
+            // 1. Image Section - Pass product images if available
+            ProductImageSection(
+              images: product?.images,
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // 2. Product Detail Below Image - Pass product data if available
+            ProductDetailBelowImage(
+              product: product,
+              productName: product?.name ?? widget.productName,
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // 3. Product Description - Pass product description if available
+            ProductDescription(
+              description: product?.productDescription,
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Toggle switch for reviews/no reviews
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                const Text(
+                  'Toggle Reviews',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Switch(
+                  value: _hasReviews,
+                  activeColor: const Color(0xFF54A801),
+                  onChanged: (value) {
+                    setState(() {
+                      _hasReviews = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+            
+            // 4. Customer Review - conditionally show reviews or no reviews
+            _hasReviews 
+              ? const CustomerReview() 
+              : NoReviewsWidget(
+                  onWriteReviewPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Write a review pressed')),
+                    );
+                  },
+                ),
+            
+            const SizedBox(height: 16),
+            
+            // 5. Related Products - Pass product category if available
+            if (product?.categoryName != null && product!.categoryName.isNotEmpty)
+              RelatedProducts(
+                category: product.categoryName,
+              ),
+            
+            const SizedBox(height: 16),
+            
+            // 6. You Might Also Like
+            const YouMightAlsoLike(),
+            
+            const SizedBox(height: 16),
+            
+            // 7. Last Viewed Products
+            const LastViewedProducts(),
+            
+            const SizedBox(height: 32),
+          ],
+        ),
       ),
     );
   }
