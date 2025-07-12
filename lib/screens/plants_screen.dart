@@ -13,6 +13,7 @@ class _PlantsScreenState extends State<PlantsScreen> {
     super.initState();
     
     // Redirect to the products screen with plants category
+    // Note: The actual UI with scrollable content is in products_screen.dart
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Navigator.pushReplacementNamed(
         context,
