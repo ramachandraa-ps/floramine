@@ -141,13 +141,13 @@ class _RelatedProductsState extends State<RelatedProducts> with AutomaticKeepAli
         // Section title
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 30),
+          padding: const EdgeInsets.symmetric(vertical: 5),
           child: const Text(
             'Related Products',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.black,
-              fontSize: 32,
+              fontSize: 24,
               fontFamily: 'Cabin',
               fontWeight: FontWeight.w700,
             ),
@@ -177,7 +177,7 @@ class _RelatedProductsState extends State<RelatedProducts> with AutomaticKeepAli
                 ),
               )
             : SizedBox(
-                height: 420, // Height for the product card
+                height: 350, // Height for the product card
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: _relatedProducts.length > 6 ? 6 : _relatedProducts.length, // Limit to 6 products
@@ -248,51 +248,6 @@ class _RelatedProductsState extends State<RelatedProducts> with AutomaticKeepAli
                 ),
               ),
         
-        // View All Products button
-        if (!_isLoading && _relatedProducts.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
-            child: GestureDetector(
-              onTap: () {
-                if (mounted && widget.category != null && widget.category!.isNotEmpty) {
-                  // Navigate to products screen with category filter
-                  Navigator.pushNamed(
-                    context,
-                    '/products',
-                    arguments: {'category': widget.category},
-                  );
-                } else if (mounted) {
-                  Navigator.pushNamed(context, '/products');
-                }
-              },
-              child: Container(
-                height: 40,
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    side: const BorderSide(width: 1),
-                    borderRadius: BorderRadius.circular(26),
-                  ),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'View All Products',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontFamily: 'Cabin',
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
       ],
     );
   }

@@ -27,13 +27,13 @@ class YouMightAlsoLike extends StatelessWidget {
         // Section title
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 30),
+          padding: const EdgeInsets.symmetric(vertical: 5),
           child: const Text(
             'You Might Also Like',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.black,
-              fontSize: 32,
+              fontSize: 24,
               fontFamily: 'Cabin',
               fontWeight: FontWeight.w700,
             ),
@@ -42,7 +42,7 @@ class YouMightAlsoLike extends StatelessWidget {
         
         // Horizontal scrollable products
         SizedBox(
-          height: 420, // Height for the product card
+          height: 350, // Height for the product card
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: productsToShow.length,
@@ -139,42 +139,6 @@ class YouMightAlsoLike extends StatelessWidget {
                 );
               }
             },
-          ),
-        ),
-        
-        // View All Products button
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24.0),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(context, '/products');
-            },
-            child: Container(
-              height: 40,
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  side: const BorderSide(width: 1),
-                  borderRadius: BorderRadius.circular(26),
-                ),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'View All Products',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                      fontFamily: 'Cabin',
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ),
         ),
       ],

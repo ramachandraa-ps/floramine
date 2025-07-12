@@ -27,13 +27,14 @@ class LastViewedProducts extends StatelessWidget {
         // Section title
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 30),
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          
           child: const Text(
             'Last Viewed Products',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.black,
-              fontSize: 32,
+              fontSize: 24,
               fontFamily: 'Cabin',
               fontWeight: FontWeight.w700,
             ),
@@ -42,7 +43,7 @@ class LastViewedProducts extends StatelessWidget {
         
         // Horizontal scrollable products
         SizedBox(
-          height: 420, // Height for the product card
+          height: 350, // Height for the product card
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: productsToShow.length,

@@ -302,8 +302,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   },
                 ),
             
-            const SizedBox(height: 16),
-            
             // 5. Related Products - Pass related products from API if available
             if (productDetails != null && productDetails.related.isNotEmpty)
               RelatedProducts(
@@ -315,8 +313,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 category: product.categoryName,
               ),
             
-            const SizedBox(height: 16),
-            
             // 6. You Might Also Like - Pass "you might also like" products from API if available
             if (productDetails != null && productDetails.youLike.isNotEmpty)
               YouMightAlsoLike(
@@ -324,8 +320,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               )
             else
               const YouMightAlsoLike(),
-            
-            const SizedBox(height: 16),
             
             // 7. Last Viewed Products - Pass recently viewed products from API if available
             if (productDetails != null && productDetails.recentlyViewed.isNotEmpty)
@@ -335,7 +329,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             else
               const LastViewedProducts(),
             
-            const SizedBox(height: 32),
+            const SizedBox(height: 16),
           ],
         ),
       ),
