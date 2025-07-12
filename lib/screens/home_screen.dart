@@ -94,17 +94,10 @@ class _HomeScreenState extends State<HomeScreen> {
               currentItem: _currentItem,
               onItemSelected: (item) {
                 if (item == NavigationItem.plants) {
-                  // If already on plants tab and user taps it again, navigate to PlantsScreen
-                  if (_currentItem == NavigationItem.plants) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const PlantsScreen()),
-                    );
-                  } else {
-                    setState(() {
-                      _currentItem = item;
-                    });
-                  }
+                  // Always stay on home screen when plants tab is selected
+                  setState(() {
+                    _currentItem = item;
+                  });
                 } else if (item != _currentItem) {
                   CustomBottomNavigationBar.navigateTo(context, item);
                 }

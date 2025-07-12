@@ -29,6 +29,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
     
     switch (item) {
       case NavigationItem.plants:
+        // Use the plants route which points to HomeScreen in main.dart
         routeName = '/plants';
         break;
       case NavigationItem.categories:
