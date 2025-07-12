@@ -72,25 +72,25 @@ Provides customer support options including:
 - Live chat
 - Contact information
 
-## Product Browsing Screens
+## Product Screens
 
 ### ProductsScreen
 Located in `lib/screens/products_screen.dart`
 
-Displays a grid of products with:
-- Filtering options
-- Sorting capabilities
-- Search functionality
-- Pagination for large product lists
+Displays a list of products with:
+- Filter options
+- Sort options
+- Grid/list view toggle
+- Pagination controls
 
 ### ProductDetailsScreen
 Located in `lib/screens/product_details_screen.dart`
 
 Shows detailed information about a specific product:
-- Multiple product images
-- Description
+- Product images/gallery
+- Name and description
 - Price information
-- Variation options (size, color, etc.)
+- Variation selection (size, color, etc.)
 - Add to cart functionality
 - Related products
 
@@ -98,6 +98,27 @@ Shows detailed information about a specific product:
 Located in `lib/screens/search_screen.dart`
 
 Dedicated screen for searching products with real-time results and filtering options.
+
+## Deal and Promotion Screens
+
+### DealOfTheDayScreen
+Located in `lib/screens/deal_of_the_day_screen.dart`
+
+Showcases special daily deals with:
+- Featured deal products
+- Limited-time offers
+- Countdown timers for deal expiration
+- Deal-specific pricing and discounts
+- Easy add to cart functionality
+
+### BundlesScreen
+Located in `lib/screens/bundles_screen.dart`
+
+Displays product bundles and package deals with:
+- Bundle pricing
+- Bundle contents
+- Bundle images
+- Add to cart functionality
 
 ## Checkout Process Screens
 
@@ -132,11 +153,6 @@ Showcases gifting options for plants and related products.
 Located in `lib/screens/rental_services_screen.dart`
 
 Provides information and booking options for plant rental services.
-
-### BundlesScreen
-Located in `lib/screens/bundles_screen.dart`
-
-Displays product bundles and special offers.
 
 ### BlogsScreen & BlogDetailsScreen
 Located in `lib/screens/blogs_screen.dart` and `lib/screens/blog_details_screen.dart`

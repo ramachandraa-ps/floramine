@@ -93,6 +93,71 @@ The ProductProvider is responsible for:
 - `setPriceRange()`: Filter products by price range
 - `setType()`: Filter by product type (featured, new arrivals)
 
+## DealProvider
+Located in `lib/providers/deal_provider.dart`
+
+```dart
+class DealProvider extends ChangeNotifier {
+  final DealService _dealService = DealService();
+  
+  // Deals data
+  Map<String, dynamic>? _dealsOfTheDay;
+  List<Product> _topDealProducts = [];
+  List<Product> _exclusiveDeals = [];
+  
+  // Loading states
+  bool _isLoadingDealsOfTheDay = false;
+  bool _isLoadingTopDeals = false;
+  bool _isLoadingExclusiveDeals = false;
+  String? _error;
+  
+  // Methods for deal management
+}
+```
+
+The DealProvider is responsible for:
+- Fetching and managing various types of deals
+- Tracking loading states for different deal types
+- Providing access to promotional product data
+- Managing error states
+- Notifying listeners of state changes
+
+### Key Methods:
+- `fetchDealsOfTheDay()`: Loads current deals of the day
+- `fetchTopDealProducts()`: Fetches products featured in top deals
+- `fetchExclusiveDeals()`: Retrieves products in exclusive deals
+- `refreshDeals()`: Updates all deal data
+
+## VariationProvider
+Located in `lib/providers/variation_provider.dart`
+
+```dart
+class VariationProvider extends ChangeNotifier {
+  final VariationService _variationService = VariationService();
+  
+  // Variations data
+  List<ProductVariation> _allVariations = [];
+  Map<int, List<ProductVariation>> _productVariations = {};
+  
+  // Loading states
+  bool _isLoading = false;
+  String? _error;
+  
+  // Methods for variation management
+}
+```
+
+The VariationProvider is responsible for:
+- Fetching and caching product variations
+- Managing product-specific variations
+- Tracking loading and error states
+- Notifying listeners of state changes
+
+### Key Methods:
+- `fetchAllVariations()`: Loads all available product variations
+- `fetchVariationsForProduct()`: Gets variations for a specific product
+- `getVariationById()`: Retrieves a specific variation by ID
+
 ## Provider Setup
 
 In `main.dart`, providers are set up at the application root:
@@ -104,6 +169,8 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
+        ChangeNotifierProvider(create: (_) => DealProvider()),
+        ChangeNotifierProvider(create: (_) => VariationProvider()),
       ],
       child: const MyApp(),
     ),

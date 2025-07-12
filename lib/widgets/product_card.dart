@@ -300,44 +300,47 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
               
-              const SizedBox(height: 6),
+              const SizedBox(height: 10), // Increased spacing before buttons
               
               // Action buttons
               Row(
                 children: [
                   // Buy Now button
-                  Container(
-                    height: 30,
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                    decoration: ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                        side: const BorderSide(
-                          width: 1,
-                          color: Color(0xFF316300),
+                  GestureDetector(
+                    onTap: onBuyNowPressed,
+                    child: Container(
+                      height: 36, // Increased height
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Increased padding
+                      decoration: ShapeDecoration(
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(
+                            width: 1,
+                            color: Color(0xFF316300),
+                          ),
+                          borderRadius: BorderRadius.circular(26),
                         ),
-                        borderRadius: BorderRadius.circular(26),
                       ),
-                    ),
-                    child: const Text(
-                      'Buy Now',
-                      style: TextStyle(
-                        color: Color(0xFF316300),
-                        fontSize: 10,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w400,
+                      child: const Text(
+                        'Buy Now',
+                        style: TextStyle(
+                          color: Color(0xFF316300),
+                          fontSize: 12, // Increased font size
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500, // Made text slightly bolder
+                        ),
                       ),
                     ),
                   ),
                   
-                  const SizedBox(width: 4),
+                  const SizedBox(width: 6), // Increased spacing between buttons
                   
                   // Add to Cart button
                   Expanded(
                     child: GestureDetector(
                       onTap: onAddToCartPressed,
                       child: Container(
-                        height: 30,
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                        height: 36, // Increased height
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Increased padding
                         decoration: ShapeDecoration(
                           color: const Color(0xFF316300),
                           shape: RoundedRectangleBorder(
@@ -352,16 +355,16 @@ class ProductCard extends StatelessWidget {
                               Icon(
                                 Icons.shopping_cart_outlined,
                                 color: Colors.white,
-                                size: 12,
+                                size: 14, // Slightly larger icon
                               ),
                               SizedBox(width: 4),
                               Text(
                                 'Add to Cart',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 10,
+                                  fontSize: 12, // Increased font size
                                   fontFamily: 'Poppins',
-                                  fontWeight: FontWeight.w400,
+                                  fontWeight: FontWeight.w500, // Made text slightly bolder
                                 ),
                               ),
                             ],
@@ -372,6 +375,7 @@ class ProductCard extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 8), // Added bottom padding to prevent cutting off
             ],
           ),
         );

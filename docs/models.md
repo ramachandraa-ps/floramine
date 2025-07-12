@@ -69,11 +69,20 @@ class ProductVariation {
   final String defaultPrice;
   final String defaultSellPrice;
   final String discount;
+  final String? dealOfferPrice;
+  final String? dealDiscount;
+  final String? dealTag;
+  final bool isInDeal;
   final int stock;
 }
 ```
 
-Represents different variations of a product (e.g., size, color).
+Represents different variations of a product (e.g., size, color) and includes:
+- Variation identification and naming
+- Templates and values for the variation
+- Pricing information (default, selling price, discounts)
+- Deal-specific information (offer price, discount percentage, promotional tag)
+- Stock availability
 
 #### VariationTemplate
 ```dart
@@ -111,6 +120,31 @@ class ProductResponse {
 ```
 
 Wraps API responses for product listings, including pagination information.
+
+### ProductDetailsResponse
+```dart
+class ProductDetailsResponse {
+  final Product data;
+  final bool status;
+  final String message;
+}
+```
+
+Wraps API responses for detailed product information.
+
+### VariationResponse
+```dart
+class VariationResponse {
+  final List<ProductVariation> data;
+  final bool success;
+  final String message;
+}
+```
+
+Wraps API responses for product variations, including:
+- List of variation data
+- Success status
+- Response message
 
 ### PaginationLinks
 ```dart

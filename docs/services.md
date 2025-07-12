@@ -68,10 +68,70 @@ The ProductService is responsible for:
 - `searchProducts()`: Searches products by query string
 - `filterByPriceRange()`: Filters products by price range
 - `sortProducts()`: Sorts products by specified criteria
+- `getProductDetailsById()`: Fetches detailed information for a specific product
+
+## DealService
+Located in `lib/services/deal_service.dart`
+
+```dart
+class DealService {
+  static const String baseUrl = 'https://erp.floramine.in/api';
+  final http.Client _client;
+
+  // Constructor with optional client parameter for dependency injection
+  DealService({http.Client? client}) : _client = client ?? http.Client();
+  
+  Future<Map<String, dynamic>> getDealsOfTheDay() async {
+    // Fetches deals of the day information
+  }
+  
+  // Additional methods for specialized deal fetching
+}
+```
+
+The DealService is responsible for:
+- Fetching various types of deals and promotions
+- Providing deal-related product information
+- Handling API errors and providing fallback data
+- Supporting dependency injection for testability
+
+### Key Methods:
+- `getDealsOfTheDay()`: Retrieves current deals of the day information
+- `getTopDealProducts()`: Fetches products featured in top deals
+- `getExclusiveDeals()`: Retrieves products in exclusive deals
+- `getMockDealProducts()`: Returns hardcoded deal products for offline use or testing
+- `dispose()`: Cleans up resources when service is no longer needed
+
+## VariationService
+Located in `lib/services/variation_service.dart`
+
+```dart
+class VariationService {
+  final String baseUrl = 'https://erp.floramine.in/api';
+  
+  Future<VariationResponse> getAllVariations() async {
+    // Fetches all available product variations
+  }
+  
+  Future<VariationResponse> getVariationsForProduct(int productId) async {
+    // Gets variations for a specific product
+  }
+}
+```
+
+The VariationService is responsible for:
+- Fetching product variation data (sizes, colors, etc.)
+- Retrieving product-specific variations
+- Providing fallback options when specific variations aren't available
+- Error handling for variation API requests
+
+### Key Methods:
+- `getAllVariations()`: Retrieves all available product variations
+- `getVariationsForProduct()`: Gets variations for a specific product ID
 
 ## API Communication Pattern
 
-Both services follow a similar pattern for API communication:
+All services follow a similar pattern for API communication:
 1. Construct the API URL with query parameters
 2. Make an HTTP request using the `http` package
 3. Parse the JSON response into model objects

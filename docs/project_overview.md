@@ -40,11 +40,21 @@ Floramine is a Flutter-based e-commerce application focused on selling plants, g
 
 ## API Integration
 The app connects to a backend API at `https://erp.floramine.in/api` for:
-- Product catalog
-- Categories
+- Product catalog and filtering
+- Categories and subcategories
+- Product variations (sizes, colors, etc.)
+- Deals and promotions (deals of the day, exclusive deals)
 - User authentication
 - Order processing
+- Shopping cart management
 - Support tickets
+
+### API Services
+The app implements several service classes for API communication:
+- `CategoryService`: Handles fetching category data
+- `ProductService`: Manages product listings with filtering and pagination
+- `DealService`: Retrieves special deals and promotions
+- `VariationService`: Fetches product variations
 
 ## Navigation
 The app uses a combination of:

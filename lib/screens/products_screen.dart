@@ -109,9 +109,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.58, // Adjust for taller product cards
+        childAspectRatio: 0.52, // Adjusted for taller product cards with more prominent buttons
         crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
+        mainAxisSpacing: 20, // Increased spacing between rows
       ),
       itemCount: products.length,
       shrinkWrap: true,

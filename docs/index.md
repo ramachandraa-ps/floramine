@@ -25,6 +25,7 @@ The app provides a comprehensive plant and gardening supplies catalog with:
 - Search functionality
 - Filtering and sorting options
 - Detailed product information
+- Product variations (sizes, colors, etc.)
 
 ### Shopping Experience
 Users can shop for plants and related products with:
@@ -32,6 +33,14 @@ Users can shop for plants and related products with:
 - Checkout process
 - Order tracking
 - Payment method management
+
+### Deals and Promotions
+The app features various promotional offerings:
+- Deals of the day
+- Exclusive deals
+- Special discounts
+- Limited-time offers
+- Top deal products
 
 ### Special Features
 The app includes specialized features for plant enthusiasts:
