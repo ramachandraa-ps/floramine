@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'providers/category_provider.dart';
 import 'providers/product_provider.dart';
 import 'providers/deal_provider.dart';
+import 'providers/variation_provider.dart';
 import 'splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
@@ -48,6 +49,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => DealProvider()),
+        ChangeNotifierProvider(create: (_) => VariationProvider()),
       ],
       child: const MyApp(),
     ),

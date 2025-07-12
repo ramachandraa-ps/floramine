@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/product_model.dart';
+import '../../models/variation_model.dart';
+import 'variation_selector.dart';
 
 class ProductDetailBelowImage extends StatelessWidget {
   final Product? product;
@@ -220,95 +222,15 @@ class ProductDetailBelowImage extends StatelessWidget {
         
         const SizedBox(height: 20),
         
-        // Size selection
-        Row(
-          children: [
-            const Text(
-              'Select Size',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 12,
-                fontFamily: 'Cabin',
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            
-            const SizedBox(width: 10),
-            
-            // Size options
-            Container(
-              padding: const EdgeInsets.all(2),
-              decoration: ShapeDecoration(
-                color: const Color(0xFFEAEAEA),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: Row(
-                children: [
-                  // Small size
-                  _buildSizeOption('S', false),
-                  
-                  // Medium size (selected)
-                  _buildSizeOption('M', true),
-                  
-                  // Large size
-                  _buildSizeOption('L', false),
-                ],
-              ),
-            ),
-          ],
-        ),
-        
-        const SizedBox(height: 20),
-        
-        // Color selection
-        Row(
-          children: [
-            const Text(
-              'Select Colour',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 12,
-                fontFamily: 'Cabin',
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            
-            const SizedBox(width: 10),
-            
-            // Color options
-            Container(
-              padding: const EdgeInsets.all(2),
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: Row(
-                children: [
-                  // White color (selected)
-                  _buildColorOption(Colors.white, true),
-                  
-                  const SizedBox(width: 10),
-                  
-                  // Black color
-                  _buildColorOption(Colors.black, false),
-                  
-                  const SizedBox(width: 10),
-                  
-                  // Red color
-                  _buildColorOption(const Color(0xFF8D0000), false),
-                  
-                  const SizedBox(width: 10),
-                  
-                  // Blue color
-                  _buildColorOption(const Color(0xFF002D61), false),
-                ],
-              ),
-            ),
-          ],
-        ),
+        // Variation selector for size and color
+        if (product != null)
+          VariationSelector(
+            productId: product!.id,
+            onVariationsSelected: (selectedVariations) {
+              // Handle selected variations
+              print('Selected variations: $selectedVariations');
+            },
+          ),
         
         const SizedBox(height: 20),
         
@@ -531,52 +453,6 @@ class ProductDetailBelowImage extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  // Helper method to build size option
-  Widget _buildSizeOption(String size, bool isSelected) {
-    return Container(
-      width: 30,
-      height: 30,
-      decoration: ShapeDecoration(
-        color: isSelected ? Colors.white : Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),
-      child: Center(
-        child: Text(
-          size,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 12,
-            fontFamily: 'Cabin',
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Helper method to build color option
-  Widget _buildColorOption(Color color, bool isSelected) {
-    return Container(
-      width: 30,
-      height: 30,
-      decoration: ShapeDecoration(
-        color: color,
-        shape: RoundedRectangleBorder(
-          side: isSelected 
-              ? const BorderSide(
-                  width: 1,
-                  color: Color(0xFF316300),
-                )
-              : BorderSide.none,
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),
     );
   }
 }
