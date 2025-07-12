@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/bottom_navigation_bar.dart';
 import 'deal_of_the_day_screen.dart';
+import '../providers/deal_provider.dart';
+import 'package:provider/provider.dart';
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({Key? key}) : super(key: key);
@@ -15,13 +17,18 @@ class NotificationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Load deal information when the screen is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<DealProvider>(context, listen: false).loadDealProducts();
+    });
+
     return Scaffold(
+      backgroundColor: const Color(0xFFFAFAF0), // Light cream background
       body: Column(
         children: [
           // Header with gradient background and back button
           Container(
             width: double.infinity,
-            height: 110,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment(0.00, 0.50),
@@ -30,8 +37,9 @@ class NotificationScreen extends StatelessWidget {
               ),
             ),
             child: SafeArea(
+              bottom: false,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16),
                 child: Row(
                   children: [
                     // Back button
@@ -78,30 +86,29 @@ class NotificationScreen extends StatelessWidget {
           // Notification list - Expanded to take remaining space
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.all(0),
+              padding: EdgeInsets.zero,
               children: [
                 // Deal of the Day Card
-                _buildDealOfTheDayCard(context),
+                Consumer<DealProvider>(
+                  builder: (context, dealProvider, child) {
+                    return _buildDealOfTheDayCard(context, dealProvider);
+                  },
+                ),
                 
-                const SizedBox(height: 16),
-                
-                // Regular notifications section with padding
+                // Regular notifications section
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Divider(color: Color(0x1A000000), height: 1),
-                      const SizedBox(height: 8),
-                      
                       // Regular notifications
-                      for (int i = 0; i < 10; i++) ...[
+                      for (int i = 0; i < 5; i++) ...[
                         _buildNotificationItem(
                           'Your Item is delivered. It will be delivered soon',
                           'Mar 25, 2025',
                           'assets/images/jasminum_sambac.png',
                         ),
-                        if (i < 9) const Divider(color: Color(0x1A000000), height: 1),
+                        if (i < 4) const Divider(color: Color(0x1A000000), height: 1),
                       ],
                     ],
                   ),
@@ -126,10 +133,41 @@ class NotificationScreen extends StatelessWidget {
     );
   }
   
-  // Deal of the Day Card
-  Widget _buildDealOfTheDayCard(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+  // Completely reimplemented Deal of the Day Card
+  Widget _buildDealOfTheDayCard(BuildContext context, DealProvider dealProvider) {
+    // Extract deal data
+    final dealInfo = dealProvider.dealInfo;
+    final isLoading = dealProvider.isLoading;
     
+    // Default values
+    String dealName = "Best Deals";
+    String? bannerImage;
+    int hours = 0;
+    int minutes = 0;
+    int seconds = 0;
+    
+    // Update with actual data if available
+    if (dealInfo != null) {
+      dealName = dealInfo['name'] ?? "Best Deals";
+      
+      if (dealInfo['banner_image'] != null) {
+        bannerImage = 'https://erp.floramine.in/${dealInfo['banner_image']}';
+      }
+      
+      // Calculate remaining time if end date is available
+      if (dealInfo['end_date'] != null) {
+        final endDate = DateTime.parse(dealInfo['end_date']);
+        final now = DateTime.now();
+        final difference = endDate.difference(now);
+        
+        if (!difference.isNegative) {
+          hours = difference.inHours;
+          minutes = difference.inMinutes.remainder(60);
+          seconds = difference.inSeconds.remainder(60);
+        }
+      }
+    }
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -138,219 +176,156 @@ class NotificationScreen extends StatelessWidget {
         );
       },
       child: Container(
-        width: double.infinity,
-        height: 140, // Adjusted height to prevent overflow
-        margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: const Color(0xFFF9F3F3),
-          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withOpacity(0.05),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
           ],
         ),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            // Left plant decoration
-            Positioned(
-              left: -8,
-              bottom: 0,
-              child: Image.asset(
-                'assets/images/deal_of_the_day/left_bottom.png',
-                width: 70,
-                height: 70,
-                fit: BoxFit.contain,
-              ),
-            ),
-            
-            // Right plant decoration
-            Positioned(
-              right: -5,
-              top: -15,
-              child: Image.asset(
-                'assets/images/deal_of_the_day/right_top.png',
-                width: 70,
-                height: 70,
-                fit: BoxFit.contain,
-              ),
-            ),
-            
-            // Content layout
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Left section - Deal of the Day and text
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Logo/text
-                        Image.asset(
-                          'assets/images/deal_of_the_day/deal_of_the_day.png',
-                          width: 140,
-                          height: 70,
-                          fit: BoxFit.contain,
+        child: isLoading 
+          ? const SizedBox(
+              height: 100,
+              child: Center(child: CircularProgressIndicator(color: Color(0xFF54A801))),
+            )
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Content row with image and timer
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Image on left - using actual deal image or placeholder
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: bannerImage != null
+                            ? Image.network(
+                                bannerImage,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                    'assets/images/deal_of_the_day/deal_of_the_day.png',
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              )
+                            : Image.asset(
+                                'assets/images/deal_of_the_day/deal_of_the_day.png',
+                                fit: BoxFit.cover,
+                              ),
                         ),
-                        const SizedBox(height: 4),
-                        const Text(
-                          "Today's Green Highlight",
-                          style: TextStyle(
-                            color: Color(0xFF316300),
-                            fontSize: 14,
-                            fontFamily: 'Cabin',
-                            fontWeight: FontWeight.w600,
+                      ),
+                      
+                      const SizedBox(width: 16),
+                      
+                      // Timer with green background - matching screenshot
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF54A801),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Hours
+                              _buildTimerBlock(hours, "h"),
+                              _buildTimerDot(),
+                              
+                              // Minutes
+                              _buildTimerBlock(minutes, "m"),
+                              _buildTimerDot(),
+                              
+                              // Seconds
+                              _buildTimerBlock(seconds, "s"),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  
-                  const SizedBox(width: 10),
-                  
-                  // Right side - Timer box
-                  Container(
-                    width: screenWidth * 0.3,
-                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF54A801),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Hours
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              '24',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              'Hrs',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        
-                        const SizedBox(height: 4),
-                        
-                        // Minutes
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              '02',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              'Min',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                        
-                        const SizedBox(height: 4),
-                        
-                        // Seconds
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              '26',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              'Sec',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            
-            // Arrow button
-            Positioned(
-              right: 10,
-              top: 10,
-              child: Container(
-                width: 26,
-                height: 26,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                ),
-                child: const Center(
-                  child: Icon(
-                    Icons.chevron_right,
-                    color: Color(0xFF54A801),
-                    size: 22,
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ),
-            
-            // Yellow strip at bottom
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                height: 6,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFFEE08),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
+                
+                // Deal name text
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      dealName,
+                      style: const TextStyle(
+                        color: Color(0xFF316300),
+                        fontSize: 18,
+                        fontFamily: 'Cabin',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                
+                // Yellow strip at bottom
+                Container(
+                  height: 4,
+                  color: const Color(0xFFFFEE08),
+                ),
+              ],
             ),
-          ],
+      ),
+    );
+  }
+  
+  // Helper method to build timer block with value and label
+  Widget _buildTimerBlock(int value, String label) {
+    return Expanded(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            value.toString().padLeft(2, '0'),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 26,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w700,
+              height: 1.0,
+            ),
+          ),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  // Helper method to build timer dot separator
+  Widget _buildTimerDot() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 2),
+      child: Text(
+        ".",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 26,
+          fontWeight: FontWeight.w700,
+          height: 0.5,
         ),
       ),
     );
@@ -359,14 +334,14 @@ class NotificationScreen extends StatelessWidget {
   // Helper method to build a notification item
   Widget _buildNotificationItem(String message, String date, String imageAsset) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Notification image
           Container(
-            width: 35,
-            height: 35,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               image: DecorationImage(
@@ -375,7 +350,7 @@ class NotificationScreen extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           
           // Notification content
           Expanded(
@@ -396,9 +371,9 @@ class NotificationScreen extends StatelessWidget {
                   date,
                   style: TextStyle(
                     color: Colors.black.withOpacity(0.5),
-                    fontSize: 10,
+                    fontSize: 12,
                     fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
