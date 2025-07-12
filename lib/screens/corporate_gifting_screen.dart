@@ -3,9 +3,59 @@ import '../widgets/corporate_gifting/corporate_gift_form.dart';
 import '../widgets/corporate_gifting/explore_gifts_section.dart';
 import '../widgets/corporate_gifting/personalized_gifting_section.dart';
 import '../widgets/corporate_gifting/corporate_testimonials_section.dart';
+import '../models/corporate_gift_model.dart';
+import '../services/corporate_gift_service.dart';
+import 'dart:developer' as developer;
 
-class CorporateGiftingScreen extends StatelessWidget {
+class CorporateGiftingScreen extends StatefulWidget {
   const CorporateGiftingScreen({Key? key}) : super(key: key);
+
+  @override
+  State<CorporateGiftingScreen> createState() => _CorporateGiftingScreenState();
+}
+
+class _CorporateGiftingScreenState extends State<CorporateGiftingScreen> {
+  // Add state variables for API data
+  final CorporateGiftService _corporateGiftService = CorporateGiftService();
+  List<CorporateGift> _corporateGifts = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCorporateGifts();
+  }
+
+  // Fetch corporate gifts from API
+  Future<void> _fetchCorporateGifts() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final response = await _corporateGiftService.fetchCorporateGifts();
+      
+      if (response.success) {
+        setState(() {
+          _corporateGifts = response.data;
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _errorMessage = response.message;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Failed to load corporate gifts: $e';
+        _isLoading = false;
+      });
+      developer.log('Error fetching corporate gifts: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,46 +72,15 @@ class CorporateGiftingScreen extends StatelessWidget {
               
               // Explore Gifts Section
               ExploreGiftsSection(
-                giftProducts: [
-                  {
-                    'imageUrl': 'assets/images/plants/plant_1.png',
-                    'title': 'Corporate Gift Hamper - Eco-Friendly',
-                    'currentPrice': '₹1,499',
-                    'originalPrice': '₹1,999',
-                    'tags': ['Eco-Friendly', 'Branded'],
-                    'hasDiscount': true,
-                    'discountText': 'Save 25%'
-                  },
-                  {
-                    'imageUrl': 'assets/images/plants/plant_2.png',
-                    'title': 'Premium Plant Gift Box',
-                    'currentPrice': '₹2,499',
-                    'originalPrice': '₹2,999',
-                    'tags': ['Premium', 'Custom'],
-                    'hasDiscount': true,
-                    'discountText': 'Save 15%'
-                  },
-                  {
-                    'imageUrl': 'assets/images/plants/plant_3.png',
-                    'title': 'Desktop Plant Collection',
-                    'currentPrice': '₹999',
-                    'originalPrice': '₹1,299',
-                    'tags': ['Desktop', 'Office'],
-                    'hasDiscount': true,
-                    'discountText': 'Save 20%'
-                  },
-                  {
-                    'imageUrl': 'assets/images/plants/plant_4.png',
-                    'title': 'Executive Plant Gift Set',
-                    'currentPrice': '₹3,499',
-                    'originalPrice': '₹3,999',
-                    'tags': ['Executive', 'Premium'],
-                    'hasDiscount': true,
-                    'discountText': 'Save 10%'
-                  },
-                ],
+                gifts: _corporateGifts,
+                isLoading: _isLoading,
+                errorMessage: _errorMessage,
+                onRetry: _fetchCorporateGifts,
                 onViewAllTap: () {
                   // Navigate to all corporate gifts
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('View all corporate gifts')),
+                  );
                 },
               ),
               
@@ -196,7 +215,7 @@ class Rectangle135 extends StatelessWidget {
                                         ),
                                       ),
                                       const TextSpan(
-                                        text: '"Indoor Plants"',
+                                        text: '"Corporate Gifts"',
                                         style: TextStyle(
                                           color: Color(0x7F622700),
                                           fontSize: 11,
