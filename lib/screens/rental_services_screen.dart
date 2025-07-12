@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/search_bar.dart';
+import '../widgets/testimonials/testimonial_section.dart';
 
 class RentalServicesScreen extends StatelessWidget {
   const RentalServicesScreen({Key? key}) : super(key: key);
@@ -875,217 +876,37 @@ class RentalTestimonialsSection extends StatelessWidget {
     
     return Container(
       width: contentWidth,
-      padding: const EdgeInsets.symmetric(vertical: 50),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Section title
-          const SizedBox(
-            width: 400,
-            child: Text(
-              'What Our Rental Customers Say',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 40,
-                fontFamily: 'Cabin',
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 30),
-
-          // Horizontal scrolling testimonial cards
-          SizedBox(
-            height: 220,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                _buildTestimonialCard(
-                  name: 'Sarath Kumar',
-                  rating: 5,
-                  review:
-                      '"The plants transformed our corporate event. Everyone was impressed with the quality and arrangement. The team was professional and punctual."',
-                  imageUrl: 'assets/images/testimonials/user1.png',
-                ),
-                const SizedBox(width: 20),
-                _buildTestimonialCard(
-                  name: 'Priya Sharma',
-                  rating: 5,
-                  review:
-                      '"We rented plants for our wedding and they were absolutely stunning. The setup was perfect and the plants were healthy and vibrant."',
-                  imageUrl: 'assets/images/testimonials/user2.png',
-                ),
-                const SizedBox(width: 20),
-                _buildTestimonialCard(
-                  name: 'Rahul Verma',
-                  rating: 4,
-                  review:
-                      '"Great service for our office space. The monthly maintenance keeps everything looking fresh, and they\'re quick to replace any plants that don\'t thrive."',
-                  imageUrl: 'assets/images/testimonials/user3.png',
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 30),
-
-          // Write a review button
-          Container(
-            height: 40,
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
-            clipBehavior: Clip.antiAlias,
-            decoration: ShapeDecoration(
-              shape: RoundedRectangleBorder(
-                side: const BorderSide(width: 1),
-                borderRadius: BorderRadius.circular(26),
-              ),
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Share your experience',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 14,
-                    fontFamily: 'Cabin',
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ],
-            ),
-          ),
+      child: TestimonialSection(
+        title: 'What Our Rental Customers Say',
+        testimonials: [
+          {
+            'name': 'Sarath Kumar',
+            'rating': 5,
+            'review': '"The plants transformed our corporate event. Everyone was impressed with the quality and arrangement. The team was professional and punctual."',
+            'image': 'assets/images/testimonials/user1.png',
+          },
+          {
+            'name': 'Priya Sharma',
+            'rating': 5,
+            'review': '"We rented plants for our wedding and they were absolutely stunning. The setup was perfect and the plants were healthy and vibrant."',
+            'image': 'assets/images/testimonials/user2.png',
+          },
+          {
+            'name': 'Rahul Verma',
+            'rating': 4,
+            'review': '"Great service for our office space. The monthly maintenance keeps everything looking fresh, and they\'re quick to replace any plants that don\'t thrive."',
+            'image': 'assets/images/testimonials/user3.png',
+          },
         ],
-      ),
-    );
-  }
-
-  Widget _buildTestimonialCard({
-    required String name,
-    required int rating,
-    required String review,
-    required String imageUrl,
-  }) {
-    return Container(
-      width: 300,
-      padding: const EdgeInsets.all(20),
-      decoration: ShapeDecoration(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            width: 1,
-            color: Colors.black.withOpacity(0.10),
-          ),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        shadows: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // User info row with image, name and rating
-          Row(
-            children: [
-              // User image
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: AssetImage(imageUrl),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-
-              const SizedBox(width: 15),
-
-              // Name and rating column
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Name
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-
-                    const SizedBox(height: 5),
-
-                    // Rating with star icon
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: ShapeDecoration(
-                        color: Colors.black.withOpacity(0.05),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(17),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            color: Color(0xFFFFD700), // Gold color for star
-                            size: 16,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '$rating Star',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black.withOpacity(0.50),
-                              fontSize: 14,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 15),
-
-          // Review text
-          Text(
-            review,
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 14,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w400,
-            ),
-            maxLines: 4,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+        onWriteReviewTap: () {
+          // Handle write review action
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Write a review feature coming soon!')),
+          );
+        },
+        showWriteReviewButton: true,
+        cardWidth: 300,
+        sectionHeight: 220,
       ),
     );
   }

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../widgets/special_day_gifts/gift_products_section_title.dart';
 import '../widgets/special_day_gifts/gift_product_grid.dart';
 import '../widgets/filter_widget.dart';
+import '../models/gift_category_model.dart';
+import '../services/gift_service.dart';
+import 'dart:developer' as developer;
 
 class SpecialDayGiftsScreen extends StatefulWidget {
   const SpecialDayGiftsScreen({Key? key}) : super(key: key);
@@ -11,8 +14,86 @@ class SpecialDayGiftsScreen extends StatefulWidget {
 }
 
 class _SpecialDayGiftsScreenState extends State<SpecialDayGiftsScreen> {
-  // Add state variable for filter overlay
-  bool _showFilterOverlay = false;
+  // Add state variables
+  bool _isLoadingCategories = true;
+  bool _isLoadingProducts = true;
+  String? _errorCategoriesMessage;
+  String? _errorProductsMessage;
+  List<GiftCategory> _giftCategories = [];
+  List<GiftProduct> _giftProducts = [];
+  GiftCategory? _selectedCategory;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchGiftCategories();
+  }
+
+  Future<void> _fetchGiftCategories() async {
+    try {
+      setState(() {
+        _isLoadingCategories = true;
+        _errorCategoriesMessage = null;
+      });
+
+      final response = await GiftService.fetchGiftCategories();
+      
+      setState(() {
+        _giftCategories = response.data;
+        _isLoadingCategories = false;
+      });
+      
+      // Log the fetched data for debugging
+      developer.log('Fetched ${_giftCategories.length} gift categories');
+      for (var category in _giftCategories) {
+        developer.log('Category: ${category.name}, Image: ${category.image}');
+      }
+      
+      // If categories were fetched successfully, load products for the first category
+      if (_giftCategories.isNotEmpty) {
+        _selectCategory(_giftCategories.first);
+      }
+    } catch (e) {
+      developer.log('Error fetching gift categories: $e');
+      setState(() {
+        _errorCategoriesMessage = e.toString();
+        _isLoadingCategories = false;
+      });
+    }
+  }
+  
+  Future<void> _fetchProductsForCategory(GiftCategory category) async {
+    try {
+      setState(() {
+        _isLoadingProducts = true;
+        _errorProductsMessage = null;
+      });
+      
+      developer.log('Fetching products for category: ${category.name} with slug: ${category.slug}');
+      final response = await GiftService.fetchGiftCategoryProducts(category.slug);
+      
+      setState(() {
+        _giftProducts = response.products;
+        _isLoadingProducts = false;
+      });
+      
+      developer.log('Fetched ${_giftProducts.length} products for category: ${category.name}');
+    } catch (e) {
+      developer.log('Error fetching products for category ${category.name}: $e');
+      setState(() {
+        _errorProductsMessage = e.toString();
+        _isLoadingProducts = false;
+        _giftProducts = [];
+      });
+    }
+  }
+  
+  void _selectCategory(GiftCategory category) {
+    setState(() {
+      _selectedCategory = category;
+    });
+    _fetchProductsForCategory(category);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -160,55 +241,33 @@ class _SpecialDayGiftsScreenState extends State<SpecialDayGiftsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Gift categories
-                        HorizontalGiftCategoriesList(),
-                        
-                        // Filter button
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _showFilterOverlay = true;
-                              });
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              decoration: BoxDecoration(
-                                border: Border.all(width: 1, color: Colors.black),
-                                borderRadius: BorderRadius.circular(26),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: const [
-                                  Text(
-                                    'Filter',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                      fontFamily: 'Poppins',
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  SizedBox(width: 5),
-                                  Icon(Icons.keyboard_arrow_down, size: 18),
-                                ],
-                              ),
-                            ),
-                          ),
+                        HorizontalGiftCategoriesList(
+                          isLoading: _isLoadingCategories,
+                          errorMessage: _errorCategoriesMessage,
+                          giftCategories: _giftCategories,
+                          onRetry: _fetchGiftCategories,
+                          selectedCategory: _selectedCategory,
+                          onCategorySelected: _selectCategory,
                         ),
                         
                         // Products section title
-                        const GiftProductsSectionTitle(
-                          title: 'Special Day Gift Plants',
+                        GiftProductsSectionTitle(
+                          title: _selectedCategory != null 
+                              ? '${_selectedCategory!.name} Gift Plants' 
+                              : 'Special Day Gift Plants',
                           description: 'Perfect plants to celebrate special moments and occasions with your loved ones.',
                         ),
                         
                         // Product grid
                         GiftProductGrid(
-                          onFilterPressed: () {
-                            setState(() {
-                              _showFilterOverlay = true;
-                            });
+                          onFilterPressed: () {},  // This is now handled internally in the GiftProductGrid
+                          products: _giftProducts,
+                          isLoading: _isLoadingProducts,
+                          errorMessage: _errorProductsMessage,
+                          onRetry: () {
+                            if (_selectedCategory != null) {
+                              _fetchProductsForCategory(_selectedCategory!);
+                            }
                           },
                         ),
                         
@@ -219,29 +278,6 @@ class _SpecialDayGiftsScreenState extends State<SpecialDayGiftsScreen> {
                 ),
               ],
             ),
-          ),
-          
-          // Filter overlay
-          FilterWidget(
-            showOverlay: _showFilterOverlay,
-            onClose: () {
-              setState(() {
-                _showFilterOverlay = false;
-              });
-            },
-            onApplyFilters: (filterValues) {
-              // Apply filters to the products
-              // This is where you would filter your product list based on selected filters
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Filters applied')),
-              );
-            },
-            onClearFilters: () {
-              // Clear all filters
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Filters cleared')),
-              );
-            },
           ),
         ],
       ),
@@ -256,6 +292,7 @@ class CustomHorizontalProductCard extends StatelessWidget {
   final VoidCallback? onTap;
   final bool isRounded;
   final bool isAsset;
+  final bool isSelected;
 
   const CustomHorizontalProductCard({
     Key? key,
@@ -264,6 +301,7 @@ class CustomHorizontalProductCard extends StatelessWidget {
     this.onTap,
     this.isRounded = false,
     this.isAsset = true,
+    this.isSelected = false,
   }) : super(key: key);
 
   @override
@@ -285,6 +323,9 @@ class CustomHorizontalProductCard extends StatelessWidget {
                 borderRadius: isRounded
                     ? BorderRadius.circular(500)
                     : BorderRadius.circular(8),
+                border: isSelected
+                    ? Border.all(color: Color(0xFF54A801), width: 3)
+                    : null,
               ),
               child: ClipRRect(
                 borderRadius: isRounded
@@ -308,6 +349,7 @@ class CustomHorizontalProductCard extends StatelessWidget {
                         imageUrl,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
+                          developer.log('Error loading image: $imageUrl, error: $error');
                           return Container(
                             color: Colors.grey[300],
                             child: Icon(
@@ -328,11 +370,11 @@ class CustomHorizontalProductCard extends StatelessWidget {
               child: Text(
                 title,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.black,
+                style: TextStyle(
+                  color: isSelected ? Color(0xFF54A801) : Colors.black,
                   fontSize: 14,
                   fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                   height: 1.2,
                 ),
                 maxLines: 2,
@@ -347,10 +389,135 @@ class CustomHorizontalProductCard extends StatelessWidget {
 }
 
 class HorizontalGiftCategoriesList extends StatelessWidget {
+  final bool isLoading;
+  final String? errorMessage;
+  final List<GiftCategory> giftCategories;
+  final VoidCallback onRetry;
+  final GiftCategory? selectedCategory;
+  final Function(GiftCategory) onCategorySelected;
+
+  const HorizontalGiftCategoriesList({
+    Key? key,
+    required this.isLoading,
+    required this.errorMessage,
+    required this.giftCategories,
+    required this.onRetry,
+    this.selectedCategory,
+    required this.onCategorySelected,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    // List of gift categories data
-    final List<Map<String, dynamic>> giftCategories = [
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 20, bottom: 15),
+            child: Text(
+              'Gift Categories',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 24,
+                fontFamily: 'Cabin',
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          Container(
+            height: 160,
+            child: isLoading
+                ? _buildLoadingState()
+                : errorMessage != null
+                    ? _buildErrorState(errorMessage!, onRetry)
+                    : _buildCategoriesList(giftCategories),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return Center(
+      child: CircularProgressIndicator(
+        color: Color(0xFF54A801),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(String errorMessage, VoidCallback onRetry) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'Failed to load categories',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            errorMessage,
+            style: TextStyle(fontSize: 14),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: onRetry,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF54A801),
+            ),
+            child: Text('Retry'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoriesList(List<GiftCategory> categories) {
+    if (categories.isEmpty) {
+      return Center(
+        child: Text(
+          'No gift categories available',
+          style: TextStyle(fontSize: 16),
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
+          children: [
+            for (var category in categories)
+              Padding(
+                padding: const EdgeInsets.only(right: 20.0),
+                child: CustomHorizontalProductCard(
+                  imageUrl: category.image,
+                  title: category.name,
+                  isRounded: true,
+                  isAsset: false,
+                  isSelected: selectedCategory?.id == category.id,
+                  onTap: () {
+                    // Handle tap for each gift category
+                    developer.log('Tapped on ${category.name} with ID: ${category.id}');
+                    onCategorySelected(category);
+                  },
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Fallback categories in case the API fails
+  Widget _buildFallbackCategories() {
+    final List<Map<String, dynamic>> fallbackCategories = [
       {
         'title': 'Birthdays',
         'imageUrl': 'assets/images/special_day_gifts/birthdays.png',
@@ -373,51 +540,28 @@ class HorizontalGiftCategoriesList extends StatelessWidget {
       },
     ];
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 20, bottom: 15),
-            child: Text(
-              'Gift Categories',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 24,
-                fontFamily: 'Cabin',
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          Container(
-            height: 160,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  children: [
-                    for (var category in giftCategories)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20.0),
-                        child: CustomHorizontalProductCard(
-                          imageUrl: category['imageUrl'],
-                          title: category['title'],
-                          isRounded: category['isRounded'],
-                          isAsset: true,
-                          onTap: () {
-                            // Handle tap for each gift category
-                            print('Tapped on ${category['title']}');
-                          },
-                        ),
-                      ),
-                  ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
+          children: [
+            for (var category in fallbackCategories)
+              Padding(
+                padding: const EdgeInsets.only(right: 20.0),
+                child: CustomHorizontalProductCard(
+                  imageUrl: category['imageUrl'],
+                  title: category['title'],
+                  isRounded: category['isRounded'],
+                  isAsset: true,
+                  onTap: () {
+                    // Handle tap for each gift category
+                    developer.log('Tapped on ${category['title']}');
+                  },
                 ),
               ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
