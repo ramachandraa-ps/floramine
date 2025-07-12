@@ -18,6 +18,7 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
   int minutes = 02;
   int seconds = 26;
   late Timer _timer;
+  DateTime? _endDate;
 
   @override
   void initState() {
@@ -25,8 +26,17 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
     _startTimer();
     
     // Load deal products when the screen initializes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<DealProvider>(context, listen: false).loadDealProducts();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final dealProvider = Provider.of<DealProvider>(context, listen: false);
+      await dealProvider.loadDealProducts();
+      
+      // Get the end date from the deal info
+      if (dealProvider.dealInfo != null && dealProvider.dealInfo!['end_date'] != null) {
+        setState(() {
+          _endDate = DateTime.parse(dealProvider.dealInfo!['end_date']);
+          _updateTimeRemaining();
+        });
+      }
     });
   }
 
@@ -35,27 +45,54 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
     _timer.cancel();
     super.dispose();
   }
+  
+  void _updateTimeRemaining() {
+    if (_endDate == null) return;
+    
+    final now = DateTime.now();
+    final difference = _endDate!.difference(now);
+    
+    if (difference.isNegative) {
+      // Deal has ended
+      setState(() {
+        hours = 0;
+        minutes = 0;
+        seconds = 0;
+      });
+      return;
+    }
+    
+    setState(() {
+      hours = difference.inHours;
+      minutes = difference.inMinutes.remainder(60);
+      seconds = difference.inSeconds.remainder(60);
+    });
+  }
 
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        if (seconds > 0) {
-          seconds--;
-        } else {
-          if (minutes > 0) {
-            minutes--;
-            seconds = 59;
+      if (_endDate != null) {
+        _updateTimeRemaining();
+      } else {
+        setState(() {
+          if (seconds > 0) {
+            seconds--;
           } else {
-            if (hours > 0) {
-              hours--;
-              minutes = 59;
+            if (minutes > 0) {
+              minutes--;
               seconds = 59;
             } else {
-              _timer.cancel();
+              if (hours > 0) {
+                hours--;
+                minutes = 59;
+                seconds = 59;
+              } else {
+                _timer.cancel();
+              }
             }
           }
-        }
-      });
+        });
+      }
     });
   }
 
@@ -63,6 +100,18 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final dealProvider = Provider.of<DealProvider>(context);
+    
+    // Get deal name from API response
+    String dealName = "Today's Green Highlight";
+    String? bannerImage;
+    
+    if (dealProvider.dealInfo != null) {
+      dealName = dealProvider.dealInfo!['name'] ?? "Today's Green Highlight";
+      
+      if (dealProvider.dealInfo!['banner_image'] != null) {
+        bannerImage = 'https://erp.floramine.in/${dealProvider.dealInfo!['banner_image']}';
+      }
+    }
     
     return Scaffold(
       body: SingleChildScrollView(
@@ -245,6 +294,8 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
                 minutes: minutes,
                 seconds: seconds,
                 screenWidth: screenWidth,
+                dealName: dealName,
+                bannerImage: bannerImage,
               ),
             ),
             
@@ -265,15 +316,17 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
                 ),
               )
             else
-              // Top Deals on Plants Section
+              // Deal Products Section
               _buildProductSection(
-                'Top Deals on Plants',
+                dealName,
                 _buildDealProductCards(dealProvider.dealProducts),
               ),
             
             const SizedBox(height: 10),
             
-            _buildViewAllButton(),
+            // View All Products button
+            if (dealProvider.dealProducts.isNotEmpty)
+              _buildViewAllButton(),
             
             // Top Deals on Bulk Gifts Section
             Container(
@@ -382,34 +435,9 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
 
   // Helper method to build product cards from API data
   List<Widget> _buildDealProductCards(List<Product> products) {
-    // If no products, return placeholder cards
+    // If no products, return an empty list
     if (products.isEmpty) {
-      return [
-        PlantProductCard(
-          imageAsset: 'assets/images/plants/jasmine.png',
-          name: 'Jasminum sambac, Mogra, Arabian Jasmine - Plant',
-          currentPrice: 299,
-          originalPrice: 350,
-          discountPercentage: 15,
-          isAirPurifying: true,
-          isPerfectGift: true,
-          onBuyNowPressed: () {},
-          onAddToCartPressed: () {},
-          onFavoritePressed: () {},
-        ),
-        PlantProductCard(
-          imageAsset: 'assets/images/plants/rose.png',
-          name: 'Miniature Rose, Button Rose (Any Color) - Plant',
-          currentPrice: 299,
-          originalPrice: 350,
-          discountPercentage: 15,
-          isAirPurifying: true,
-          isPerfectGift: true,
-          onBuyNowPressed: () {},
-          onAddToCartPressed: () {},
-          onFavoritePressed: () {},
-        ),
-      ];
+      return [];
     }
 
     // Otherwise, build cards from API data
@@ -432,8 +460,6 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
           double defaultPrice = double.parse(defaultPriceStr);
           double defaultSellPrice = double.parse(defaultSellPriceStr);
           
-          print("Raw price values - Default price: $defaultPrice, Default sell price: $defaultSellPrice");
-          
           // Set current price to default sell price
           currentPrice = defaultSellPrice;
           
@@ -442,11 +468,9 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
           // 2. If default_price is 0 or less than sell price, create a synthetic original price
           if (defaultPrice > 0 && defaultPrice > defaultSellPrice) {
             originalPrice = defaultPrice;
-            print("Using actual default_price as original price: $originalPrice");
           } else {
             // If default price is 0 or less than sell price, create a synthetic original price
             originalPrice = defaultSellPrice * 1.05;
-            print("Created synthetic original price: $originalPrice (5% above sell price)");
           }
           
           // If the product is in a deal and has a deal offer price, use that instead
@@ -458,28 +482,18 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
             if (dealOfferPrice < defaultSellPrice) {
               currentPrice = dealOfferPrice;
               originalPrice = defaultSellPrice; // Original price becomes the default sell price
-              print("Using deal price: $currentPrice (original was $originalPrice)");
             }
           }
-          
-          // Debug output to verify values
-          print("Product: ${product.name}");
-          print("Default price: ${variation.defaultPrice}, Default sell price: ${variation.defaultSellPrice}");
-          print("Final prices - Original: $originalPrice, Current: $currentPrice");
-          print("Is in deal: ${variation.isInDeal}");
           
           // Parse discount percentage
           if (variation.dealDiscount != null && variation.dealDiscount!.isNotEmpty) {
             String discountStr = variation.dealDiscount!.replaceAll('%', '').trim();
             discountPercentage = double.parse(discountStr);
-            print("Using provided discount percentage: $discountPercentage%");
           } else if (originalPrice > 0 && currentPrice > 0 && originalPrice > currentPrice) {
             // Calculate discount if not provided
             discountPercentage = ((originalPrice - currentPrice) / originalPrice) * 100;
-            print("Calculated discount percentage: $discountPercentage%");
           }
         } catch (e) {
-          print("Error parsing prices for ${product.name}: $e");
           // Fallback values
           originalPrice = 25.0;
           currentPrice = 23.75;
@@ -487,26 +501,25 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
         }
       }
 
-      // Get the first image URL or use a placeholder
-      String imageUrl = product.images.isNotEmpty 
-          ? product.images.first 
-          : 'assets/images/plants/default_plant.png';
+      // Get the image URL or use a placeholder
+      // Check if the image URL is the default product image that's returning 404
+      String? imageUrl;
+      if (product.images.isNotEmpty) {
+        String url = product.images.first;
+        // Don't use the default-product.png URL that's returning 404
+        if (url.contains('default-product.png')) {
+          imageUrl = null; // Will use local asset instead
+        } else {
+          imageUrl = url;
+        }
+      }
 
-      // Use local asset if the API image is not available
-      bool useLocalImage = !imageUrl.startsWith('http');
-      String imageAsset = useLocalImage ? imageUrl : 'assets/images/plants/default_plant.png';
-
-      // Print debug information
-      print("Creating PlantProductCard for ${product.name}:");
-      print("  - Original Price: $originalPrice");
-      print("  - Current Price: $currentPrice");
-      print("  - Discount: $discountPercentage%");
-      print("  - Image URL: $imageUrl");
-      print("  - Using local image: $useLocalImage");
+      // Use local asset if no valid image URL
+      String? imageAsset = imageUrl == null ? 'assets/images/plants/default_plant.png' : null;
 
       return PlantProductCard(
-        imageUrl: !useLocalImage ? imageUrl : null,
-        imageAsset: useLocalImage ? imageAsset : null,
+        imageUrl: imageUrl,
+        imageAsset: imageAsset,
         name: product.name,
         currentPrice: currentPrice,
         originalPrice: originalPrice,
@@ -522,6 +535,10 @@ class _DealOfTheDayScreenState extends State<DealOfTheDayScreen> {
   }
 
   Widget _buildProductSection(String title, List<Widget> products) {
+    if (products.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 30),
@@ -601,6 +618,8 @@ class DealOfTheDayContent extends StatelessWidget {
   final int minutes;
   final int seconds;
   final double screenWidth;
+  final String dealName;
+  final String? bannerImage;
 
   const DealOfTheDayContent({
     Key? key,
@@ -608,6 +627,8 @@ class DealOfTheDayContent extends StatelessWidget {
     required this.minutes,
     required this.seconds,
     required this.screenWidth,
+    this.dealName = "Today's Green Highlight",
+    this.bannerImage,
   }) : super(key: key);
 
   @override
@@ -619,130 +640,49 @@ class DealOfTheDayContent extends StatelessWidget {
       children: [
         Container(
           width: containerWidth,
-          height: isTablet ? 760 : 680,
           clipBehavior: Clip.antiAlias,
           decoration: ShapeDecoration(
-            color: const Color(0xFFF6ECEC),
+            color: const Color(0xFFF9F3F3),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
-          child: Stack(
+          child: Column(
             children: [
-              // Background color
+              // Banner image section
               Container(
                 width: double.infinity,
-                height: double.infinity,
-                color: const Color(0xFFF9F3F3),
-              ),
-              
-              // Left top decorative element (plant image)
-              Positioned(
-                left: containerWidth * 0.1,
-                top: containerWidth * 0.05,
-                child: Container(
-                  transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(0.77),
-                  width: containerWidth * 0.5,
-                  height: containerWidth * 0.5,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/deal_of_the_day/left_top.png'),
+                constraints: BoxConstraints(
+                  minHeight: 180,
+                  maxHeight: containerWidth * 0.8,
+                ),
+                child: bannerImage != null
+                  ? Image.network(
+                      bannerImage!,
+                      width: double.infinity,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          'assets/images/deal_of_the_day/deal_of_the_day.png',
+                          width: double.infinity,
+                          fit: BoxFit.contain,
+                        );
+                      },
+                    )
+                  : Image.asset(
+                      'assets/images/deal_of_the_day/deal_of_the_day.png',
+                      width: double.infinity,
                       fit: BoxFit.contain,
                     ),
-                  ),
-                ),
               ),
               
-              // Right top decorative element (plant image)
-              Positioned(
-                right: -containerWidth * 0.1,
-                top: -containerWidth * 0.05,
-                child: Container(
-                  width: containerWidth * 0.6,
-                  height: containerWidth * 0.5,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/deal_of_the_day/right_top.png'),
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-              ),
-              
-              // Left bottom decorative element
-              Positioned(
-                left: -containerWidth * 0.05,
-                bottom: containerWidth * 0.3,
-                child: Container(
-                  width: containerWidth * 0.4,
-                  height: containerWidth * 0.4,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/deal_of_the_day/left_bottom.png'),
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-              ),
-              
-              // Right bottom decorative element
-              Positioned(
-                right: containerWidth * 0.1,
-                bottom: containerWidth * 0.5,
-                child: Container(
-                  width: containerWidth * 0.3,
-                  height: containerWidth * 0.3,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/deal_of_the_day/right_bottom.png'),
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-              ),
-              
-              // Decorative lines (if needed)
-              Positioned(
-                left: containerWidth * 0.4,
-                top: containerWidth * 0.2,
-                child: Container(
-                  transform: Matrix4.identity()..translate(0.0, 0.0)..rotateZ(1.57),
-                  height: containerWidth * 0.4,
-                  decoration: ShapeDecoration(
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(
-                        width: 3,
-                        strokeAlign: BorderSide.strokeAlignCenter,
-                        color: const Color(0xFF622700).withOpacity(0.1),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              
-              // Main Deal of the Day text
-              Positioned(
-                top: containerWidth * 0.15,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Image.asset(
-                    'assets/images/deal_of_the_day/deal_of_the_day.png',
-                    width: containerWidth * 0.7,
-                  ),
-                ),
-              ),
-              
-              // Text content
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: containerWidth * 0.4,
+              // Deal name and countdown text
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      "Today's Green Highlight",
+                      dealName,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: const Color(0xFF316300),
@@ -751,18 +691,15 @@ class DealOfTheDayContent extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 15),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: containerWidth * 0.1),
-                      child: Text(
-                        "Just 24 hours to grab this stunner—don't miss out!",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: const Color(0xFF316300),
-                          fontSize: isTablet ? 18 : 16,
-                          fontFamily: 'Cabin',
-                          fontWeight: FontWeight.w500,
-                        ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "Just ${hours > 0 ? '$hours hours' : '${minutes > 0 ? '$minutes minutes' : '$seconds seconds'}'} to grab this stunner—don't miss out!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: const Color(0xFF316300),
+                        fontSize: isTablet ? 16 : 14,
+                        fontFamily: 'Cabin',
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -770,32 +707,28 @@ class DealOfTheDayContent extends StatelessWidget {
               ),
               
               // Timer container
-              Positioned(
-                left: containerWidth * 0.05,
-                right: containerWidth * 0.05,
-                bottom: containerWidth * 0.1,
-                child: Container(
-                  height: 100,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  decoration: ShapeDecoration(
-                    color: const Color(0xFF54A801),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+              Container(
+                margin: const EdgeInsets.all(16),
+                height: 80,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                decoration: ShapeDecoration(
+                  color: const Color(0xFF54A801),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      // Hours
-                      _buildTimeUnit(hours.toString().padLeft(2, '0'), 'Hours'),
-                      
-                      // Minutes
-                      _buildTimeUnit(minutes.toString().padLeft(2, '0'), 'Minutes'),
-                      
-                      // Seconds
-                      _buildTimeUnit(seconds.toString().padLeft(2, '0'), 'Seconds'),
-                    ],
-                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // Hours
+                    _buildTimeUnit(hours.toString().padLeft(2, '0'), 'Hours'),
+                    
+                    // Minutes
+                    _buildTimeUnit(minutes.toString().padLeft(2, '0'), 'Minutes'),
+                    
+                    // Seconds
+                    _buildTimeUnit(seconds.toString().padLeft(2, '0'), 'Seconds'),
+                  ],
                 ),
               ),
             ],
@@ -813,17 +746,16 @@ class DealOfTheDayContent extends StatelessWidget {
           value,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 40,
+            fontSize: 32,
             fontFamily: 'Poppins',
             fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 5),
         Text(
           label,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 16,
+            fontSize: 14,
             fontFamily: 'Poppins',
             fontWeight: FontWeight.w500,
           ),

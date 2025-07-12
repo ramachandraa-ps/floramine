@@ -9,6 +9,59 @@ class DealService {
   // Constructor with optional client parameter for dependency injection
   DealService({http.Client? client}) : _client = client ?? http.Client();
 
+  // Fetch deals of the day information
+  Future<Map<String, dynamic>> getDealsOfTheDay() async {
+    try {
+      final response = await _client.get(Uri.parse('$baseUrl/deals-of-the-day'));
+      
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        print("Deals of the day API Response: ${response.body}");
+        return data;
+      } else {
+        throw Exception('Failed to load deals info: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("Exception in getDealsOfTheDay: $e");
+      throw Exception('Error fetching deals info: $e');
+    }
+  }
+  
+  // Fetch top deal products
+  Future<List<Product>> getTopDealProducts() async {
+    try {
+      final response = await _client.get(Uri.parse('$baseUrl/deals/top-products'));
+      
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        print("Top deal products API Response: ${response.body}");
+        
+        if (data['success'] == true) {
+          final List<dynamic> productsJson = data['data'];
+          List<Product> products = [];
+          
+          for (var dealProduct in productsJson) {
+            if (dealProduct['product'] != null) {
+              // Extract the product data from the deal product
+              final productJson = dealProduct['product'];
+              products.add(Product.fromJson(productJson));
+            }
+          }
+          
+          print("Parsed ${products.length} top deal products successfully");
+          return products;
+        } else {
+          throw Exception('API returned success: false - ${data['message']}');
+        }
+      } else {
+        throw Exception('Failed to load top deal products: ${response.statusCode}');
+      }
+    } catch (e) {
+      print("Exception in getTopDealProducts: $e");
+      throw Exception('Error fetching top deal products: $e');
+    }
+  }
+
   // Fetch exclusive deals products
   Future<List<Product>> getExclusiveDeals() async {
     try {
@@ -83,10 +136,10 @@ class DealService {
           "default_price": "₹ 0.00",
           "default_sell_price": "₹ 25.00",
           "discount": "₹ 0.00",
-          "deal_offer_price": null,
-          "deal_discount": null,
-          "deal_tag": "",
-          "is_in_deal": false,
+          "deal_offer_price": "₹ 23.75",
+          "deal_discount": "5.00%",
+          "deal_tag": "Exclusive Deals",
+          "is_in_deal": true,
           "stock": 0
         }
       ],

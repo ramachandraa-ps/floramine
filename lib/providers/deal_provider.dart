@@ -6,16 +6,23 @@ class DealProvider extends ChangeNotifier {
   final DealService _dealService = DealService();
   
   List<Product> _dealProducts = [];
+  Map<String, dynamic>? _dealInfo;
   bool _isLoading = false;
   String? _error;
   bool _hasInternetConnection = true;
 
   // Getters
   List<Product> get dealProducts => _dealProducts;
+  Map<String, dynamic>? get dealInfo => _dealInfo;
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get hasInternetConnection => _hasInternetConnection;
   bool get hasData => _dealProducts.isNotEmpty;
+  
+  // Get formatted end date
+  DateTime? get endDate => _dealInfo != null && _dealInfo!['end_date'] != null 
+      ? DateTime.parse(_dealInfo!['end_date']) 
+      : null;
 
   // Load deal products from API or fallback to mock data
   Future<void> loadDealProducts({bool forceRefresh = false}) async {
@@ -30,8 +37,18 @@ class DealProvider extends ChangeNotifier {
     notifyListeners();
     
     try {
-      print("Fetching deal products from API...");
-      _dealProducts = await _dealService.getExclusiveDeals();
+      // First, get the deal information
+      print("Fetching deal information from API...");
+      final dealInfoResponse = await _dealService.getDealsOfTheDay();
+      
+      if (dealInfoResponse['success'] == true && dealInfoResponse['data'].isNotEmpty) {
+        _dealInfo = dealInfoResponse['data'][0];
+        print("Deal info loaded: ${_dealInfo!['name']}");
+      }
+      
+      // Then, get the top deal products
+      print("Fetching top deal products from API...");
+      _dealProducts = await _dealService.getTopDealProducts();
       _error = null;
       
       // Print debug info
